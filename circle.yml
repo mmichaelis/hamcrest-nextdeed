@@ -3,10 +3,9 @@ machine:
     TERM: dumb
   java:
     version: openjdk7
-    version: openjdk8
 
 test:
   override:
-    - gradlew -d clean check jacocoTestReport
+    - gradlew clean check jacocoTestReport
   post:
     - cp -R build/reports/* $CIRCLE_ARTIFACTS
