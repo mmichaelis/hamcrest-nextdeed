@@ -40,10 +40,28 @@ when we first tried to poll very frequently that the component under test was bu
 polls instead of trying to reach the wanted state (in this case we were polling Solr for having
 indexed a given document).
 
+## Release
+
+The release process of *Hamcrest &mdash; Next Deed* has been adopted according to
+[Yennick Trevels' helpful hints][Trevels-2011]. Thus the first thing you need to do is
+to add your signing information to `gradle.properties` located in your `.gradle` folder
+in your user home folder.
+
+Deployment can afterwards just be done with:
+
+```
+$ gradle uploadArchives
+```
+
 ## Side Note
 
 *Hamcrest &mdash; Next Deed* is just another wordplay (if clever or not is up to you). Do you get
 the meaning?
 
+## References
+
+* [Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository][Trevels-2011]
+
 [Hamcrest]: <http://hamcrest.org/> "Hamcrest - Matchers that can be combined to create flexible expressions of intent"
 [haste-minds]: <http://minds.coremedia.com/2012/11/29/haste-makes-waste/> "Haste makes waste | Minds"
+[Trevels-2011]: <http://jedicoder.blogspot.de/2011/11/automated-gradle-project-deployment-to.html> "Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository"

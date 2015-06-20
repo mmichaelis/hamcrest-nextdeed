@@ -13,17 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 group 'com.github.mmichaelis'
 version '1.0.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'jacoco'
 
+/* source/target: Do not use constants from JavaVersion; IntelliJ Idea does not support this */
+/* define the valid syntax level for source files */
 sourceCompatibility = 1.7
+/* define binary compatibility version */
 targetCompatibility = 1.7
+
+def isDevBuild
+def isCiBuild
+def isReleaseBuild
+
+def sonatypeRepositoryUrl
+
+//set build variables based on build type (release, continuous integration, development)
+if (hasProperty("release")) {
+  isReleaseBuild = true
+  sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+} else if (hasProperty("ci")) {
+  isCiBuild = true
+  version += "-SNAPSHOT"
+  sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
+  isDevBuild = true
+}
 
 repositories {
   mavenCentral()
@@ -51,16 +71,81 @@ jar {
   }
 }
 
-task sourcesJar(type: Jar) {
-  classifier = 'sources'
-  from sourceSets.main.allSource
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from 'build/docs/javadoc'
 }
 
-task javadocJar(type: Jar) {
-  classifier = 'javadoc'
-  from javadoc
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
 }
 
 artifacts {
-  archives sourcesJar, javadocJar
+  archives jar
+
+  archives javadocJar
+  archives sourcesJar
+}
+
+if (isReleaseBuild) {
+  signing {
+    sign configurations.archives
+  }
+} else {
+  task signArchives {
+    // do nothing
+  }
+}
+
+uploadArchives {
+  repositories {
+    if (isDevBuild) {
+      mavenLocal()
+    } else {
+      mavenDeployer {
+        beforeDeployment {MavenDeployment deployment -> signing.signPom(deployment)}
+        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+          authentication(userName: sonatypeUsername, password: sonatypePassword)
+        }
+        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+          authentication(userName: sonatypeUsername, password: sonatypePassword)
+        }
+        pom.project {
+          name project.name
+          packaging 'jar'
+          description 'Hamcrest Next Deed is an extension to Hamcrest matchers.'
+          url 'https://github.com/mmichaelis/hamcrest-nextdeed'
+          scm {
+            url 'https://github.com/mmichaelis/hamcrest-nextdeed'
+            connection 'git@github.com:mmichaelis/hamcrest-nextdeed.git'
+            developerConnection 'git@github.com:mmichaelis/hamcrest-nextdeed.git'
+          }
+          licenses {
+            license {
+              name 'The Apache Software License, Version 2.0'
+              url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+              distribution 'repo'
+            }
+          }
+          developers {
+            developer {
+              id 'mmichaelis'
+              name 'Mark Michaelis'
+            }
+            developer {
+              id 'okummer'
+              name 'Olaf Kummer'
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+task wrapper(type: Wrapper) {
+  group = 'Buildmaster'
+  description = 'Generates gradlew and gradlew.bat bootstrap scripts'
+  gradleVersion = '2.4'
 }
