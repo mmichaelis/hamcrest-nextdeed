@@ -5,12 +5,43 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 
-# =========================
+# ===================================
+# Temporary Files
+# ===================================
+
+*.out
+*.log
+*.err
+*.tmp
+
+# ===================================
+# Build Tools
+# ===================================
+
+# Gradle
+# ===================================
+
+.gradle/
+build/
+
+# ===================================
+# Integrated Development Environments
+# ===================================
+
+# IntelliJ Idea
+# ===================================
+
+.idea/libraries/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+
+# ===================================
 # Operating System Files
-# =========================
+# ===================================
 
 # OSX
-# =========================
+# ===================================
 
 .DS_Store
 .AppleDouble
@@ -31,7 +62,7 @@ Temporary Items
 .apdisk
 
 # Windows
-# =========================
+# ===================================
 
 # Windows image file caches
 Thumbs.db

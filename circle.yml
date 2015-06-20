@@ -1,0 +1,11 @@
+machine:
+  environment:
+    TERM: dumb
+  java:
+    version: openjdk7
+
+test:
+  override:
+    - gradle check jacocoTestReport
+  post:
+    - cp -R build/reports/* $CIRCLE_ARTIFACTS
