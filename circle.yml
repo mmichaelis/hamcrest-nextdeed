@@ -6,6 +6,6 @@ machine:
 
 test:
   override:
-    - gradlew clean check jacocoTestReport
+    - ./gradlew clean check jacocoTestReport
   post:
     - cp -R build/reports/* $CIRCLE_ARTIFACTS
