@@ -17,6 +17,7 @@
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
@@ -27,6 +28,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -45,6 +47,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings({"MagicNumber", "DuplicateStringLiteralInspection"})
 public class WaitForTest {
+
   @Rule
   public ErrorCollector errorCollector = new ErrorCollector();
 
@@ -53,7 +56,8 @@ public class WaitForTest {
     TrackingMatcher<Object> originalMatcher = new AlwaysTrue<>();
     Matcher<Object> matcher = WaitFor.waitFor(originalMatcher, 30);
     assertThat(Integer.MAX_VALUE, matcher);
-    assertThat("Original matcher should exactly have been queried once.", 1, equalTo(originalMatcher.getMatchesCalls()));
+    assertThat("Original matcher should exactly have been queried once.", 1,
+               equalTo(originalMatcher.getMatchesCalls()));
   }
 
   @Test
@@ -61,7 +65,8 @@ public class WaitForTest {
     TrackingMatcher<Object> originalMatcher = new TriesUntilTrue<>(1);
     Matcher<Object> matcher = new NeverTimeOutWaitFor<>(originalMatcher);
     assertThat(Integer.MAX_VALUE, matcher);
-    assertThat("Original matcher should exactly have been queried twice.", 2, equalTo(originalMatcher.getMatchesCalls()));
+    assertThat("Original matcher should exactly have been queried twice.", 2,
+               equalTo(originalMatcher.getMatchesCalls()));
   }
 
   @Test
@@ -108,17 +113,22 @@ public class WaitForTest {
   @Test
   public void polling_decelerates() throws Exception {
     TrackingMatcher<Object> originalMatcher = new TriesUntilTrue<>(2);
-    TrackSleepsWaitFor<Object> matcher = new TrackSleepsWaitFor<>(originalMatcher, 30, TimeUnit.SECONDS);
+    TrackSleepsWaitFor<Object>
+        matcher =
+        new TrackSleepsWaitFor<>(originalMatcher, 30, TimeUnit.SECONDS);
     assertThat(Integer.MAX_VALUE, matcher);
     List<Long> sleeps = matcher.getSleeps();
     assertThat("Should have slept two times.", sleeps, Matchers.hasSize(2));
-    assertThat("Sleep times should have accelerated.", sleeps.get(0), Matchers.lessThan(sleeps.get(1)));
+    assertThat("Sleep times should have accelerated.", sleeps.get(0),
+               Matchers.lessThan(sleeps.get(1)));
   }
 
   @Test
   public void polling_should_give_a_last_chance_before_failure() throws Exception {
     TrackingMatcher<Object> originalMatcher = new TriesUntilTrue<>(2);
-    TrackSleepsWaitFor<Object> matcher = new TrackSleepsWaitFor<>(originalMatcher, 4, TimeUnit.SECONDS);
+    TrackSleepsWaitFor<Object>
+        matcher =
+        new TrackSleepsWaitFor<>(originalMatcher, 4, TimeUnit.SECONDS);
     assertThat(Integer.MAX_VALUE, matcher);
     List<Long> sleeps = matcher.getSleeps();
     assertThat("Should have slept two times.", sleeps, Matchers.hasSize(2));
@@ -131,15 +141,19 @@ public class WaitForTest {
   @Test
   public void example_use_case_with_delegating_matcher_works() throws Exception {
     ComponentUnderTest componentUnderTest = new ComponentUnderTest(1, 2);
-    Matcher<ComponentUnderTest> waitForMatcher = new NeverTimeOutWaitFor<>(new ApplyingMatcher<>(new ToState(), Matchers.equalTo(2)));
-    assertThat("Requested state should have been reached on second try.", componentUnderTest, waitForMatcher);
+    Matcher<ComponentUnderTest>
+        waitForMatcher =
+        new NeverTimeOutWaitFor<>(new ApplyingMatcher<>(new ToState(), Matchers.equalTo(2)));
+    assertThat("Requested state should have been reached on second try.", componentUnderTest,
+               waitForMatcher);
   }
 
   @Test
   public void delegating_matcher_remembers_previous_state_on_failure() throws Exception {
     ComponentUnderTest componentUnderTest = new ComponentUnderTest(42, 43);
     Matcher<ComponentUnderTest> waitForMatcher =
-        new TimeOutImmediatelyWaitFor<>(ApplyingMatcher.applying(new ToState(), Matchers.equalTo(43)));
+        new TimeOutImmediatelyWaitFor<>(
+            ApplyingMatcher.applying(new ToState(), Matchers.equalTo(43)));
     AssertionError caughtAssertionFailure = null;
     try {
       assertThat("Provoke failure because of timeout.", componentUnderTest, waitForMatcher);
@@ -153,6 +167,24 @@ public class WaitForTest {
         Matchers.containsString("42"));
   }
 
+  @Test(expected = IllegalStateException.class)
+  public void rethrow_interrupted_exception() throws Exception {
+    Matcher<String> embeddedMatcher = new AlwaysFalse<>();
+    Matcher<String> waitForMatcher = new InterruptedSleepWaitFor<>(embeddedMatcher);
+    assertThat("Provoke interrupted exception, rethrown as IllegalStateException.",
+               "Something", waitForMatcher);
+  }
+
+  @Test
+  public void sleep_really_sleeps() throws Exception {
+    PublicSleepWaitFor matcher = new PublicSleepWaitFor();
+    long beforeMillis = System.currentTimeMillis();
+    matcher.sleep(5L);
+    long afterMillis = System.currentTimeMillis();
+    assertThat("Should have delayed about 5 ms.", afterMillis - beforeMillis,
+               Matchers.greaterThan(4L));
+  }
+
   /*
    * -------------------------------------------------------------------------------------------------------------------
    * Helper Classes
@@ -163,6 +195,7 @@ public class WaitForTest {
    * Some component under test which changes its state each time the state is queried.
    */
   private static class ComponentUnderTest {
+
     private final List<Integer> states;
 
     private ComponentUnderTest(Integer... states) {
@@ -182,6 +215,7 @@ public class WaitForTest {
    * Function to retrieve state from the component under test.
    */
   private static class ToState implements Function<ComponentUnderTest, Integer> {
+
     @Override
     public Integer apply(ComponentUnderTest input) {
       return input.getState();
@@ -189,13 +223,8 @@ public class WaitForTest {
   }
 
   private static class TrackingMatcher<T> extends TypeSafeMatcher<T> {
-    private int matchesCalls = 0;
 
-    @Override
-    protected boolean matchesSafely(T item) {
-      matchesCalls++;
-      return false;
-    }
+    private int matchesCalls = 0;
 
     @Override
     public void describeTo(Description description) {
@@ -204,12 +233,19 @@ public class WaitForTest {
     public int getMatchesCalls() {
       return matchesCalls;
     }
+
+    @Override
+    protected boolean matchesSafely(T item) {
+      matchesCalls++;
+      return false;
+    }
   }
 
   /**
    * Matcher which eventually will succeed.
    */
   private static class TriesUntilTrue<T> extends TrackingMatcher<T> {
+
     private final int untilCount;
     private int currentCount = 0;
 
@@ -228,6 +264,7 @@ public class WaitForTest {
    * Matcher which denotes success always.
    */
   private static class AlwaysTrue<T> extends TrackingMatcher<T> {
+
     @Override
     protected boolean matchesSafely(T item) {
       super.matchesSafely(item);
@@ -239,6 +276,7 @@ public class WaitForTest {
    * Matcher which denotes failure always.
    */
   private static class AlwaysFalse<T> extends TrackingMatcher<T> {
+
     private final String fixedDescription;
     private final String fixedMismatchDescription;
 
@@ -278,25 +316,26 @@ public class WaitForTest {
    * Special WaitFor matcher which will never time out.
    */
   private static class NeverTimeOutWaitFor<T> extends WaitFor<T> {
+
     public NeverTimeOutWaitFor(Matcher<T> originalMatcher) {
       super(originalMatcher, 24, TimeUnit.HOURS);
     }
 
     @Override
+    protected void sleep(long millis) throws InterruptedException {
+      // do nothing, don't sleep
+    }    @Override
     protected long nowMillis() {
       return 0;
     }
 
-    @Override
-    protected void sleep(long millis) throws InterruptedException {
-      // do nothing, don't sleep
-    }
   }
 
   /**
    * Special WaitFor matcher which will time out immediately.
    */
   private static class TimeOutImmediatelyWaitFor<T> extends WaitFor<T> {
+
     private long count = 0;
 
     public TimeOutImmediatelyWaitFor(Matcher<T> originalMatcher) {
@@ -315,9 +354,11 @@ public class WaitForTest {
   }
 
   /**
-   * WaitFor matcher which tracks sleep-calls for later assertions regarding the decelerating behavior.
+   * WaitFor matcher which tracks sleep-calls for later assertions regarding the decelerating
+   * behavior.
    */
   private static class TrackSleepsWaitFor<T> extends WaitFor<T> {
+
     private long count = 0;
     private List<Long> sleeps = new ArrayList<>();
 
@@ -325,7 +366,9 @@ public class WaitForTest {
       super(originalMatcher, timeout, timeUnit);
     }
 
-    @Override
+    public List<Long> getSleeps() {
+      return Collections.unmodifiableList(sleeps);
+    }    @Override
     protected long nowMillis() {
       count += 1000;
       return count;
@@ -337,8 +380,30 @@ public class WaitForTest {
       sleeps.add(millis);
     }
 
-    public List<Long> getSleeps() {
-      return Collections.unmodifiableList(sleeps);
+
+  }
+
+  private static class InterruptedSleepWaitFor<T> extends NeverTimeOutWaitFor<T> {
+
+    public InterruptedSleepWaitFor(@NotNull Matcher<T> originalMatcher) {
+      super(originalMatcher);
+    }
+
+    @Override
+    protected void sleep(long millis) throws InterruptedException {
+      Thread.currentThread().interrupt();
+      Thread.sleep(1L);
+    }
+  }
+
+  private static class PublicSleepWaitFor extends WaitFor<Boolean> {
+    public PublicSleepWaitFor() {
+      super(is(false), 0, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void sleep(long millis) throws InterruptedException {
+      super.sleep(millis);
     }
   }
 }
