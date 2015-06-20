@@ -1,5 +1,7 @@
 # Hamcrest &mdash; Next Deed
 
+[![Circle CI][circleci-badge]][circle-ci]
+
 I am a fan of Hamcrest and its logo which actually emphasizes the clever wordplay. I like the ease
 of use of Hamcrest, its easy extensibility and its great approach of creating failure reports
 which sometimes do not even require to set an assertion message.
@@ -62,6 +64,13 @@ the meaning?
 
 * [Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository][Trevels-2011]
 
+<!-- Links -->
+
 [Hamcrest]: <http://hamcrest.org/> "Hamcrest - Matchers that can be combined to create flexible expressions of intent"
 [haste-minds]: <http://minds.coremedia.com/2012/11/29/haste-makes-waste/> "Haste makes waste | Minds"
 [Trevels-2011]: <http://jedicoder.blogspot.de/2011/11/automated-gradle-project-deployment-to.html> "Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository"
+
+<!-- Badges -->
+
+[circleci]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed>
+[circleci-badge]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed.svg?style=svg>
