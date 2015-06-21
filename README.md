@@ -2,7 +2,7 @@
 
 \[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
-[![Circle CI][circleci-badge]][circleci]
+[![Circle CI][circleci-badge]][circleci-project]
 [![Maven Central][mavencentral-badge]][mavencentral]
 [![Apache License, Version 2.0][license-badge]][license]
 [![Java Version][java-badge]][java]
@@ -56,6 +56,13 @@ indexed a given document).
 *Hamcrest &mdash; Next Deed* is just another wordplay (if clever or not is up to you). Do you get
 the meaning?
 
+## References
+
+* [Olaf Kummer: Haste makes waste | Minds][haste-minds]
+* [shields.io][]
+    providing out-of-the-box badges like the license badge
+* [circleci.com][]
+
 \[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 <!-- Links -->
@@ -63,6 +70,8 @@ the meaning?
 [Hamcrest]: <http://hamcrest.org/> "Hamcrest - Matchers that can be combined to create flexible expressions of intent"
 [haste-minds]: <http://minds.coremedia.com/2012/11/29/haste-makes-waste/> "Haste makes waste | Minds"
 [Trevels-2011]: <http://jedicoder.blogspot.de/2011/11/automated-gradle-project-deployment-to.html> "Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository"
+[shields.io]: <http://shields.io/> "Shields.io: Quality metadata badges for open source projects"
+[circleci.com]: <https://circleci.com/> "Continuous Integration and Deployment - CircleCI"
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
@@ -72,7 +81,7 @@ the meaning?
 
 [license]: <LICENSE.md> "Apache License, Version 2.0"
 [license-badge]: <https://img.shields.io/badge/license-Apache%20License%2C%20Version%202.0-lightgrey.svg> "Apache License, Version 2.0"
-[circleci]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed>
+[circleci-project]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed>
 [circleci-badge]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed.svg?style=svg>
 [java]: <http://www.oracle.com/technetwork/java/javase/downloads/index.html>
 [java-badge]: <https://img.shields.io/badge/java-7-blue.svg>
