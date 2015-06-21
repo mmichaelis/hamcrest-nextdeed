@@ -23,9 +23,9 @@ apply plugin: 'signing'
 
 /* source/target: Do not use constants from JavaVersion; IntelliJ Idea does not support this */
 /* define the valid syntax level for source files */
-sourceCompatibility = 1.7
+sourceCompatibility = JavaVersion.VERSION_1_7
 /* define binary compatibility version */
-targetCompatibility = 1.7
+targetCompatibility = JavaVersion.VERSION_1_7
 
 def isDevBuild
 def isCiBuild
@@ -33,15 +33,24 @@ def isReleaseBuild
 
 def sonatypeRepositoryUrl
 
+compileJava.doFirst {
+  /* trying to debug https://github.com/mmichaelis/hamcrest-nextdeed/issues/1 */
+  logger.info("Source compatibility {}", sourceCompatibility)
+  logger.info("Target compatibility {}", targetCompatibility)
+}
+
 //set build variables based on build type (release, continuous integration, development)
 if (hasProperty("release")) {
+  logger.info("Release Build enabled. Deployment (uploadArtifacts) will go to Sonatype Staging.")
   isReleaseBuild = true
   sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 } else if (hasProperty("ci")) {
+  logger.info("CI Build enabled. Deployment (uploadArtifacts) will go to Sonatype Snapshots.")
   isCiBuild = true
   version += "-SNAPSHOT"
   sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
 } else {
+  logger.info("Development build enabled. Deployment (uploadArtifacts) will go to local maven repository.")
   isDevBuild = true
 }
 
@@ -65,7 +74,7 @@ dependencies {
 
 jar {
   manifest {
-    attributes 'Implementation-Title': 'hamcrest-nextdeed',
+    attributes 'Implementation-Title': 'Hamcrest - Next Deed',
                'Implementation-Vendor': 'Mark Michaelis',
                'Implementation-Version': version
   }
@@ -73,7 +82,7 @@ jar {
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
-  from 'build/docs/javadoc'
+  from tasks.javadoc.destinationDir
 }
 
 task sourcesJar(type: Jar) {
@@ -94,6 +103,7 @@ if (isReleaseBuild) {
   }
 } else {
   task signArchives {
+    logger.info("Signing skipped as release build not triggered.")
     // do nothing
   }
 }
@@ -114,7 +124,7 @@ uploadArchives {
         pom.project {
           name project.name
           packaging 'jar'
-          description 'Hamcrest Next Deed is an extension to Hamcrest matchers.'
+          description 'Hamcrest - Next Deed is an extension to Hamcrest matchers.'
           url 'https://github.com/mmichaelis/hamcrest-nextdeed'
           scm {
             url 'https://github.com/mmichaelis/hamcrest-nextdeed'
