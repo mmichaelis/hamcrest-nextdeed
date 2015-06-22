@@ -1,8 +1,14 @@
+general:
+  branches:
+    ignore:
+      - gh-pages # list of branches to ignore
+      - /release\/.*/ # or ignore regexes
+
 machine:
   environment:
     TERM: dumb
   java:
-    version: openjdk7
+    version: oraclejdk7
 
 test:
   override:
