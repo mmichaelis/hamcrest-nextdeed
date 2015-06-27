@@ -1,4 +1,7 @@
 general:
+  artifacts:
+    - "build/reports" # relative to the build directory
+
   branches:
     ignore:
       - gh-pages # list of branches to ignore
@@ -16,11 +19,3 @@ test:
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/.*-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
-    - mkdir -p $CIRCLE_ARTIFACTS
-    - find . -type d -regex ".*/reports/\(jacoco\)" -exec cp -R {} $CIRCLE_ARTIFACTS \;
-
-deployment:
-  snapshot:
-    branch: master
-    commands:
-      - ./gradlew uploadArchives -Pci
