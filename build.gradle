@@ -27,6 +27,9 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 /* define binary compatibility version */
 targetCompatibility = JavaVersion.VERSION_1_7
 
+def deployUsername = System.getenv("SONATYPE_USERNAME") ?: sonatypeUsername
+def deployPassword = System.getenv("SONATYPE_PASSWORD") ?: sonatypePassword
+
 def isDevBuild
 def isCiBuild
 def isReleaseBuild
@@ -116,10 +119,10 @@ uploadArchives {
       mavenDeployer {
         beforeDeployment {MavenDeployment deployment -> signing.signPom(deployment)}
         repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-          authentication(userName: sonatypeUsername, password: sonatypePassword)
+          authentication(userName: deployUsername, password: deployPassword)
         }
         snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-          authentication(userName: sonatypeUsername, password: sonatypePassword)
+          authentication(userName: deployUsername, password: deployPassword)
         }
         pom.project {
           name project.name

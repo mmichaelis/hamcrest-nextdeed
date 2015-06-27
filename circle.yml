@@ -14,4 +14,14 @@ test:
   override:
     - ./gradlew clean check jacocoTestReport
   post:
-    - cp -R build/reports/* $CIRCLE_ARTIFACTS
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/.*-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - mkdir -p $CIRCLE_ARTIFACTS
+    - find . -type d -regex ".*/(jacoco)" -exec cp -R {} $CIRCLE_ARTIFACTS
+post:
+
+deployment:
+  snapshot:
+    branch: master
+    commands:
+      - ./gradlew uploadArchives -Pci
