@@ -87,12 +87,12 @@ the meaning?
 <!-- Badges -->
 
 [license]: <./LICENSE.md> "Apache License, Version 2.0"
-[license-badge]: <//img.shields.io/badge/license-Apache%20License%2C%20Version%202.0-lightgrey.svg> "Apache License, Version 2.0"
+[license-badge]: <https://img.shields.io/badge/license-Apache%20License%2C%20Version%202.0-lightgrey.svg> "Apache License, Version 2.0"
 [circleci-project]: <//circleci.com/gh/mmichaelis/hamcrest-nextdeed>
-[circleci-badge]: <//circleci.com/gh/mmichaelis/hamcrest-nextdeed.svg?style=svg>
+[circleci-badge]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed.svg?style=svg>
 [java]: <//www.oracle.com/technetwork/java/javase/downloads/index.html>
-[java-badge]: <//img.shields.io/badge/java-7-blue.svg>
+[java-badge]: <https://img.shields.io/badge/java-7-blue.svg>
 [mavencentral]: <//search.maven.org/#search|gav|1|g%3A%22com.github.mmichaelis%22%20AND%20a%3A%22hamcrest-nextdeed%22>
-[mavencentral-badge]: <//maven-badges.herokuapp.com/maven-central/com.github.mmichaelis/hamcrest-nextdeed/badge.svg>
+[mavencentral-badge]: <https://maven-badges.herokuapp.com/maven-central/com.github.mmichaelis/hamcrest-nextdeed/badge.svg>
 [stillmaintained-url]: <//stillmaintained.com/mmichaelis/hamcrest-nextdeed>
-[stillmaintained-badge]: <//stillmaintained.com/mmichaelis/hamcrest-nextdeed.png>
+[stillmaintained-badge]: <https://stillmaintained.com/mmichaelis/hamcrest-nextdeed.png>
