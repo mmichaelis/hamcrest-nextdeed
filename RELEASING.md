@@ -16,7 +16,7 @@ find common usages within *Hamcrest &mdash; Next Deed* below.
 
 In order to work with the [axion-release-plugin][] you must copy the provided
 [gradle.properties][] to your user home folder's `.gradle` sub-folder and fill in the
-credentials and keys.
+credentials and keys. Mind that you generate a personal access token for GitHub access. 
 
 ## Basic Usage
 
