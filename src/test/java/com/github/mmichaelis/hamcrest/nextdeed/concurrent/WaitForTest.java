@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Olaf Kummer
  * @author Mark Michaelis
+ * @since SINCE
  */
 @SuppressWarnings({"MagicNumber", "DuplicateStringLiteralInspection"})
 public class WaitForTest {
@@ -290,18 +291,18 @@ public class WaitForTest {
     }
 
     @Override
-    protected boolean matchesSafely(T item) {
-      super.matchesSafely(item);
-      return false;
-    }
-
-    @Override
     public void describeTo(Description description) {
       super.describeTo(description);
       if (fixedDescription != null) {
         description.appendText(fixedDescription);
       }
+    }    @Override
+    protected boolean matchesSafely(T item) {
+      super.matchesSafely(item);
+      return false;
     }
+
+
 
     @Override
     protected void describeMismatchSafely(T item, Description mismatchDescription) {
@@ -324,7 +325,9 @@ public class WaitForTest {
     @Override
     protected void sleep(long millis) throws InterruptedException {
       // do nothing, don't sleep
-    }    @Override
+    }
+
+    @Override
     protected long nowMillis() {
       return 0;
     }
@@ -368,7 +371,9 @@ public class WaitForTest {
 
     public List<Long> getSleeps() {
       return Collections.unmodifiableList(sleeps);
-    }    @Override
+    }
+
+    @Override
     protected long nowMillis() {
       count += 1000;
       return count;
@@ -397,6 +402,7 @@ public class WaitForTest {
   }
 
   private static class PublicSleepWaitFor extends WaitFor<Boolean> {
+
     public PublicSleepWaitFor() {
       super(is(false), 0, TimeUnit.MILLISECONDS);
     }

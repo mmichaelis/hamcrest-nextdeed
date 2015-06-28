@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @author Olaf Kummer
  * @author Mark Michaelis
- * @since 1.0.0
+ * @since SINCE
  */
 public class ApplyingMatcherTest {
 

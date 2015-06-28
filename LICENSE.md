@@ -1,6 +1,6 @@
 # <a id="top"></a>The Apache Software Foundation
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]
 
 ## Apache License, Version 2.0
 
@@ -175,6 +175,8 @@ liability.
 
 END OF TERMS AND CONDITIONS
 
+\[[Top][]]
+
 # APPENDIX: How to apply the Apache License to your work
 
 To apply the Apache License to your work, attach the following boilerplate
@@ -201,11 +203,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 <!-- Links -->
 
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
+[Releasing]: <./RELEASING.md> "Building Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
 [Top]: <#top>

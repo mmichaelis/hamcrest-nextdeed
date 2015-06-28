@@ -13,22 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-group 'com.github.mmichaelis'
-version '1.0.0'
+
+repositories {
+  mavenCentral()
+}
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    // Axion Release Plugin: https://github.com/allegro/axion-release-plugin
+    classpath group: 'pl.allegro.tech.build', name: 'axion-release-plugin', version: '1.2.3'
+  }
+}
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'pl.allegro.tech.build.axion-release'
 
-/* source/target: Do not use constants from JavaVersion; IntelliJ Idea does not support this */
+scmVersion {
+  tag {
+    prefix = project.name + ".release"
+  }
+  hooks {
+    pre 'fileUpdate',
+        [file: 'README.md', pattern: {v, p -> /Version: $v/}, replacement: {v, p -> "Version: $v"}]
+    pre 'fileUpdate',
+        [files: fileTree('src').include('**/*.java'), pattern: {v, p -> /SINCE/}, replacement: {
+          v, p -> "$v"
+        }]
+    pre 'commit', {v, p -> "Applying release version $v."}
+  }
+}
+
+project.group = 'com.github.mmichaelis'
+// Version determined by Axion Release Plugin
+project.version = scmVersion.version
+
 /* define the valid syntax level for source files */
 sourceCompatibility = JavaVersion.VERSION_1_7
 /* define binary compatibility version */
 targetCompatibility = JavaVersion.VERSION_1_7
-
-def deployUsername = System.getenv("SONATYPE_USERNAME") ?: sonatypeUsername
-def deployPassword = System.getenv("SONATYPE_PASSWORD") ?: sonatypePassword
 
 def isDevBuild
 def isCiBuild
@@ -42,23 +70,20 @@ compileJava.doFirst {
   logger.info("Target compatibility {}", targetCompatibility)
 }
 
-//set build variables based on build type (release, continuous integration, development)
-if (hasProperty("release")) {
+logger.info(
+    "Determined Project information: " + project.group + ":" + project.name + ":" + project.version)
+
+if (hasProperty("local")) {
+  logger.info("Deployment (uploadArtifacts) will go to local maven repository.")
+  isDevBuild = true
+} else if (project.version.toString().endsWith('SNAPSHOT')) {
+  logger.info("Deployment (uploadArtifacts) will go to Sonatype Snapshots.")
+  isCiBuild = true
+  sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
   logger.info("Release Build enabled. Deployment (uploadArtifacts) will go to Sonatype Staging.")
   isReleaseBuild = true
   sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-} else if (hasProperty("ci")) {
-  logger.info("CI Build enabled. Deployment (uploadArtifacts) will go to Sonatype Snapshots.")
-  isCiBuild = true
-  version += "-SNAPSHOT"
-  sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-} else {
-  logger.info("Development build enabled. Deployment (uploadArtifacts) will go to local maven repository.")
-  isDevBuild = true
-}
-
-repositories {
-  mavenCentral()
 }
 
 dependencies {
@@ -121,10 +146,10 @@ uploadArchives {
           MavenDeployment deployment -> signing.signPom(deployment)
         }
         repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-          authentication(userName: deployUsername, password: deployPassword)
+          authentication(userName: sonatypeUsername, password: sonatypePassword)
         }
         snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-          authentication(userName: deployUsername, password: deployPassword)
+          authentication(userName: sonatypeUsername, password: sonatypePassword)
         }
         pom.project {
           name project.name

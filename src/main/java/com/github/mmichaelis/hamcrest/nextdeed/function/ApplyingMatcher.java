@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <F> type of the actual value in the assertion; typically the component under test
  * @param <T> type of the actual value to compare; typically the state of the component under test
- * @since 1.0.0
+ * @since SINCE
  */
 public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
 
@@ -56,6 +56,7 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
    *
    * @param function        the function to apply to convert the matched object to the target value
    * @param delegateMatcher matcher to apply to the transformed value
+   * @since SINCE
    */
   public ApplyingMatcher(@NotNull Function<F, T> function,
                          @NotNull Matcher<? super T> delegateMatcher) {
@@ -75,6 +76,7 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
    * @param <F>             type to input into assertion
    * @param <T>             actual value type to compare
    * @return matcher which transforms input before comparison
+   * @since SINCE
    */
   public static <F, T> Matcher<F> applying(@NotNull Function<F, T> function,
                                            @NotNull Matcher<? super T> delegateMatcher) {
