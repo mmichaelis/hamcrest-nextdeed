@@ -17,6 +17,6 @@
 /**
  * Matcher for concurrent changes of the system/component under test.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
