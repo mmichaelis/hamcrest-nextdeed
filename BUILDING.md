@@ -73,7 +73,7 @@ from CI build, coverage and dependency update checks.
 
 * [Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository (2011)][Trevels-2011]
 
-    Update: [Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository (2011)][Trevels-2013]
+    Update: [Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository (2013)][Trevels-2013]
 
     And even more code copied from [GradleFx' build.gradle][GradleFx-build].
 
