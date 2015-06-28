@@ -35,7 +35,15 @@ apply plugin: 'signing'
 
 project.group = 'com.github.mmichaelis'
 
-if (!hasProperty("ci")) {
+def isDeployLocal
+def isDeploySnapshot
+def isDeployRelease
+
+def isCiBuild = System.getenv("CI_BUILD") ?: hasProperty("ci")
+
+def sonatypeRepositoryUrl
+
+if (!isCiBuild) {
 
   logger.info("Enabling axion-release-plugin.")
 
@@ -69,12 +77,6 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 /* define binary compatibility version */
 targetCompatibility = JavaVersion.VERSION_1_7
 
-def isDevBuild
-def isCiBuild
-def isReleaseBuild
-
-def sonatypeRepositoryUrl
-
 compileJava.doFirst {
   /* trying to debug https://github.com/mmichaelis/hamcrest-nextdeed/issues/1 */
   logger.info("Source compatibility {}", sourceCompatibility)
@@ -86,14 +88,14 @@ logger.info(
 
 if (hasProperty("local")) {
   logger.info("Deployment (uploadArtifacts) will go to local maven repository.")
-  isDevBuild = true
+  isDeployLocal = true
 } else if (project.version.toString().endsWith('SNAPSHOT')) {
   logger.info("Deployment (uploadArtifacts) will go to Sonatype Snapshots.")
-  isCiBuild = true
+  isDeploySnapshot = true
   sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
 } else {
   logger.info("Release Build enabled. Deployment (uploadArtifacts) will go to Sonatype Staging.")
-  isReleaseBuild = true
+  isDeployRelease = true
   sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
@@ -136,7 +138,7 @@ artifacts {
   archives sourcesJar
 }
 
-if (isReleaseBuild) {
+if (isDeployRelease) {
   signing {
     sign configurations.archives
   }
@@ -149,7 +151,7 @@ if (isReleaseBuild) {
 
 uploadArchives {
   repositories {
-    if (isDevBuild) {
+    if (isDeployLocal) {
       mavenLocal()
     } else {
       mavenDeployer {

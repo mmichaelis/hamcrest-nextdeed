@@ -10,12 +10,13 @@ general:
 machine:
   environment:
     TERM: dumb
+    CI_BUILD: true
   java:
     version: oraclejdk7
 
 test:
   override:
-    - ./gradlew clean check jacocoTestReport --info -Pci
+    - ./gradlew clean check jacocoTestReport --info
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/.*-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

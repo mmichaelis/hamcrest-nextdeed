@@ -40,8 +40,8 @@ from CI build, coverage and dependency update checks.
 [CircleCI][] 
 
 For CircleCI it is important to disable `axion-release-plugin` as you will otherwise get an error
-when `axion-release-plugin` tries to determine the version. To do so add `-Pci` to the build
-call.
+when `axion-release-plugin` tries to determine the version. To do so set environment property
+`CI_BUILD`.
 
 \[[Top][]]
 
