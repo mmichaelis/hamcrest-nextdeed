@@ -1,11 +1,13 @@
 # <a id="top"></a>Hamcrest &mdash; Next Deed
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]
 
 [![Circle CI][circleci-badge]][circleci-project]
 [![Maven Central][mavencentral-badge]][mavencentral]
 [![Apache License, Version 2.0][license-badge]][license]
 [![Java Version][java-badge]][java]
+
+Version: 0.1.0
 
 I am a fan of Hamcrest and its logo which actually emphasizes the clever wordplay. I like the ease
 of use of Hamcrest, its easy extensibility and its great approach of creating failure reports
@@ -15,10 +17,10 @@ which sometimes do not even require to set an assertion message.
 more matchers you may find useful.
 
 The first version of *Hamcrest &mdash; Next Deed* contains especially one matcher:
- 
-## WaitFor
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Top][]]
+
+## WaitFor
  
 The WaitFor matcher introduces matching for state changes which might take a while until they
 become effective. It implements the wait pattern as introduced in [Haste makes waste][haste-minds].
@@ -49,12 +51,14 @@ when we first tried to poll very frequently that the component under test was bu
 polls instead of trying to reach the wanted state (in this case we were polling Solr for having
 indexed a given document).
 
-## Side Note
+\[[Top][]]
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+## Side Note
 
 *Hamcrest &mdash; Next Deed* is just another wordplay (if clever or not is up to you). Do you get
 the meaning?
+
+\[[Top][]]
 
 ## References
 
@@ -63,7 +67,7 @@ the meaning?
     providing out-of-the-box badges like the license badge
 * [circleci.com][]
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 <!-- Links -->
 
@@ -72,8 +76,10 @@ the meaning?
 [Trevels-2011]: <http://jedicoder.blogspot.de/2011/11/automated-gradle-project-deployment-to.html> "Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository"
 [shields.io]: <http://shields.io/> "Shields.io: Quality metadata badges for open source projects"
 [circleci.com]: <https://circleci.com/> "Continuous Integration and Deployment - CircleCI"
+
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
+[Releasing]: <./RELEASING.md> "Building Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
 [Top]: <#top>
 
