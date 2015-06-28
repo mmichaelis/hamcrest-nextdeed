@@ -95,4 +95,4 @@ the meaning?
 [mavencentral]: <https://search.maven.org/#search|gav|1|g%3A%22com.github.mmichaelis%22%20AND%20a%3A%22hamcrest-nextdeed%22>
 [mavencentral-badge]: <https://maven-badges.herokuapp.com/maven-central/com.github.mmichaelis/hamcrest-nextdeed/badge.svg>
 [stillmaintained-url]: <https://stillmaintained.com/mmichaelis/hamcrest-nextdeed>
-[stillmaintained-badge]: <https://stillmaintained.com/mmichaelis/hamcrest-nextdeed.png>
+[stillmaintained-badge]: <http://stillmaintained.com/mmichaelis/hamcrest-nextdeed.png>
