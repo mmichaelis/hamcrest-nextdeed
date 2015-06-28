@@ -25,6 +25,8 @@ buildscript {
   dependencies {
     // Axion Release Plugin: https://github.com/allegro/axion-release-plugin
     classpath group: 'pl.allegro.tech.build', name: 'axion-release-plugin', version: '1.2.3'
+    // gradle-git plugin to manage github pages
+    classpath group: 'org.ajoberstar', name: 'gradle-git', version: '1.2.0'
   }
 }
 
@@ -32,6 +34,7 @@ apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'org.ajoberstar.github-pages'
 
 project.group = 'com.github.mmichaelis'
 
@@ -193,6 +196,20 @@ uploadArchives {
     }
   }
 }
+
+// Example taken from https://github.com/asciidoctor/asciidoctor-gradle-examples/pull/1
+githubPages {
+  repoUri = 'https://github.com/mmichaelis/hamcrest-nextdeed.git'
+  credentials {
+    username = project.hasProperty('githubAccessToken') ? project.githubAccessToken : ''
+    password = ''
+  }
+  pages {
+    from javadoc
+  }
+}
+
+// publishGhPages.dependsOn asciidoctor
 
 task wrapper(type: Wrapper) {
   group = 'Buildmaster'
