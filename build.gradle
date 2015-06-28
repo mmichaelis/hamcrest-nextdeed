@@ -32,26 +32,37 @@ apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'pl.allegro.tech.build.axion-release'
-
-scmVersion {
-  tag {
-    prefix = project.name + ".release"
-  }
-  hooks {
-    pre 'fileUpdate',
-        [file: 'README.md', pattern: {v, p -> /Version: $v/}, replacement: {v, p -> "Version: $v"}]
-    pre 'fileUpdate',
-        [files: fileTree('src').include('**/*.java'), pattern: {v, p -> /SINCE/}, replacement: {
-          v, p -> "$v"
-        }]
-    pre 'commit', {v, p -> "Applying release version $v."}
-  }
-}
 
 project.group = 'com.github.mmichaelis'
-// Version determined by Axion Release Plugin
-project.version = scmVersion.version
+
+if (!hasProperty("ci")) {
+
+  logger.info("Enabling axion-release-plugin.")
+
+  apply plugin: 'pl.allegro.tech.build.axion-release'
+
+  scmVersion {
+    tag {
+      prefix = project.name + ".release"
+    }
+    hooks {
+      pre 'fileUpdate',
+          [file: 'README.md', pattern: {v, p -> /Version: $v/}, replacement: {v, p -> "Version: $v"
+          }]
+      pre 'fileUpdate',
+          [files: fileTree('src').include('**/*.java'), pattern: {v, p -> /SINCE/}, replacement: {
+            v, p -> "$v"
+          }]
+      pre 'commit', {v, p -> "Applying release version $v."}
+    }
+  }
+
+  // Version determined by Axion Release Plugin
+  project.version = scmVersion.version
+} else {
+  logger.info("CI Build. axion-release-plugin disabled. Falling back to default version")
+  project.version = '0.1.0-ci-SNAPSHOT'
+}
 
 /* define the valid syntax level for source files */
 sourceCompatibility = JavaVersion.VERSION_1_7
