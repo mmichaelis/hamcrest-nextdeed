@@ -89,6 +89,12 @@ from CI build, coverage and dependency update checks.
 
 * [Automatically Publish to Sonatype with Gradle and Travis CI | Ben Limmer (2014)][benlimmer-autopublish-sonatype]
 
+* [gradle-release plugin][gradle-release]
+
+* [Gradle release ramblings | anorak:girl][gradle-release-ramblings]
+
+* [allegro/axion-release-plugin][axion-release-plugin]
+
 \[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 <!-- Links -->
@@ -101,6 +107,9 @@ from CI build, coverage and dependency update checks.
 [slant-cicompare]: <http://www.slant.co/topics/186/compare/~circleci_vs_shippable_vs_travis> "Compare CircleCI vs Shippable vs Travis - Slant"
 [sonatype-ci-best-practices]: <http://blog.sonatype.com/2009/01/maven-continuous-integration-best-practices> "Maven Continuous Integration Best Practices | Sonatype Blog (2009)"
 [benlimmer-autopublish-sonatype]: <http://benlimmer.com/2014/01/04/automatically-publish-to-sonatype-with-gradle-and-travis-ci/> "Automatically Publish to Sonatype with Gradle and Travis CI | Ben Limmer (2014)"
+[gradle-release]: <https://github.com/researchgate/gradle-release> "researchgate/gradle-release"
+[gradle-release-ramblings]: <http://blog.anorakgirl.co.uk/2014/03/gradle-release-ramblings/> "Gradle release ramblings | anorak:girl (2014-03-13)"
+[axion-release-plugin]: <https://github.com/allegro/axion-release-plugin> "allegro/axion-release-plugin"
 
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
