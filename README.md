@@ -89,7 +89,7 @@ the meaning?
 [license]: <./LICENSE.md> "Apache License, Version 2.0"
 [license-badge]: <https://img.shields.io/badge/license-Apache%20License%2C%20Version%202.0-lightgrey.svg> "Apache License, Version 2.0"
 [circleci-project]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed>
-[circleci-badge]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed.svg?style=svg>
+[circleci-badge]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed.svg?style=shield>
 [java]: <https://www.oracle.com/technetwork/java/javase/downloads/index.html>
 [java-badge]: <https://img.shields.io/badge/java-7-blue.svg>
 [mavencentral]: <https://search.maven.org/#search|gav|1|g%3A%22com.github.mmichaelis%22%20AND%20a%3A%22hamcrest-nextdeed%22>
