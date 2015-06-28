@@ -50,9 +50,6 @@ if (!isCiBuild) {
   apply plugin: 'pl.allegro.tech.build.axion-release'
 
   scmVersion {
-    tag {
-      prefix = project.name + ".release"
-    }
     hooks {
       pre 'fileUpdate',
           [file: 'README.md', pattern: {v, p -> /Version: $v/}, replacement: {v, p -> "Version: $v"
