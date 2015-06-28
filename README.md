@@ -82,6 +82,7 @@ the meaning?
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
 [Releasing]: <./RELEASING.md> "Building Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
+[Pages]: <http://mmichaelis.github.io/hamcrest-nextdeed>
 [Top]: <#top>
 
 <!-- Badges -->
