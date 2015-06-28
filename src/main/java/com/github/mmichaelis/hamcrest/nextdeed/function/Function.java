@@ -25,7 +25,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.function;
  *
  * @param <T> type of value to transform; typically the matched object
  * @param <R> type of the target value to transform to
- * @since SINCE
+ * @since 0.1.0
  */
 public interface Function<T, R> {
 
@@ -34,7 +34,7 @@ public interface Function<T, R> {
    *
    * @param input the function argument
    * @return the function result
-   * @since SINCE
+   * @since 0.1.0
    */
   R apply(T input);
 }

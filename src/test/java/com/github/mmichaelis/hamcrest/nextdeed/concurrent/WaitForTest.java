@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Olaf Kummer
  * @author Mark Michaelis
- * @since SINCE
+ * @since 0.1.0
  */
 @SuppressWarnings({"MagicNumber", "DuplicateStringLiteralInspection"})
 public class WaitForTest {

@@ -76,32 +76,32 @@ import java.util.concurrent.TimeUnit;
  * @author Mark Michaelis
  * @see <a href="http://minds.coremedia.com/2012/11/29/haste-makes-waste/">Haste makes waste |
  * Minds</a>
- * @since SINCE
+ * @since 0.1.0
  */
 public class WaitFor<T> extends TypeSafeMatcher<T> {
 
   /**
    * Initial delay to wait if we need to wait.
-   * @since SINCE
+   * @since 0.1.0
    */
   private static final long INITIAL_DELAY_MS = 10L;
   /**
    * Factor by which the polling factor decelerates.
    *
-   * @since SINCE
+   * @since 0.1.0
    */
   private static final double DECELERATION_FACTOR = 1.1;
   /**
    * A grace period for the last poll.
    *
-   * @since SINCE
+   * @since 0.1.0
    */
   private static final long SLEEP_NOT_MUCH_LONGER_OFFSET_MILLIS = 100L;
 
   /**
    * Original matcher who is required to check a mutable aspect of the matched object.
    *
-   * @since SINCE
+   * @since 0.1.0
    */
   @NotNull
   private final Matcher<T> originalMatcher;
@@ -109,14 +109,14 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * Amount of timeout.
    *
    * @see #timeUnit
-   * @since SINCE
+   * @since 0.1.0
    */
   private final long timeout;
   /**
    * Unit for timeout.
    *
    * @see #timeout
-   * @since SINCE
+   * @since 0.1.0
    */
   @NotNull
   private final TimeUnit timeUnit;
@@ -128,7 +128,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * @param originalMatcher matcher to wrap; must change its state over time
    * @param timeout         amount of timeout
    * @param timeUnit        unit of timeout
-   * @since SINCE
+   * @since 0.1.0
    */
   public WaitFor(@NotNull Matcher<T> originalMatcher,
                  long timeout,
@@ -147,7 +147,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * @param timeoutMs       timeout in milliseconds
    * @param <T>             accepted value type of the original matcher
    * @return matcher which waits
-   * @since SINCE
+   * @since 0.1.0
    */
   public static <T> Matcher<T> waitFor(Matcher<T> originalMatcher, long timeoutMs) {
     return waitFor(originalMatcher, timeoutMs, TimeUnit.MILLISECONDS);
@@ -163,7 +163,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * @param timeUnit        timeout unit
    * @param <T>             accepted value type of the original matcher
    * @return matcher which waits
-   * @since SINCE
+   * @since 0.1.0
    */
   public static <T> Matcher<T> waitFor(Matcher<T> originalMatcher, long timeout,
                                        TimeUnit timeUnit) {
@@ -220,7 +220,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * </dd>
    * </dl>
    *
-   * @since SINCE
+   * @since 0.1.0
    */
   @Override
   protected void describeMismatchSafely(T item, @NotNull Description mismatchDescription) {
@@ -232,7 +232,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    *
    * @param millis how long to sleep
    * @throws InterruptedException if the current thread has been interrupted
-   * @since SINCE
+   * @since 0.1.0
    */
   protected void sleep(long millis) throws InterruptedException {
     Thread.sleep(millis);
@@ -243,7 +243,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * testing purpose.
    *
    * @return time in milliseconds
-   * @since SINCE
+   * @since 0.1.0
    */
   protected long nowMillis() {
     return System.currentTimeMillis();
@@ -256,7 +256,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * actually reach the desired state.
    * </p>
    *
-   * @since SINCE
+   * @since 0.1.0
    */
   private long sleepAndRecalculateDelay(long previousDelay,
                                         long deadlineTimeMs,
