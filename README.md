@@ -7,7 +7,7 @@
 [![Apache License, Version 2.0][license-badge]][license]
 [![Java Version][java-badge]][java]
 
-Version: 0.1.1
+Version: 0.1.2
 
 I am a fan of Hamcrest and its logo which actually emphasizes the clever wordplay. I like the ease
 of use of Hamcrest, its easy extensibility and its great approach of creating failure reports
