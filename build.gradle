@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+defaultTasks 'clean', 'check'
+
 repositories {
   mavenCentral()
 }
@@ -37,6 +39,7 @@ apply plugin: 'signing'
 apply plugin: 'org.ajoberstar.github-pages'
 
 project.group = 'com.github.mmichaelis'
+project.description = 'Hamcrest - Next Deed is an extension to Hamcrest matchers.'
 
 def isDeployLocal
 def isDeploySnapshot
@@ -53,10 +56,12 @@ if (!isCiBuild) {
   apply plugin: 'pl.allegro.tech.build.axion-release'
 
   scmVersion {
+    repository {
+      customUsername = project.hasProperty('githubUsername') ? project.githubUsername : ''
+      customPassword = project.hasProperty('githubPassword') ? project.githubPassword : ''
+    }
     hooks {
-      pre 'fileUpdate',
-          [file: 'README.md', pattern: {v, p -> /Version: $v/}, replacement: {v, p -> "Version: $v"
-          }]
+      // replaces usages of e. g. @since SINCE by the new version number
       pre 'fileUpdate',
           [files: fileTree('src').include('**/*.java'), pattern: {v, p -> /SINCE/}, replacement: {
             v, p -> "$v"
@@ -167,7 +172,7 @@ uploadArchives {
         pom.project {
           name project.name
           packaging 'jar'
-          description 'Hamcrest - Next Deed is an extension to Hamcrest matchers.'
+          description project.description
           url 'https://github.com/mmichaelis/hamcrest-nextdeed'
           scm {
             url 'https://github.com/mmichaelis/hamcrest-nextdeed'
@@ -197,19 +202,21 @@ uploadArchives {
   }
 }
 
-// Example taken from https://github.com/asciidoctor/asciidoctor-gradle-examples/pull/1
 githubPages {
   repoUri = 'https://github.com/mmichaelis/hamcrest-nextdeed.git'
   credentials {
-    username = project.hasProperty('githubAccessToken') ? project.githubAccessToken : ''
-    password = ''
+    username = project.hasProperty('githubUsername') ? project.githubUsername : ''
+    password = project.hasProperty('githubPassword') ? project.githubPassword : ''
   }
   pages {
     from javadoc
   }
 }
 
-// publishGhPages.dependsOn asciidoctor
+pushRelease.doLast{
+  uploadArchives()
+  publishGhPages()
+}
 
 task wrapper(type: Wrapper) {
   group = 'Buildmaster'
