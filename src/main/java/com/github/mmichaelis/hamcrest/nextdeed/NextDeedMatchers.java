@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @since SINCE
+ * @since 0.1.3
  */
 public final class NextDeedMatchers {
 
@@ -45,7 +45,7 @@ public final class NextDeedMatchers {
    * @param <F>             type to input into assertion
    * @param <T>             actual value type to compare
    * @return matcher which transforms input before comparison
-   * @since SINCE
+   * @since 0.1.3
    */
   public static <F, T> Matcher<F> applying(@NotNull Function<F, T> function,
                                            @NotNull Matcher<? super T> delegateMatcher) {
