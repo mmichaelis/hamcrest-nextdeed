@@ -4,6 +4,7 @@
 
 [![Circle CI][circleci-badge]][circleci-project]
 [![Maven Central][mavencentral-badge]][mavencentral]
+[![Coverage Status][coveralls-badge]][coveralls-project]
 [![Dependency Status][versioneye-badge]][versioneye-project]
 [![Project Status][stillmaintained-badge]][stillmaintained-url]
 [![Apache License, Version 2.0][license-badge]][license]
@@ -88,16 +89,17 @@ the meaning?
 
 <!-- Badges -->
 
-[license]: <./LICENSE.md> "Apache License, Version 2.0"
-[license-badge]: <https://img.shields.io/badge/license-Apache%20License%2C%20Version%202.0-lightgrey.svg> "Apache License, Version 2.0"
 [circleci-project]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed>
 [circleci-badge]: <https://circleci.com/gh/mmichaelis/hamcrest-nextdeed.svg?style=shield>
-[versioneye-project]: <https://www.versioneye.com/user/projects/55981413616634002100003e>
-[versioneye-badge]: <https://www.versioneye.com/user/projects/55981413616634002100003e/badge.svg?style=flat>
+[coveralls-project]: <https://coveralls.io/r/mmichaelis/hamcrest-nextdeed?branch=master>
+[coveralls-badge]: <https://coveralls.io/repos/mmichaelis/hamcrest-nextdeed/badge.svg?branch=master>
 [java]: <https://www.oracle.com/technetwork/java/javase/downloads/index.html>
 [java-badge]: <https://img.shields.io/badge/java-7-blue.svg>
+[license]: <./LICENSE.md> "Apache License, Version 2.0"
+[license-badge]: <https://img.shields.io/badge/license-Apache%20License%2C%20Version%202.0-lightgrey.svg> "Apache License, Version 2.0"
 [mavencentral]: <https://search.maven.org/#search|gav|1|g%3A%22com.github.mmichaelis%22%20AND%20a%3A%22hamcrest-nextdeed%22>
 [mavencentral-badge]: <https://maven-badges.herokuapp.com/maven-central/com.github.mmichaelis/hamcrest-nextdeed/badge.svg>
 [stillmaintained-url]: <https://stillmaintained.com/mmichaelis/hamcrest-nextdeed>
 [stillmaintained-badge]: <http://stillmaintained.com/mmichaelis/hamcrest-nextdeed.png>
-
+[versioneye-project]: <https://www.versioneye.com/user/projects/55981413616634002100003e>
+[versioneye-badge]: <https://www.versioneye.com/user/projects/55981413616634002100003e/badge.svg?style=flat>
