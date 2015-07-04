@@ -213,14 +213,9 @@ githubPages {
   }
 }
 
-afterReleaseBuild.dependsOn uploadArchives
-
-/*
-release.doLast{
-  uploadArchives()
-  publishGhPages()
+publishGhPages {
+  shouldRunAfter(tasks.uploadArchives)
 }
-*/
 
 task wrapper(type: Wrapper) {
   group = 'Buildmaster'
