@@ -15,6 +15,8 @@ machine:
     version: oraclejdk7
 
 test:
+  pre:
+    - echo "repo_token: ${COVERALLS_TOKEN}" > ".coveralls.yml"
   override:
     - ./gradlew clean check jacocoTestReport --info
   post:
