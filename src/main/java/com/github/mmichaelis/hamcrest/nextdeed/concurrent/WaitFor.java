@@ -149,7 +149,7 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * @return matcher which waits
    * @since 0.1.0
    */
-  public static <T> Matcher<T> waitFor(Matcher<T> originalMatcher, long timeoutMs) {
+  public static <T> Matcher<T> waitFor(@NotNull Matcher<T> originalMatcher, long timeoutMs) {
     return waitFor(originalMatcher, timeoutMs, TimeUnit.MILLISECONDS);
   }
 
@@ -165,8 +165,9 @@ public class WaitFor<T> extends TypeSafeMatcher<T> {
    * @return matcher which waits
    * @since 0.1.0
    */
-  public static <T> Matcher<T> waitFor(Matcher<T> originalMatcher, long timeout,
-                                       TimeUnit timeUnit) {
+  public static <T> Matcher<T> waitFor(@NotNull Matcher<T> originalMatcher,
+                                       long timeout,
+                                       @NotNull TimeUnit timeUnit) {
     return new WaitFor<>(originalMatcher, timeout, timeUnit);
   }
 

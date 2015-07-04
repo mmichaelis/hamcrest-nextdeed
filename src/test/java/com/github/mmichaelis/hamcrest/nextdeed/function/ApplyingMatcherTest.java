@@ -21,6 +21,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -36,6 +38,13 @@ import java.util.List;
  * @since 0.1.0
  */
 public class ApplyingMatcherTest {
+
+  @Test
+  public void facade_contains_matcher() throws Exception {
+    String expectedProfession = "plumber";
+    Person kurt = new Person(expectedProfession);
+    assertThat(kurt, NextDeedMatchers.applying(new GetProfession(), equalTo(expectedProfession)));
+  }
 
   @Test
   public void main_use_case_example_works() throws Exception {

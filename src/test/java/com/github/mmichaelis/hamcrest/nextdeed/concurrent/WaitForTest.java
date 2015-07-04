@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers;
 import com.github.mmichaelis.hamcrest.nextdeed.function.ApplyingMatcher;
 import com.github.mmichaelis.hamcrest.nextdeed.function.Function;
 
@@ -51,6 +52,20 @@ public class WaitForTest {
 
   @Rule
   public ErrorCollector errorCollector = new ErrorCollector();
+
+  @Test
+  public void facade_contains_matcher_with_timeout_milliseconds() throws Exception {
+    Matcher<Object> originalMatcher = new AlwaysTrue<>();
+    Matcher<Object> matcher = NextDeedMatchers.waitFor(originalMatcher, 30);
+    assertThat(Integer.MAX_VALUE, matcher);
+  }
+
+  @Test
+  public void facade_contains_matcher_with_timeout_and_specified_timeout() throws Exception {
+    Matcher<Object> originalMatcher = new AlwaysTrue<>();
+    Matcher<Object> matcher = NextDeedMatchers.waitFor(originalMatcher, 30, TimeUnit.MILLISECONDS);
+    assertThat(Integer.MAX_VALUE, matcher);
+  }
 
   @Test
   public void end_immediately_if_first_match_succeeds() throws Exception {
