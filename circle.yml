@@ -16,7 +16,7 @@ machine:
 
 test:
   pre:
-    - echo "repo_token: ${COVERALLS_TOKEN}" > ".coveralls.yml"
+    - ./create-coveralls-config.sh
   override:
     - ./gradlew clean check jacocoTestReport --info
   post:
