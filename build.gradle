@@ -111,10 +111,10 @@ dependencies {
   )
   testCompile(
       [group: 'junit', name: 'junit', version: '4.12', transitive: false],
-      [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.10']
+      [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12']
   )
   testRuntime(
-      [group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2']
+      [group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.3']
   )
 }
 
