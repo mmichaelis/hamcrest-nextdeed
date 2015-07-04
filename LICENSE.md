@@ -1,6 +1,6 @@
 # <a id="top"></a>The Apache Software Foundation
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]
 
 ## Apache License, Version 2.0
 
@@ -203,12 +203,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 <!-- Links -->
 
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
 [Releasing]: <./RELEASING.md> "Building Hamcrest Next Deed"
+[Javadoc]: <//mmichaelis.github.io/hamcrest-nextdeed/> "Javadoc for Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
 [Top]: <#top>

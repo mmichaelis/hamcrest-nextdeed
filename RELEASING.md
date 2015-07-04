@@ -1,6 +1,6 @@
 # <a id="top"></a>Releasing
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]
 
 *Hamcrest &mdash; Next Deed* uses [axion-release-plugin][] to perform release via Gradle. It
 provides an easy to use *auto-versioning* mechanism which derives the version from tags rather
@@ -48,7 +48,7 @@ credentials and keys. Mind that you generate a personal access token for GitHub 
     Currently to publish the release use:
     
     ```
-    $ ./gradlew uploadArchives
+    $ ./gradlew uploadArchives publishGhPages
     ```
 
     *Note:* `uploadArchives` will automatically determine by the evaluated version if this will
@@ -64,14 +64,16 @@ credentials and keys. Mind that you generate a personal access token for GitHub 
     ```
     $ ./gradlew publish
     ```
-    
+
+    `publishGhPages` will upload [Javadoc][]. 
+        
 * change to another minor or version number
 
     ```
     $ ./gradlew markNextVersion -Prelease.nextVersion=1.0.0
     ```
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 ## References
 
@@ -93,5 +95,6 @@ credentials and keys. Mind that you generate a personal access token for GitHub 
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
 [Releasing]: <./RELEASING.md> "Building Hamcrest Next Deed"
+[Javadoc]: <//mmichaelis.github.io/hamcrest-nextdeed/> "Javadoc for Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
 [Top]: <#top>

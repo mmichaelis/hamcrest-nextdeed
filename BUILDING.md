@@ -1,6 +1,6 @@
 # <a id="top"></a>Building
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]
 
 To debug gradle build, specify either `--debug` or `--info`.
 
@@ -30,8 +30,6 @@ Just take the `gradle.properties` in this workspace as template to fill in.
 
 ## CI Build Services
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
-
 For continuous integration *Hamcrest &mdash; Next Deed* uses several free services ranging
 from CI build, coverage and dependency update checks.
 
@@ -57,7 +55,7 @@ when `axion-release-plugin` tries to determine the version. To do so set environ
 
 * [Maven Continuous Integration Best Practices | Sonatype Blog (2009)][sonatype-ci-best-practices]
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 <!-- Links -->
 
@@ -69,5 +67,6 @@ when `axion-release-plugin` tries to determine the version. To do so set environ
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
 [Releasing]: <./RELEASING.md> "Building Hamcrest Next Deed"
+[Javadoc]: <//mmichaelis.github.io/hamcrest-nextdeed/> "Javadoc for Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
 [Top]: <#top>

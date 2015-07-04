@@ -1,6 +1,6 @@
 # <a id="top"></a>Hamcrest &mdash; Next Deed
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]
 
 [![Circle CI][circleci-badge]][circleci-project]
 [![Maven Central][mavencentral-badge]][mavencentral]
@@ -9,8 +9,6 @@
 [![Project Status][stillmaintained-badge]][stillmaintained-url]
 [![Apache License, Version 2.0][license-badge]][license]
 [![Java Version][java-badge]][java]
-
-Version: 0.1.2
 
 I am a fan of Hamcrest and its logo which actually emphasizes the clever wordplay. I like the ease
 of use of Hamcrest, its easy extensibility and its great approach of creating failure reports
@@ -70,7 +68,7 @@ the meaning?
     providing out-of-the-box badges like the license badge
 * [circleci.com][]
 
-\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
+\[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
 <!-- Links -->
 
@@ -83,6 +81,7 @@ the meaning?
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
 [Releasing]: <./RELEASING.md> "Building Hamcrest Next Deed"
+[Javadoc]: <//mmichaelis.github.io/hamcrest-nextdeed/> "Javadoc for Hamcrest Next Deed"
 [License]: <./LICENSE.md> "License of Hamcrest Next Deed"
 [Pages]: <http://mmichaelis.github.io/hamcrest-nextdeed>
 [Top]: <#top>
