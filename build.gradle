@@ -216,6 +216,14 @@ githubPages {
   }
 }
 
+jacocoTestReport {
+  reports {
+    html.enabled = true
+    xml.enabled = true
+    csv.enabled = false
+  }
+}
+
 publishGhPages {
   shouldRunAfter(tasks.uploadArchives)
 }
