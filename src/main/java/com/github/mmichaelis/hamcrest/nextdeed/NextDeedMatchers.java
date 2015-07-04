@@ -26,6 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * <p>
+ * Convenience access to all fabric methods for matchers provided by
+ * <em>Hamcrest &mdash; Next Deed</em>.
+ * </p>
+ *
  * @since 0.1.3
  */
 public final class NextDeedMatchers {
