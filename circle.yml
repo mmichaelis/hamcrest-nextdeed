@@ -15,8 +15,6 @@ machine:
     version: oraclejdk7
 
 test:
-  pre:
-    - ./create-coveralls-config.sh
   override:
     - ./gradlew clean check jacocoTestReport coveralls --info
   post:
