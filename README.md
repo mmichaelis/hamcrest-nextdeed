@@ -10,9 +10,9 @@
 [![Apache License, Version 2.0][license-badge]][license]
 [![Java Version][java-badge]][java]
 
-I am a fan of Hamcrest and its logo which actually emphasizes the clever wordplay. I like the ease
-of use of Hamcrest, its easy extensibility and its great approach of creating failure reports
-which sometimes do not even require to set an assertion message.
+I am a fan of [Hamcrest][] and its logo which actually emphasizes the clever wordplay. I like the
+ease of use of [Hamcrest][], its easy extensibility and its great approach of creating failure
+reports which sometimes do not even require to set an assertion message.
 
 *Hamcrest &mdash; Next Deed* is an extension to Hamcrest and especially its library for even
 more matchers you may find useful.
