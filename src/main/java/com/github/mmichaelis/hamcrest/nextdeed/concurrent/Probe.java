@@ -68,7 +68,10 @@ import java.util.concurrent.TimeUnit;
  *      .assertThat(new Function<System,State>(){...}, equalTo(RUNNING));
  * }</pre>
  * <p>
- * Mind that for best development experience you have to provide
+ * Mind that it is required to add the generic type parameters to {@code probing} &mdash; which
+ * in return will prevent you from using static import for {@code probing}. The advantage is
+ * that you see right at the start what is your system under test and what is the state type
+ * you will wait for.
  * </p>
  * </dd>
  * <dt><strong>Note:</strong></dt>
@@ -85,10 +88,21 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Probe {
 
+  /**
+   * Utility class constructor. You must not instantiate this :-)
+   */
   private Probe() {
     // Utility class
   }
 
+  /**
+   * First specify what system you want to probe.
+   *
+   * @param <T>    the type of system you are probing
+   * @param <R>    the type of state variable you are polling
+   * @param target the system under test
+   * @return Builder for your waiting assertion, ...
+   */
   @NotNull
   public static <T, R> ProbeBuilder<T, R> probing(@NotNull T target) {
     return new ProbeBuilderImpl<>(target);

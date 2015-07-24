@@ -67,18 +67,6 @@ public class ProbeTest {
   @Rule
   public TestName testName = new TestName();
 
-/*
-  @Test
-  public void works_without_generic_types() throws Exception {
-    SystemUnderTest systemUnderTest = new SystemUnderTest(State.RUNNING);
-
-    probing(systemUnderTest)
-        .withinMs(1000L)
-        .assertThat(new GetSystemState(),
-                    Matchers.equalTo(State.RUNNING));
-  }
-*/
-
   @Test
   public void throw_assertion_error_on_failure_no_message() throws Exception {
     List<Long> usedTimeMillis = Collections.singletonList(1000L);
