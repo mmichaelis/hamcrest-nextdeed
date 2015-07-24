@@ -17,11 +17,13 @@
 defaultTasks 'clean', 'check'
 
 repositories {
+  jcenter()
   mavenCentral()
 }
 
 buildscript {
   repositories {
+    jcenter()
     mavenCentral()
   }
   dependencies {
@@ -81,9 +83,9 @@ if (!isCiBuild) {
 }
 
 /* define the valid syntax level for source files */
-sourceCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = '1.7'
 /* define binary compatibility version */
-targetCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = '1.7'
 
 compileJava.doFirst {
   /* trying to debug https://github.com/mmichaelis/hamcrest-nextdeed/issues/1 */
@@ -110,11 +112,14 @@ if (hasProperty("local")) {
 dependencies {
   compile(
       [group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'],
+      [group: 'junit', name: 'junit', version: '4.12', transitive: false],
+      [group: 'com.google.guava', name: 'guava', version: '18.0'],
       [group: 'org.jetbrains', name: 'annotations', version: '13.0']
   )
   testCompile(
-      [group: 'junit', name: 'junit', version: '4.12', transitive: false],
-      [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12']
+      [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'],
+      [group: 'org.mockito', name: 'mockito-core', version: '1.10.19']
+      // testCompile "org.mockito:mockito-core:1.+"
   )
   testRuntime(
       [group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.3']

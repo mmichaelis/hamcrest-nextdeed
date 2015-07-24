@@ -21,6 +21,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import com.google.common.base.Function;
+
 import com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers;
 
 import org.hamcrest.Matchers;

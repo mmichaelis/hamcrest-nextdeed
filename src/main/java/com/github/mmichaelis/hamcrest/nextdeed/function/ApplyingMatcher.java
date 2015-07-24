@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.function;
 
+import com.google.common.base.Function;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
