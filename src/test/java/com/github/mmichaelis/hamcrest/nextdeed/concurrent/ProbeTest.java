@@ -27,7 +27,9 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.google.common.base.Function;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matchers;
+import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
@@ -46,6 +48,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Tests {@link Probe} or more specifically
@@ -229,6 +232,63 @@ public class ProbeTest {
 
     WaitFunction<SystemUnderTest, State> spy = TL_WAIT_FUNCTION.get();
     Mockito.verify(spy, times(1)).sleep(anyLong());
+  }
+
+  @Test
+  public void pass_requirement_on_eventual_match() throws Exception {
+    List<Long> usedTimeMillis = Arrays.asList(1000L, 2000L);
+    SystemUnderTest systemUnderTest =
+        new SystemUnderTest(State.STOPPED, State.RUNNING, State.RUNNING);
+
+    String message = testName.getMethodName();
+
+    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+            .withinMs(1000L);
+    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+                      usedTimeMillis);
+
+    configuredProbe.requireThat(message,
+                                new GetSystemState(),
+                                new SameStateTwice());
+  }
+
+  @Test
+  public void pass_assumption_on_eventual_match() throws Exception {
+    List<Long> usedTimeMillis = Arrays.asList(1000L, 2000L);
+    SystemUnderTest systemUnderTest =
+        new SystemUnderTest(State.STOPPED, State.RUNNING, State.RUNNING);
+
+    String message = testName.getMethodName();
+
+    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+            .withinMs(1000L);
+    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+                      usedTimeMillis);
+
+    configuredProbe.assumeThat(message,
+                               new GetSystemState(),
+                               new SameStateTwice());
+  }
+
+  @Test
+  public void pass_assertion_on_eventual_match() throws Exception {
+    List<Long> usedTimeMillis = Arrays.asList(1000L, 2000L);
+    SystemUnderTest systemUnderTest =
+        new SystemUnderTest(State.STOPPED, State.RUNNING, State.RUNNING);
+
+    String message = testName.getMethodName();
+
+    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+            .withinMs(1000L);
+    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+                      usedTimeMillis);
+
+    configuredProbe.assertThat(message,
+                               new GetSystemState(),
+                               new SameStateTwice());
   }
 
   @Test
@@ -490,6 +550,21 @@ public class ProbeTest {
     @Override
     public State apply(SystemUnderTest input) {
       return input.getState();
+    }
+  }
+
+  private static class SameStateTwice extends TypeSafeMatcher<State> {
+
+    private AtomicReference<State> previousState = new AtomicReference<State>();
+
+    @Override
+    public void describeTo(Description description) {
+
+    }
+
+    @Override
+    protected boolean matchesSafely(State item) {
+      return item.equals(previousState.getAndSet(item));
     }
   }
 }

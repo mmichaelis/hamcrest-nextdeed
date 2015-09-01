@@ -364,7 +364,8 @@ public final class Probe {
       if (!matcher.matches(lastResult)) {
         throw new AssumptionViolatedException(getMessage(lastResult, reason, matcher));
       }
-      // Will never get here unless as last validation the actual value eventually matches.
+      // Will never get here unless as last validation the actual value eventually matches,
+      // which actually means that the matcher responds differently on the same value.
       return lastResult;
     }
 
@@ -388,7 +389,8 @@ public final class Probe {
       if (!matcher.matches(lastResult)) {
         throw new WaitTimeoutException(getMessage(lastResult, reason, matcher));
       }
-      // Will never get here unless as last validation the actual value eventually matches.
+      // Will never get here unless as last validation the actual value eventually matches,
+      // which actually means that the matcher responds differently on the same value.
       return lastResult;
     }
 
@@ -410,7 +412,8 @@ public final class Probe {
       R lastResult = input.getLastResult();
       org.hamcrest.MatcherAssert
           .assertThat(Optional.fromNullable(reason).or(""), lastResult, matcher);
-      // Will never get here unless as last validation the actual value eventually matches.
+      // Will never get here unless as last validation the actual value eventually matches,
+      // which actually means that the matcher responds differently on the same value.
       return lastResult;
     }
   }
