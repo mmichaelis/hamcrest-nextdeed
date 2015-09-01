@@ -26,6 +26,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matchers;
@@ -543,6 +544,16 @@ public class ProbeTest {
       }
       return state;
     }
+
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("state", state)
+          .add("states", states)
+          .toString();
+    }
   }
 
   private static class GetSystemState implements Function<SystemUnderTest, State> {
@@ -565,6 +576,16 @@ public class ProbeTest {
     @Override
     protected boolean matchesSafely(State item) {
       return item.equals(previousState.getAndSet(item));
+    }
+
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("super", super.toString())
+          .add("previousState", previousState)
+          .toString();
     }
   }
 }

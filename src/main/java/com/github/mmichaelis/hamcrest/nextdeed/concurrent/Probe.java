@@ -21,6 +21,7 @@ import static com.github.mmichaelis.hamcrest.nextdeed.glue.HamcrestGlue.asPredic
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 
 import org.hamcrest.Description;
@@ -343,6 +344,16 @@ public final class Probe {
       preProcessedWaitFunction.apply(target);
     }
 
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("actualFunction", actualFunction)
+          .add("target", target)
+          .add("waitFunctionBuilder", waitFunctionBuilder)
+          .add("waitFunctionPreProcessor", waitFunctionPreProcessor)
+          .toString();
+    }
   }
 
   private static class ThrowAssumptionViolation<T, R>
@@ -369,6 +380,14 @@ public final class Probe {
       return lastResult;
     }
 
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("matcher", matcher)
+          .add("reason", reason)
+          .toString();
+    }
   }
 
   private static class ThrowWaitTimeoutException<T, R>
@@ -394,6 +413,14 @@ public final class Probe {
       return lastResult;
     }
 
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("matcher", matcher)
+          .add("reason", reason)
+          .toString();
+    }
   }
 
   private static class ThrowAssertionError<T, R> implements Function<WaitTimeoutEvent<T, R>, R> {
@@ -416,5 +443,15 @@ public final class Probe {
       // which actually means that the matcher responds differently on the same value.
       return lastResult;
     }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("matcher", matcher)
+          .add("reason", reason)
+          .toString();
+    }
   }
+
 }

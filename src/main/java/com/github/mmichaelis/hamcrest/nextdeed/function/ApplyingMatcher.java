@@ -17,6 +17,7 @@
 package com.github.mmichaelis.hamcrest.nextdeed.function;
 
 import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -102,4 +103,15 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
     delegateMatcher.describeMismatch(lastValue.get(), mismatchDescription);
   }
 
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
+        .add("super", super.toString())
+        .add("delegateMatcher", delegateMatcher)
+        .add("function", function)
+        .add("lastValue", lastValue)
+        .toString();
+  }
 }

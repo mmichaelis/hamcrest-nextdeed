@@ -419,6 +419,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
     @Override
     public String toString() {
       return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
           .add("decelerationFactor", decelerationFactor)
           .add("delegateFunction", delegateFunction)
           .add("gracePeriod", gracePeriod)
@@ -460,7 +461,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
     @Override
     public R apply(@Nullable WaitTimeoutEvent<T, R> input) {
       if (input == null) {
-        // Unlike Java 8 Function Guava enforces functions to handle null values.
+        // In contrast to Java 8 Function Guava enforces functions to handle null values.
         throw new WaitTimeoutException();
       }
       throw new WaitTimeoutException(input.describe());
@@ -471,6 +472,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
         .add("decelerationFactor", decelerationFactor)
         .add("delegateFunction", delegateFunction)
         .add("gracePeriod", gracePeriod)

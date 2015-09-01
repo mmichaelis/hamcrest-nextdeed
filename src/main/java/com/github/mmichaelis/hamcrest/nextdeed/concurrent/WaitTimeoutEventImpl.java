@@ -86,6 +86,7 @@ public class WaitTimeoutEventImpl<T, R> implements WaitTimeoutEvent<T, R> {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
         .add("consumedMs", consumedMs)
         .add("item", item)
         .add("lastResult", lastResult)
