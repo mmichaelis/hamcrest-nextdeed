@@ -1,3 +1,7 @@
+## For templates see:
+## https://github.com/github/gitignore
+##
+
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -15,6 +19,24 @@ release.properties
 *.tmp
 
 # ===================================
+# Language Files
+# ===================================
+
+# Java
+# ===================================
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# ===================================
 # Build Tools
 # ===================================
 
@@ -23,6 +45,13 @@ release.properties
 
 .gradle/
 build/
+vendor/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
 
 # ===================================
 # Integrated Development Environments

@@ -16,14 +16,12 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed;
 
-import com.github.mmichaelis.hamcrest.nextdeed.concurrent.WaitFor;
+import com.google.common.base.Function;
+
 import com.github.mmichaelis.hamcrest.nextdeed.function.ApplyingMatcher;
-import com.github.mmichaelis.hamcrest.nextdeed.function.Function;
 
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -55,39 +53,6 @@ public final class NextDeedMatchers {
   public static <F, T> Matcher<F> applying(@NotNull Function<F, T> function,
                                            @NotNull Matcher<? super T> delegateMatcher) {
     return ApplyingMatcher.applying(function, delegateMatcher);
-  }
-
-  /**
-   * Creates a matcher which waits for the embedded matcher to evaluate to true.
-   * It is required that the embedded matcher checks a mutable aspect of the matched object thus
-   * typical default matchers like {@code equalTo} won't work.
-   *
-   * @param originalMatcher the original matcher to wait to return true
-   * @param timeoutMs       timeout in milliseconds
-   * @param <T>             accepted value type of the original matcher
-   * @return matcher which waits
-   * @since 0.1.0
-   */
-  public static <T> Matcher<T> waitFor(@NotNull Matcher<T> originalMatcher, long timeoutMs) {
-    return WaitFor.waitFor(originalMatcher, timeoutMs);
-  }
-
-  /**
-   * Creates a matcher which waits for the embedded matcher to evaluate to true.
-   * It is required that the embedded matcher checks a mutable aspect of the matched object thus
-   * typical default matchers like {@code equalTo} won't work.
-   *
-   * @param originalMatcher the original matcher to wait to return true
-   * @param timeout         timeout amount
-   * @param timeUnit        timeout unit
-   * @param <T>             accepted value type of the original matcher
-   * @return matcher which waits
-   * @since 0.1.0
-   */
-  public static <T> Matcher<T> waitFor(@NotNull Matcher<T> originalMatcher,
-                                       long timeout,
-                                       @NotNull TimeUnit timeUnit) {
-    return WaitFor.waitFor(originalMatcher, timeout, timeUnit);
   }
 
 }
