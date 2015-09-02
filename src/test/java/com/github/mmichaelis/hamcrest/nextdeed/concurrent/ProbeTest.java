@@ -19,6 +19,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 import static java.lang.String.valueOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -48,6 +49,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -460,6 +462,35 @@ public class ProbeTest {
         Matchers.equalTo(Collections.singletonList(90L)));
   }
 
+  @Test
+  public void probeBuilder_has_toString() throws Exception {
+    Random random = new Random(0);
+
+    long initialDelayMs = random.nextInt(1000);
+    double decelerationFactor = Math.abs(random.nextDouble() - 1d) + 1;
+    long gracePeriodMs = random.nextInt(1000);
+    long timeoutMs = random.nextInt(1000);
+
+    Probe.ProbeBuilder<String, String> configuredProbe =
+        Probe.<String, String>probing(testName.getMethodName())
+            .withInitialDelayMs(initialDelayMs)
+            .deceleratePollingBy(decelerationFactor)
+            .withFinalGracePeriodMs(gracePeriodMs)
+            .withinMs(timeoutMs);
+    assertThat("toString shows all configured values.",
+               configuredProbe,
+               hasToString(allOf(
+                               containsString(configuredProbe.getClass().getSimpleName()),
+                               containsString(testName.getMethodName()),
+                               containsString(String.valueOf(initialDelayMs)),
+                               containsString(String.valueOf(decelerationFactor)),
+                               containsString(String.valueOf(gracePeriodMs)),
+                               containsString(String.valueOf(timeoutMs))
+                           )
+               )
+    );
+  }
+
   /**
    * Creates spy on wait function. Spy won't wait and the system time returned will be build from
    * the given used time millis. So you only need to specify how long each call to the system will
@@ -574,18 +605,17 @@ public class ProbeTest {
     }
 
     @Override
-    protected boolean matchesSafely(State item) {
-      return item.equals(previousState.getAndSet(item));
-    }
-
-
-    @Override
     public String toString() {
       return MoreObjects.toStringHelper(this)
           .add("hash", Integer.toHexString(System.identityHashCode(this)))
           .add("super", super.toString())
           .add("previousState", previousState)
           .toString();
+    }
+
+    @Override
+    protected boolean matchesSafely(State item) {
+      return item.equals(previousState.getAndSet(item));
     }
   }
 }

@@ -169,23 +169,80 @@ public final class Probe {
     @Override
     ProbeBuilder<T, R> and();
 
+    /**
+     * Assert that the result of the function applied to the probed object matches the
+     * requirements.
+     *
+     * @param actualFunction function to get a value from the probed object
+     * @param matcher        matcher to apply to result of function
+     * @throws AssertionError if there is no match in the given time; thus the test will be marked
+     *                        as <strong>Failure</strong>
+     */
     void assertThat(@NotNull Function<T, R> actualFunction,
                     @NotNull Matcher<? super R> matcher);
 
+    /**
+     * Assert that the result of the function applied to the probed object matches the
+     * requirements.
+     *
+     * @param reason         message on failure
+     * @param actualFunction function to get a value from the probed object
+     * @param matcher        matcher to apply to result of function
+     * @throws AssertionError if there is no match in the given time; thus the test will be marked
+     *                        as <strong>Failure</strong>
+     */
     void assertThat(@Nullable String reason,
                     @NotNull Function<T, R> actualFunction,
                     @NotNull Matcher<? super R> matcher);
 
+    /**
+     * Assumes that the result of the function applied to the probed object matches the
+     * requirements.
+     *
+     * @param actualFunction function to get a value from the probed object
+     * @param matcher        matcher to apply to result of function
+     * @throws AssumptionViolatedException if there is no match in the given time; thus the test
+     *                                     will be marked as <strong>Skipped</strong>
+     */
     void assumeThat(@NotNull Function<T, R> actualFunction,
                     @NotNull Matcher<? super R> matcher);
 
+    /**
+     * Assumes that the result of the function applied to the probed object matches the
+     * requirements.
+     *
+     * @param reason         message on failure
+     * @param actualFunction function to get a value from the probed object
+     * @param matcher        matcher to apply to result of function
+     * @throws AssumptionViolatedException if there is no match in the given time; thus the test
+     *                                     will be marked as <strong>Skipped</strong>
+     */
     void assumeThat(@Nullable String reason,
                     @NotNull Function<T, R> actualFunction,
                     @NotNull Matcher<? super R> matcher);
 
+    /**
+     * Requires that the result of the function applied to the probed object matches the
+     * requirements.
+     *
+     * @param actualFunction function to get a value from the probed object
+     * @param matcher        matcher to apply to result of function
+     * @throws WaitTimeoutException if there is no match in the given time; thus the test
+     *                              will be marked as <strong>Error</strong>
+     */
     void requireThat(@NotNull Function<T, R> actualFunction,
                      @NotNull Matcher<? super R> matcher);
 
+    /**
+     * Requires that the result of the function applied to the probed object matches the
+     * requirements.
+     *
+     * @param reason         message on failure
+     * @param actualFunction function to get a value from the probed object
+     * @param matcher        matcher to apply to result of function
+     * @throws WaitTimeoutException if there is no match in the given time; thus the test
+     *                              will be marked as <strong>Error</strong>
+     */
     void requireThat(@Nullable String reason,
                      @NotNull Function<T, R> actualFunction,
                      @NotNull Matcher<? super R> matcher);
@@ -329,7 +386,6 @@ public final class Probe {
       return actualFunction;
     }
 
-
     private void checkThat(@NotNull Function<T, R> actualFunction,
                            @NotNull Matcher<? super R> matcher,
                            @NotNull Function<WaitTimeoutEvent<T, R>, R> timeoutFunction) {
@@ -379,6 +435,7 @@ public final class Probe {
       // which actually means that the matcher responds differently on the same value.
       return lastResult;
     }
+
 
     @Override
     public String toString() {

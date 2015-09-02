@@ -43,6 +43,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class WaitFunction<T, R> implements Function<T, R> {
 
+  /**
+   * Minimum time to sleep between polls.
+   *
+   * @since SINCE
+   */
   public static final int MINIMUM_SLEEP_TIME_MS = 1;
   /**
    * Initial delay to wait if we need to wait. Using 0L as base as a delay
@@ -76,10 +81,17 @@ public class WaitFunction<T, R> implements Function<T, R> {
   /**
    * Predicate to determine if the retrieved result by the given function meets
    * the expectations.
+   *
+   * @since SINCE
    */
   @NotNull
   private final Predicate<? super R> predicate;
 
+  /**
+   * Function to determine what to do on timeout.
+   *
+   * @since SINCE
+   */
   @NotNull
   private final Function<WaitTimeoutEvent<T, R>, R> onTimeoutFunction;
   /**
@@ -417,23 +429,6 @@ public class WaitFunction<T, R> implements Function<T, R> {
     }
 
     @Override
-    public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("hash", Integer.toHexString(System.identityHashCode(this)))
-          .add("decelerationFactor", decelerationFactor)
-          .add("delegateFunction", delegateFunction)
-          .add("gracePeriod", gracePeriod)
-          .add("gracePeriodTimeUnit", gracePeriodTimeUnit)
-          .add("initialDelay", initialDelay)
-          .add("initialDelayTimeUnit", initialDelayTimeUnit)
-          .add("predicate", predicate)
-          .add("timeout", timeout)
-          .add("timeoutFunction", timeoutFunction)
-          .add("timeoutTimeUnit", timeoutTimeUnit)
-          .toString();
-    }
-
-    @Override
     public WaitFunction<T, R> get() {
       return new WaitFunction<>(
           delegateFunction,
@@ -452,6 +447,23 @@ public class WaitFunction<T, R> implements Function<T, R> {
           initialDelayTimeUnit,
           decelerationFactor
       );
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("decelerationFactor", decelerationFactor)
+          .add("delegateFunction", delegateFunction)
+          .add("gracePeriod", gracePeriod)
+          .add("gracePeriodTimeUnit", gracePeriodTimeUnit)
+          .add("initialDelay", initialDelay)
+          .add("initialDelayTimeUnit", initialDelayTimeUnit)
+          .add("predicate", predicate)
+          .add("timeout", timeout)
+          .add("timeoutFunction", timeoutFunction)
+          .add("timeoutTimeUnit", timeoutTimeUnit)
+          .toString();
     }
   }
 
