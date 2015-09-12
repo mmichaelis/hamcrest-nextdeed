@@ -15,7 +15,32 @@
  */
 
 /**
+ * <p>
  * Matcher for concurrent changes of the system/component under test.
+ * </p>
+ * <dl>
+ * <dt><strong>Example:</strong></dt>
+ * <dd>
+ * <pre>{@code
+ * Deque<String> strings = new ArrayDeque<>(Arrays.asList("Lorem", "Ipsum"));
+ * Probe.<Deque<String>, String>probing(strings)
+ *      .withinMs(1L)
+ *      .assertThat(
+ *                  new Function<Deque<String>, String>() {
+ *                    @Override
+ *                    public String apply(Deque<String> input) {
+ *                      return input.pop().toLowerCase();
+ *                    }
+ *                  },
+ *                  Matchers.equalTo("ipsum")
+ *      );
+ * }</pre>
+ * <p>
+ * While this example is somewhat academic you still might get the meaning. While the test above
+ * triggers the state change, a typical system of course changes its state over time.
+ * </p>
+ * </dd>
+ * </dl>
  *
  * @since 0.1.0
  */

@@ -112,6 +112,12 @@ public final class Probe {
     return new ProbeBuilderImpl<>(target);
   }
 
+  /**
+   * Builder for Probes.
+   *
+   * @param <T> the type of system you are probing
+   * @param <R> the type of state variable you are polling
+   */
   public interface ProbeBuilder<T, R> extends WaitBuilder {
 
     @NotNull
@@ -234,10 +240,19 @@ public final class Probe {
    */
   private static final class FailureMessage<R> {
 
+    /**
+     * The last result which will be used to build the failure message.
+     */
     @Nullable
     private final R lastResult;
+    /**
+     * Description for the failure.
+     */
     @Nullable
     private final String reason;
+    /**
+     * Matcher which did not accept the last result.
+     */
     @NotNull
     private final Matcher<? super R> matcher;
 
@@ -261,6 +276,7 @@ public final class Probe {
      *
      * @return message
      */
+    @NotNull
     public String getMessage() {
       // Copy & Paste from Hamcrest Matcher's assert, to be able to use same
       // message for different exceptions.
@@ -413,12 +429,14 @@ public final class Probe {
     }
 
     @VisibleForTesting
+    @NotNull
     ProbeBuilder<T, R> preProcessWaitFunction(
         @NotNull Function<Function<T, R>, Function<T, R>> waitFunctionPreProcessor) {
       this.waitFunctionPreProcessor = waitFunctionPreProcessor;
       return this;
     }
 
+    @NotNull
     private Function<T, R> getActualFunction() {
       assert actualFunction != null : "actualFunction must be set.";
       return actualFunction;
