@@ -112,30 +112,6 @@ public final class Probe {
     return new ProbeBuilderImpl<>(target);
   }
 
-  /**
-   * Build the failure message just as Hamcrest does in {@code MatcherAssert}.
-   *
-   * @param lastResult last result
-   * @param reason     reason given as e. g. assertion message
-   * @param matcher    matcher which did not match the last result
-   * @param <R>        type of the result
-   * @return message
-   */
-  @NotNull
-  private static <R> String getMessage(R lastResult, @Nullable String reason,
-                                       Matcher<? super R> matcher) {
-    // Copy & Paste from Hamcrest Matcher's assert, to be able to use same
-    // message for different exceptions.
-    Description description = new StringDescription();
-    description.appendText(Optional.fromNullable(reason).or(""))
-        .appendText("\nExpected: ")
-        .appendDescriptionOf(matcher)
-        .appendText("\n     but: ");
-    matcher.describeMismatch(lastResult, description);
-
-    return description.toString();
-  }
-
   public interface ProbeBuilder<T, R> extends WaitBuilder {
 
     @NotNull
@@ -249,6 +225,54 @@ public final class Probe {
     void requireThat(@Nullable String reason,
                      @NotNull Function<T, R> actualFunction,
                      @NotNull Matcher<? super R> matcher);
+  }
+
+  /**
+   * Build the failure message just as Hamcrest does in {@code MatcherAssert}.
+   *
+   * @param <R> type of the result
+   */
+  private static final class FailureMessage<R> {
+
+    @Nullable
+    private final R lastResult;
+    @Nullable
+    private final String reason;
+    @NotNull
+    private final Matcher<? super R> matcher;
+
+    /**
+     * Build the failure message just as Hamcrest does in {@code MatcherAssert}.
+     *
+     * @param lastResult last result
+     * @param reason     reason given as e. g. assertion message
+     * @param matcher    matcher which did not match the last result
+     */
+    private FailureMessage(@Nullable R lastResult,
+                           @Nullable String reason,
+                           @NotNull Matcher<? super R> matcher) {
+      this.lastResult = lastResult;
+      this.reason = reason;
+      this.matcher = matcher;
+    }
+
+    /**
+     * Create the message.
+     *
+     * @return message
+     */
+    public String getMessage() {
+      // Copy & Paste from Hamcrest Matcher's assert, to be able to use same
+      // message for different exceptions.
+      Description description = new StringDescription();
+      description.appendText(Optional.fromNullable(reason).or(""))
+          .appendText("\nExpected: ")
+          .appendDescriptionOf(matcher)
+          .appendText("\n     but: ");
+      matcher.describeMismatch(lastResult, description);
+
+      return description.toString();
+    }
   }
 
   @VisibleForTesting
@@ -377,6 +401,17 @@ public final class Probe {
           new ThrowWaitTimeoutException<T, R>(reason, matcher));
     }
 
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("actualFunction", actualFunction)
+          .add("target", target)
+          .add("waitFunctionBuilder", waitFunctionBuilder)
+          .add("waitFunctionPreProcessor", waitFunctionPreProcessor)
+          .toString();
+    }
+
     @VisibleForTesting
     ProbeBuilder<T, R> preProcessWaitFunction(
         @NotNull Function<Function<T, R>, Function<T, R>> waitFunctionPreProcessor) {
@@ -402,17 +437,6 @@ public final class Probe {
              != null : "Wait function should not have been preprocessed to null.";
       preProcessedWaitFunction.apply(target);
     }
-
-    @Override
-    public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("hash", Integer.toHexString(System.identityHashCode(this)))
-          .add("actualFunction", actualFunction)
-          .add("target", target)
-          .add("waitFunctionBuilder", waitFunctionBuilder)
-          .add("waitFunctionPreProcessor", waitFunctionPreProcessor)
-          .toString();
-    }
   }
 
   private static class ThrowAssumptionViolation<T, R>
@@ -432,7 +456,8 @@ public final class Probe {
       R lastResult = input.getLastResult();
       // Copy & Paste from Hamcrest Matcher's assert, but with new exception
       if (!matcher.matches(lastResult)) {
-        throw new AssumptionViolatedException(getMessage(lastResult, reason, matcher));
+        throw new AssumptionViolatedException(
+            new FailureMessage<>(lastResult, reason, matcher).getMessage());
       }
       // Will never get here unless as last validation the actual value eventually matches,
       // which actually means that the matcher responds differently on the same value.
@@ -466,7 +491,8 @@ public final class Probe {
       assert input != null : "null values unexpected";
       R lastResult = input.getLastResult();
       if (!matcher.matches(lastResult)) {
-        throw new WaitTimeoutException(getMessage(lastResult, reason, matcher));
+        throw new WaitTimeoutException(
+            new FailureMessage<>(lastResult, reason, matcher).getMessage());
       }
       // Will never get here unless as last validation the actual value eventually matches,
       // which actually means that the matcher responds differently on the same value.
