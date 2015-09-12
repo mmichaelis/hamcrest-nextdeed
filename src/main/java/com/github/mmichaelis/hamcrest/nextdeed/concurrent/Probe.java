@@ -17,12 +17,15 @@
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
 import static com.github.mmichaelis.hamcrest.nextdeed.glue.HamcrestGlue.asPredicate;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
+
+import com.github.mmichaelis.hamcrest.nextdeed.concurrent.WaitFunction.Builder;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -252,19 +255,19 @@ public final class Probe {
   static class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
 
     @NotNull
-    private final WaitFunction.Builder<T, R> waitFunctionBuilder;
+    private final Builder<T, R> waitFunctionBuilder;
     @NotNull
     private final T target;
     private Function<T, R> actualFunction;
-    private Function<WaitFunction<T, R>, WaitFunction<T, R>> waitFunctionPreProcessor =
+    private Function<Function<T, R>, Function<T, R>> waitFunctionPreProcessor =
         Functions.identity();
 
-    private ProbeBuilderImpl(@NotNull final T target) {
+    private ProbeBuilderImpl(@NotNull T target) {
       this.target = target;
       waitFunctionBuilder = WaitFunction.waitFor(new Function<T, R>() {
         @Override
         public R apply(@Nullable T input) {
-          return ProbeBuilderImpl.this.getActualFunction().apply(input);
+          return getActualFunction().apply(input);
         }
       });
     }
@@ -376,7 +379,7 @@ public final class Probe {
 
     @VisibleForTesting
     ProbeBuilder<T, R> preProcessWaitFunction(
-        @NotNull Function<WaitFunction<T, R>, WaitFunction<T, R>> waitFunctionPreProcessor) {
+        @NotNull Function<Function<T, R>, Function<T, R>> waitFunctionPreProcessor) {
       this.waitFunctionPreProcessor = waitFunctionPreProcessor;
       return this;
     }
@@ -390,11 +393,11 @@ public final class Probe {
                            @NotNull Matcher<? super R> matcher,
                            @NotNull Function<WaitTimeoutEvent<T, R>, R> timeoutFunction) {
       this.actualFunction = actualFunction;
-      WaitFunction<T, R> waitFunction = waitFunctionBuilder
+      Function<T, R> waitFunction = waitFunctionBuilder
           .toFulfill(asPredicate(matcher))
           .onTimeout(timeoutFunction)
           .get();
-      WaitFunction<T, R> preProcessedWaitFunction = waitFunctionPreProcessor.apply(waitFunction);
+      Function<T, R> preProcessedWaitFunction = waitFunctionPreProcessor.apply(waitFunction);
       assert preProcessedWaitFunction
              != null : "Wait function should not have been preprocessed to null.";
       preProcessedWaitFunction.apply(target);
@@ -494,8 +497,7 @@ public final class Probe {
     public R apply(@Nullable WaitTimeoutEvent<T, R> input) {
       assert input != null : "null values unexpected";
       R lastResult = input.getLastResult();
-      org.hamcrest.MatcherAssert
-          .assertThat(Optional.fromNullable(reason).or(""), lastResult, matcher);
+      assertThat(Optional.fromNullable(reason).or(""), lastResult, matcher);
       // Will never get here unless as last validation the actual value eventually matches,
       // which actually means that the matcher responds differently on the same value.
       return lastResult;

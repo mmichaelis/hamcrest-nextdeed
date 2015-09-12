@@ -60,7 +60,7 @@ public class WaitFunctionTest {
   public void without_predicate_accept_any_value_immediately() throws Exception {
     WaitFunction<Void, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<Void, String>) WaitFunction
             .waitFor(new Function<Void, String>() {
               @Override
               public String apply(Void input) {
@@ -85,7 +85,7 @@ public class WaitFunctionTest {
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -109,13 +109,13 @@ public class WaitFunctionTest {
   @Test
   public void pass_on_second_try() throws Exception {
     final Deque<Boolean> predicateAnswers = new ArrayDeque<>(Arrays.asList(false, true));
-    final String inputValue = "Lorem";
+    String inputValue = "Lorem";
     final String outputValue = testName.getMethodName();
-    final String functionName = "Ipsum";
+    String functionName = "Ipsum";
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -144,10 +144,10 @@ public class WaitFunctionTest {
   @Test
   public void adopt_new_delay_on_long_duration() throws Exception {
     final Deque<Boolean> predicateAnswers = new ArrayDeque<>(Arrays.asList(false, true));
-    final String inputValue = "Lorem";
+    String inputValue = "Lorem";
     final String outputValue = testName.getMethodName();
-    final String functionName = "Ipsum";
-    final List<Long> timeMillis =
+    String functionName = "Ipsum";
+    List<Long> timeMillis =
         Arrays.asList(
             // used to determine deadline
             0L,
@@ -158,7 +158,7 @@ public class WaitFunctionTest {
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -187,10 +187,10 @@ public class WaitFunctionTest {
   @Test
   public void decelerate_polling_on_repetitive_calls() throws Exception {
     final Deque<Boolean> predicateAnswers = new ArrayDeque<>(Arrays.asList(false, false, true));
-    final String inputValue = "Lorem";
+    String inputValue = "Lorem";
     final String outputValue = testName.getMethodName();
-    final String functionName = "Ipsum";
-    final List<Long> timeMillis =
+    String functionName = "Ipsum";
+    List<Long> timeMillis =
         Arrays.asList(
             // used to determine deadline
             0L,
@@ -205,7 +205,7 @@ public class WaitFunctionTest {
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -241,10 +241,10 @@ public class WaitFunctionTest {
   @Test
   public void at_least_decelerate_by_one_millisecond() throws Exception {
     final Deque<Boolean> predicateAnswers = new ArrayDeque<>(Arrays.asList(false, false, true));
-    final String inputValue = "Lorem";
+    String inputValue = "Lorem";
     final String outputValue = testName.getMethodName();
-    final String functionName = "Ipsum";
-    final List<Long> timeMillis =
+    String functionName = "Ipsum";
+    List<Long> timeMillis =
         Arrays.asList(
             // used to determine deadline
             0L,
@@ -259,7 +259,7 @@ public class WaitFunctionTest {
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -296,13 +296,13 @@ public class WaitFunctionTest {
   @Test
   public void fail_on_interrupt_during_sleep() throws Exception {
     final Deque<Boolean> predicateAnswers = new ArrayDeque<>(Arrays.asList(false, true));
-    final String inputValue = "Lorem";
+    String inputValue = "Lorem";
     final String outputValue = testName.getMethodName();
-    final String functionName = "Ipsum";
+    String functionName = "Ipsum";
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -330,10 +330,10 @@ public class WaitFunctionTest {
 
   @Test
   public void withinMs_configures_timeout_in_milliseconds() throws Exception {
-    final String inputValue = "Lorem";
+    String inputValue = "Lorem";
     final String outputValue = testName.getMethodName();
-    final String functionName = "Ipsum";
-    final List<Long> timeMillis =
+    String functionName = "Ipsum";
+    List<Long> timeMillis =
         Arrays.asList(
             // init: determine deadline
             0L,
@@ -345,13 +345,13 @@ public class WaitFunctionTest {
             9L,
             // cycle 2: determine end time -- timeout
             11L);
-    final long timeoutMs = 10L;
+    long timeoutMs = 10L;
 
     StoreTimeoutEvent<String, String> timeoutFunction = new StoreTimeoutEvent<>();
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -376,11 +376,11 @@ public class WaitFunctionTest {
 
   @Test
   public void raised_timeout_event_contains_all_relevant_information() throws Exception {
-    final String inputValue = "Lorem";
+    String inputValue = "Lorem";
     final String outputValue = testName.getMethodName();
-    final String functionName = "Ipsum";
-    final long expectedConsumedMs = 11;
-    final List<Long> timeMillis =
+    String functionName = "Ipsum";
+    long expectedConsumedMs = 11;
+    List<Long> timeMillis =
         Arrays.asList(
             // init: determine deadline
             5L,
@@ -388,13 +388,13 @@ public class WaitFunctionTest {
             5L,
             // cycle 1: determine end time
             5L + expectedConsumedMs);
-    final long timeoutMs = 10L;
+    long timeoutMs = 10L;
 
     StoreTimeoutEvent<String, String> timeoutFunction = new StoreTimeoutEvent<>();
 
     WaitFunction<String, String>
         waitFunction =
-        WaitFunction
+        (WaitFunction<String, String>) WaitFunction
             .waitFor(describe(new Function<String, String>() {
               @Override
               public String apply(String input) {
@@ -469,5 +469,6 @@ public class WaitFunctionTest {
     public WaitTimeoutEvent<T, R> getLastEvent() {
       return lastEvent;
     }
+
   }
 }

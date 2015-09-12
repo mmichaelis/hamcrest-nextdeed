@@ -233,7 +233,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
                                         long afterEvaluationTimeMs) {
     long newDelay = previousDelay;
     // Leave at least as much time between two checks as the check itself took.
-    final long lastDuration = afterEvaluationTimeMs - beforeEvaluationTimeMs;
+    long lastDuration = afterEvaluationTimeMs - beforeEvaluationTimeMs;
     if (lastDuration > newDelay) {
       newDelay = lastDuration;
     }
@@ -269,7 +269,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
    * @param <R> output the function will provide
    * @since SINCE
    */
-  public interface Builder<T, R> extends Supplier<WaitFunction<T, R>>, WaitBuilder {
+  public interface Builder<T, R> extends Supplier<Function<T, R>>, WaitBuilder {
     /**
      * Predicate which the returned function value must fulfill. Defaults to
      * always true.
@@ -335,13 +335,13 @@ public class WaitFunction<T, R> implements Function<T, R> {
     private long timeout;
     @NotNull
     private TimeUnit timeoutTimeUnit = TimeUnit.MILLISECONDS;
-    private long gracePeriod = WaitFunction.DEFAULT_GRACE_PERIOD_MS;
+    private long gracePeriod = DEFAULT_GRACE_PERIOD_MS;
     @NotNull
     private TimeUnit gracePeriodTimeUnit = TimeUnit.MILLISECONDS;
-    private long initialDelay = WaitFunction.DEFAULT_INITIAL_DELAY_MS;
+    private long initialDelay = DEFAULT_INITIAL_DELAY_MS;
     @NotNull
     private TimeUnit initialDelayTimeUnit = TimeUnit.MILLISECONDS;
-    private double decelerationFactor = WaitFunction.DEFAULT_DECELERATION_FACTOR;
+    private double decelerationFactor = DEFAULT_DECELERATION_FACTOR;
     @Nullable
     private Function<WaitTimeoutEvent<T, R>, R> timeoutFunction;
 
@@ -368,7 +368,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
     public Builder<T, R> within(long timeout, @NotNull TimeUnit timeUnit) {
       Preconditions.checkArgument(timeout >= 0L, "Timeout value must be positive.");
       this.timeout = timeout;
-      this.timeoutTimeUnit = timeUnit;
+      timeoutTimeUnit = timeUnit;
       return this;
     }
 
@@ -385,7 +385,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
                                               @NotNull TimeUnit timeUnit) {
       Preconditions.checkArgument(gracePeriod >= 0, "Grace period value must be positive.");
       this.gracePeriod = gracePeriod;
-      this.gracePeriodTimeUnit = timeUnit;
+      gracePeriodTimeUnit = timeUnit;
       return this;
     }
 
@@ -402,7 +402,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
                                           @NotNull TimeUnit timeUnit) {
       Preconditions.checkArgument(initialDelay >= 0, "Initial delay must be positive.");
       this.initialDelay = initialDelay;
-      this.initialDelayTimeUnit = timeUnit;
+      initialDelayTimeUnit = timeUnit;
       return this;
     }
 
@@ -429,7 +429,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
     }
 
     @Override
-    public WaitFunction<T, R> get() {
+    public Function<T, R> get() {
       return new WaitFunction<>(
           delegateFunction,
           predicate,

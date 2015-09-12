@@ -91,7 +91,7 @@ public class ApplyingMatcherTest {
 
     private final String profession;
 
-    private Person(final String profession) {
+    private Person(String profession) {
       this.profession = profession;
     }
 
@@ -103,7 +103,7 @@ public class ApplyingMatcherTest {
   private static class GetProfession implements Function<Person, String> {
 
     @Override
-    public String apply(final Person input) {
+    public String apply(Person input) {
       return input.getProfession();
     }
   }
@@ -111,7 +111,7 @@ public class ApplyingMatcherTest {
   private static class GetShape implements Function<Shapeshifter, String> {
 
     @Override
-    public String apply(final Shapeshifter input) {
+    public String apply(Shapeshifter input) {
       return input.getShape();
     }
   }
