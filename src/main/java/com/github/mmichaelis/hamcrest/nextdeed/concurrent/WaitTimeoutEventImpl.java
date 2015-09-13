@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @since SINCE
  */
+@SuppressWarnings("MethodParameterOfConcreteClass")
 public class WaitTimeoutEventImpl<T, R> implements WaitTimeoutEvent<T, R> {
 
   private final WaitFunction<T, R> source;
@@ -45,6 +46,7 @@ public class WaitTimeoutEventImpl<T, R> implements WaitTimeoutEvent<T, R> {
     this.lastResult = lastResult;
   }
 
+  @SuppressWarnings("MethodReturnOfConcreteClass")
   @Override
   @NotNull
   public WaitFunction<T, R> getSource() {
@@ -66,6 +68,7 @@ public class WaitTimeoutEventImpl<T, R> implements WaitTimeoutEvent<T, R> {
     return lastResult;
   }
 
+  @SuppressWarnings("LocalVariableOfConcreteClass")
   @Override
   @NotNull
   public String describe() {

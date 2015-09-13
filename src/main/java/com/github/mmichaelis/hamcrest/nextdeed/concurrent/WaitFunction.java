@@ -43,6 +43,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class WaitFunction<T, R> implements Function<T, R> {
 
+  /**
+   * Minimum time to sleep between polls.
+   *
+   * @since SINCE
+   */
   public static final int MINIMUM_SLEEP_TIME_MS = 1;
   /**
    * Initial delay to wait if we need to wait. Using 0L as base as a delay
@@ -76,10 +81,17 @@ public class WaitFunction<T, R> implements Function<T, R> {
   /**
    * Predicate to determine if the retrieved result by the given function meets
    * the expectations.
+   *
+   * @since SINCE
    */
   @NotNull
   private final Predicate<? super R> predicate;
 
+  /**
+   * Function to determine what to do on timeout.
+   *
+   * @since SINCE
+   */
   @NotNull
   private final Function<WaitTimeoutEvent<T, R>, R> onTimeoutFunction;
   /**
@@ -221,7 +233,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
                                         long afterEvaluationTimeMs) {
     long newDelay = previousDelay;
     // Leave at least as much time between two checks as the check itself took.
-    final long lastDuration = afterEvaluationTimeMs - beforeEvaluationTimeMs;
+    long lastDuration = afterEvaluationTimeMs - beforeEvaluationTimeMs;
     if (lastDuration > newDelay) {
       newDelay = lastDuration;
     }
@@ -257,7 +269,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
    * @param <R> output the function will provide
    * @since SINCE
    */
-  public interface Builder<T, R> extends Supplier<WaitFunction<T, R>>, WaitBuilder {
+  public interface Builder<T, R> extends Supplier<Function<T, R>>, WaitBuilder {
     /**
      * Predicate which the returned function value must fulfill. Defaults to
      * always true.
@@ -323,13 +335,13 @@ public class WaitFunction<T, R> implements Function<T, R> {
     private long timeout;
     @NotNull
     private TimeUnit timeoutTimeUnit = TimeUnit.MILLISECONDS;
-    private long gracePeriod = WaitFunction.DEFAULT_GRACE_PERIOD_MS;
+    private long gracePeriod = DEFAULT_GRACE_PERIOD_MS;
     @NotNull
     private TimeUnit gracePeriodTimeUnit = TimeUnit.MILLISECONDS;
-    private long initialDelay = WaitFunction.DEFAULT_INITIAL_DELAY_MS;
+    private long initialDelay = DEFAULT_INITIAL_DELAY_MS;
     @NotNull
     private TimeUnit initialDelayTimeUnit = TimeUnit.MILLISECONDS;
-    private double decelerationFactor = WaitFunction.DEFAULT_DECELERATION_FACTOR;
+    private double decelerationFactor = DEFAULT_DECELERATION_FACTOR;
     @Nullable
     private Function<WaitTimeoutEvent<T, R>, R> timeoutFunction;
 
@@ -356,7 +368,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
     public Builder<T, R> within(long timeout, @NotNull TimeUnit timeUnit) {
       Preconditions.checkArgument(timeout >= 0L, "Timeout value must be positive.");
       this.timeout = timeout;
-      this.timeoutTimeUnit = timeUnit;
+      timeoutTimeUnit = timeUnit;
       return this;
     }
 
@@ -373,7 +385,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
                                               @NotNull TimeUnit timeUnit) {
       Preconditions.checkArgument(gracePeriod >= 0, "Grace period value must be positive.");
       this.gracePeriod = gracePeriod;
-      this.gracePeriodTimeUnit = timeUnit;
+      gracePeriodTimeUnit = timeUnit;
       return this;
     }
 
@@ -390,7 +402,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
                                           @NotNull TimeUnit timeUnit) {
       Preconditions.checkArgument(initialDelay >= 0, "Initial delay must be positive.");
       this.initialDelay = initialDelay;
-      this.initialDelayTimeUnit = timeUnit;
+      initialDelayTimeUnit = timeUnit;
       return this;
     }
 
@@ -417,24 +429,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
     }
 
     @Override
-    public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("hash", Integer.toHexString(System.identityHashCode(this)))
-          .add("decelerationFactor", decelerationFactor)
-          .add("delegateFunction", delegateFunction)
-          .add("gracePeriod", gracePeriod)
-          .add("gracePeriodTimeUnit", gracePeriodTimeUnit)
-          .add("initialDelay", initialDelay)
-          .add("initialDelayTimeUnit", initialDelayTimeUnit)
-          .add("predicate", predicate)
-          .add("timeout", timeout)
-          .add("timeoutFunction", timeoutFunction)
-          .add("timeoutTimeUnit", timeoutTimeUnit)
-          .toString();
-    }
-
-    @Override
-    public WaitFunction<T, R> get() {
+    public Function<T, R> get() {
       return new WaitFunction<>(
           delegateFunction,
           predicate,
@@ -452,6 +447,23 @@ public class WaitFunction<T, R> implements Function<T, R> {
           initialDelayTimeUnit,
           decelerationFactor
       );
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("hash", Integer.toHexString(System.identityHashCode(this)))
+          .add("decelerationFactor", decelerationFactor)
+          .add("delegateFunction", delegateFunction)
+          .add("gracePeriod", gracePeriod)
+          .add("gracePeriodTimeUnit", gracePeriodTimeUnit)
+          .add("initialDelay", initialDelay)
+          .add("initialDelayTimeUnit", initialDelayTimeUnit)
+          .add("predicate", predicate)
+          .add("timeout", timeout)
+          .add("timeoutFunction", timeoutFunction)
+          .add("timeoutTimeUnit", timeoutTimeUnit)
+          .toString();
     }
   }
 

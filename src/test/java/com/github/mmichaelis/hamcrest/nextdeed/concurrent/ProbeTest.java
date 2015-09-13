@@ -19,6 +19,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 import static java.lang.String.valueOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -27,6 +28,9 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
+
+import com.github.mmichaelis.hamcrest.nextdeed.concurrent.Probe.ProbeBuilder;
+import com.github.mmichaelis.hamcrest.nextdeed.concurrent.Probe.ProbeBuilderImpl;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matchers;
@@ -48,12 +52,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Tests {@link Probe} or more specifically
- * {@link com.github.mmichaelis.hamcrest.nextdeed.concurrent.Probe.ProbeBuilder}. The main focus
+ * {@link ProbeBuilder}. The main focus
  * is to test that the given arguments are correctly handed over to the wait function.
  *
  * @since SINCE
@@ -76,11 +81,11 @@ public class ProbeTest {
     List<Long> usedTimeMillis = Collections.singletonList(1000L);
     SystemUnderTest systemUnderTest = new SystemUnderTest();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(0L)
             .withinMs(0L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
     try {
       configuredProbe.assertThat(new GetSystemState(), Matchers.equalTo(State.RUNNING));
@@ -100,11 +105,11 @@ public class ProbeTest {
     SystemUnderTest systemUnderTest = new SystemUnderTest();
 
     String message = testName.getMethodName();
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(0L)
             .withinMs(0L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
     try {
       configuredProbe.assertThat(message, new GetSystemState(), Matchers.equalTo(State.RUNNING));
@@ -123,11 +128,11 @@ public class ProbeTest {
     List<Long> usedTimeMillis = Collections.singletonList(1000L);
     SystemUnderTest systemUnderTest = new SystemUnderTest();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(0L)
             .withinMs(0L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
     try {
       configuredProbe.assumeThat(new GetSystemState(),
@@ -149,11 +154,11 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(0L)
             .withinMs(0L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
     try {
       configuredProbe.assumeThat(message,
@@ -174,11 +179,11 @@ public class ProbeTest {
     List<Long> usedTimeMillis = Collections.singletonList(1000L);
     SystemUnderTest systemUnderTest = new SystemUnderTest();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(0L)
             .withinMs(0L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     expectedException.expect(WaitTimeoutException.class);
@@ -197,11 +202,11 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(0L)
             .withinMs(0L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     expectedException.expect(WaitTimeoutException.class);
@@ -221,10 +226,10 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withinMs(1000L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.requireThat(message,
@@ -243,10 +248,10 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withinMs(1000L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.requireThat(message,
@@ -262,10 +267,10 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withinMs(1000L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.assumeThat(message,
@@ -281,10 +286,10 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withinMs(1000L);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.assertThat(message,
@@ -301,13 +306,13 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelay(1, TimeUnit.MILLISECONDS)
             .deceleratePollingBy(2.0d)
             .and()
             .within(1L, TimeUnit.SECONDS);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.requireThat(message,
@@ -330,13 +335,13 @@ public class ProbeTest {
         systemUnderTest =
         new SystemUnderTest(State.STOPPED, State.STOPPED, State.STARTING, State.RUNNING);
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelay(100L, TimeUnit.MILLISECONDS)
             .deceleratePollingBy(1.5d)
             .and()
             .within(1L, TimeUnit.SECONDS);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.requireThat(new GetSystemState(),
@@ -364,13 +369,13 @@ public class ProbeTest {
         systemUnderTest =
         new SystemUnderTest(State.STOPPED, State.STOPPED, State.STARTING, State.RUNNING);
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(initialDelayMs)
             .deceleratePollingBy(decelerationFactor)
             .and()
             .within(1L, TimeUnit.SECONDS);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.requireThat(new GetSystemState(),
@@ -401,14 +406,14 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(initialDelayMs)
             .withFinalGracePeriodMs(gracePeriodMs)
             .deceleratePollingBy(decelerationFactor)
             .and()
             .within(140L, TimeUnit.MILLISECONDS);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.requireThat(message,
@@ -436,14 +441,14 @@ public class ProbeTest {
 
     String message = testName.getMethodName();
 
-    Probe.ProbeBuilder<SystemUnderTest, State> configuredProbe =
+    ProbeBuilder<SystemUnderTest, State> configuredProbe =
         Probe.<SystemUnderTest, State>probing(systemUnderTest)
             .withInitialDelayMs(initialDelayMs)
             .withFinalGracePeriod(gracePeriodMs, TimeUnit.MILLISECONDS)
             .deceleratePollingBy(decelerationFactor)
             .and()
             .within(140L, TimeUnit.MILLISECONDS);
-    spyOnWaitFunction((Probe.ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
                       usedTimeMillis);
 
     configuredProbe.requireThat(message,
@@ -460,6 +465,35 @@ public class ProbeTest {
         Matchers.equalTo(Collections.singletonList(90L)));
   }
 
+  @Test
+  public void probeBuilder_has_toString() throws Exception {
+    Random random = new Random(0);
+
+    long initialDelayMs = random.nextInt(1000);
+    double decelerationFactor = Math.abs(random.nextDouble() - 1d) + 1;
+    long gracePeriodMs = random.nextInt(1000);
+    long timeoutMs = random.nextInt(1000);
+
+    ProbeBuilder<String, String> configuredProbe =
+        Probe.<String, String>probing(testName.getMethodName())
+            .withInitialDelayMs(initialDelayMs)
+            .deceleratePollingBy(decelerationFactor)
+            .withFinalGracePeriodMs(gracePeriodMs)
+            .withinMs(timeoutMs);
+    assertThat("toString shows all configured values.",
+               configuredProbe,
+               hasToString(allOf(
+                               containsString(configuredProbe.getClass().getSimpleName()),
+                               containsString(testName.getMethodName()),
+                               containsString(valueOf(initialDelayMs)),
+                               containsString(valueOf(decelerationFactor)),
+                               containsString(valueOf(gracePeriodMs)),
+                               containsString(valueOf(timeoutMs))
+                           )
+               )
+    );
+  }
+
   /**
    * Creates spy on wait function. Spy won't wait and the system time returned will be build from
    * the given used time millis. So you only need to specify how long each call to the system will
@@ -469,16 +503,17 @@ public class ProbeTest {
    * @param usedTimeMillis  array of used times in milliseconds
    */
   private void spyOnWaitFunction(
-      Probe.ProbeBuilderImpl<SystemUnderTest, State> configuredProbe,
-      List<Long> usedTimeMillis) {
+      ProbeBuilderImpl<SystemUnderTest, State> configuredProbe,
+      Iterable<Long> usedTimeMillis) {
     final List<Long> timeMillis = getTimeMillis(usedTimeMillis);
 
     configuredProbe.preProcessWaitFunction(
-        new Function<WaitFunction<SystemUnderTest, State>, WaitFunction<SystemUnderTest, State>>() {
+        new Function<Function<SystemUnderTest, State>, Function<SystemUnderTest, State>>() {
           @Override
-          public WaitFunction<SystemUnderTest, State> apply(
-              WaitFunction<SystemUnderTest, State> input) {
-            WaitFunction<SystemUnderTest, State> spy = Mockito.spy(input);
+          public Function<SystemUnderTest, State> apply(
+              Function<SystemUnderTest, State> input) {
+            WaitFunction<SystemUnderTest, State> spy =
+                (WaitFunction<SystemUnderTest, State>) Mockito.spy(input);
             try {
               Mockito.doNothing().when(spy).sleep(anyLong());
               Mockito.doAnswer(
@@ -500,15 +535,15 @@ public class ProbeTest {
    * @return time millis required for mocking wait function
    */
   @NotNull
-  private List<Long> getTimeMillis(List<Long> usedTimeMillis) {
-    final List<Long> timeMillis = new ArrayList<>();
+  private List<Long> getTimeMillis(Iterable<Long> usedTimeMillis) {
+    List<Long> timeMillis = new ArrayList<>();
     long currentTime = 0L;
     // start time to calculate timeout time
     timeMillis.add(currentTime);
     for (Long usedTimeMilli : usedTimeMillis) {
       // time before evaluation
       timeMillis.add(currentTime);
-      currentTime = currentTime + usedTimeMilli;
+      currentTime += usedTimeMilli;
       // time after evaluation
       timeMillis.add(currentTime);
     }
@@ -566,18 +601,12 @@ public class ProbeTest {
 
   private static class SameStateTwice extends TypeSafeMatcher<State> {
 
-    private AtomicReference<State> previousState = new AtomicReference<State>();
+    private AtomicReference<State> previousState = new AtomicReference<>();
 
     @Override
     public void describeTo(Description description) {
 
     }
-
-    @Override
-    protected boolean matchesSafely(State item) {
-      return item.equals(previousState.getAndSet(item));
-    }
-
 
     @Override
     public String toString() {
@@ -586,6 +615,11 @@ public class ProbeTest {
           .add("super", super.toString())
           .add("previousState", previousState)
           .toString();
+    }
+
+    @Override
+    protected boolean matchesSafely(State item) {
+      return item == previousState.getAndSet(item);
     }
   }
 }
