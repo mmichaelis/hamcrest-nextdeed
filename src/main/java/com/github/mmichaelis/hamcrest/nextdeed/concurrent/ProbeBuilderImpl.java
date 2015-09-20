@@ -17,6 +17,7 @@
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
 import static com.github.mmichaelis.hamcrest.nextdeed.glue.HamcrestGlue.asPredicate;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -71,7 +72,7 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
       Functions.identity();
 
   ProbeBuilderImpl(@NotNull T target) {
-    this.target = target;
+    this.target = requireNonNull(target, "target must not be null.");
     waitFunctionBuilder = WaitFunction.waitFor(new Function<T, R>() {
       @Override
       public R apply(@Nullable T input) {

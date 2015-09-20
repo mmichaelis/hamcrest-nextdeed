@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.function;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 
@@ -63,8 +65,8 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
    */
   public ApplyingMatcher(@NotNull Function<F, T> function,
                          @NotNull Matcher<? super T> delegateMatcher) {
-    this.function = function;
-    this.delegateMatcher = delegateMatcher;
+    this.function = requireNonNull(function, "function must not be null.");
+    this.delegateMatcher = requireNonNull(delegateMatcher, "matcher must not be null.");
   }
 
   /**
@@ -92,19 +94,6 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
   }
 
   @Override
-  protected boolean matchesSafely(F item) {
-    lastValue.set(function.apply(item));
-    return delegateMatcher.matches(lastValue.get());
-  }
-
-  @Override
-  protected void describeMismatchSafely(F item, @NotNull Description mismatchDescription) {
-    // Ignoring item, expecting that it did not change between call to describeMismatch and matches.
-    delegateMatcher.describeMismatch(lastValue.get(), mismatchDescription);
-  }
-
-
-  @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("hash", Integer.toHexString(System.identityHashCode(this)))
@@ -113,5 +102,19 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
         .add("function", function)
         .add("lastValue", lastValue)
         .toString();
+  }
+
+  @Override
+  protected boolean matchesSafely(F item) {
+    lastValue.set(function.apply(item));
+    return delegateMatcher.matches(lastValue.get());
+  }
+
+  @Override
+  protected void describeMismatchSafely(F item, @NotNull Description mismatchDescription) {
+    // Ignoring item, expecting that it did not change between call to describeMismatch and matches.
+    delegateMatcher.describeMismatch(lastValue.get(),
+                                     requireNonNull(mismatchDescription,
+                                                    "mismatchDescription must not be null."));
   }
 }

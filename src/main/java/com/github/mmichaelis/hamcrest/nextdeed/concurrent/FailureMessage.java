@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 
@@ -68,7 +70,7 @@ final class FailureMessage<R> {
                  @NotNull Matcher<? super R> matcher) {
     this.lastResult = lastResult;
     this.reason = reason;
-    this.matcher = matcher;
+    this.matcher = requireNonNull(matcher, "matcher must not be null.");
   }
 
   /**

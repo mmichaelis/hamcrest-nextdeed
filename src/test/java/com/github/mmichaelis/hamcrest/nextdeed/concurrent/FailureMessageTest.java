@@ -37,7 +37,7 @@ public class FailureMessageTest {
   @SuppressWarnings("ConstantConditions")
   @Test
   public void constructor_failOnNullMatcher() throws Exception {
-    expectedException.expect(IllegalArgumentException.class);
+    expectedException.expect(RuntimeException.class);
     expectedException.expectMessage("matcher");
     new FailureMessage<String>(null, null, null);
   }

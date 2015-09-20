@@ -17,6 +17,7 @@
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
 import static com.google.common.base.Optional.fromNullable;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
@@ -56,6 +57,7 @@ final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
    */
   private static final double DEFAULT_DECELERATION_FACTOR = 1.1;
 
+  @NotNull
   private final Function<T, R> delegateFunction;
   @NotNull
   private Predicate<? super R> predicate = Predicates.alwaysTrue();
@@ -72,14 +74,14 @@ final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
   @Nullable
   private Function<WaitTimeoutEvent<T, R>, R> timeoutFunction;
 
-  public WaitFunctionBuilderImpl(Function<T, R> delegateFunction) {
-    this.delegateFunction = delegateFunction;
+  public WaitFunctionBuilderImpl(@NotNull Function<T, R> delegateFunction) {
+    this.delegateFunction = requireNonNull(delegateFunction, "delegateFunction must not be null.");
   }
 
   @NotNull
   @Override
   public WaitFunctionBuilder<T, R> toFulfill(@NotNull Predicate<? super R> predicate) {
-    this.predicate = predicate;
+    this.predicate = requireNonNull(predicate, "predicate must not be null.");
     return this;
   }
 
@@ -87,7 +89,7 @@ final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
   @Override
   public WaitFunctionBuilder<T, R> onTimeout(
       @NotNull Function<WaitTimeoutEvent<T, R>, R> timeoutFunction) {
-    this.timeoutFunction = timeoutFunction;
+    this.timeoutFunction = requireNonNull(timeoutFunction, "timeoutFunction must not be null.");
     return this;
   }
 
@@ -103,7 +105,7 @@ final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
   public WaitFunctionBuilder<T, R> within(long timeout, @NotNull TimeUnit timeUnit) {
     Preconditions.checkArgument(timeout >= 0L, "Timeout value must be positive.");
     this.timeout = timeout;
-    timeoutTimeUnit = timeUnit;
+    timeoutTimeUnit = requireNonNull(timeUnit, "timeUnit must not be null.");
     return this;
   }
 
@@ -120,7 +122,7 @@ final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
                                                         @NotNull TimeUnit timeUnit) {
     Preconditions.checkArgument(gracePeriod >= 0, "Grace period value must be positive.");
     this.gracePeriod = gracePeriod;
-    gracePeriodTimeUnit = timeUnit;
+    gracePeriodTimeUnit = requireNonNull(timeUnit, "timeUnit must not be null.");
     return this;
   }
 
@@ -137,7 +139,7 @@ final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
                                                     @NotNull TimeUnit timeUnit) {
     Preconditions.checkArgument(initialDelay >= 0, "Initial delay must be positive.");
     this.initialDelay = initialDelay;
-    initialDelayTimeUnit = timeUnit;
+    initialDelayTimeUnit = requireNonNull(timeUnit, "timeUnit must not be null.");
     return this;
   }
 

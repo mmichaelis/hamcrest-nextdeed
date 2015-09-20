@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
@@ -92,28 +94,31 @@ public class WaitFunction<T, R> implements Function<T, R> {
   private final double decelerationFactor;
 
   WaitFunction(@NotNull Function<T, R> delegateFunction,
-                         @NotNull Predicate<? super R> predicate,
-                         @NotNull Function<WaitTimeoutEvent<T, R>, R> onTimeoutFunction,
-                         long timeout,
-                         @NotNull TimeUnit timeoutTimeUnit,
-                         long gracePeriod,
-                         @NotNull TimeUnit gracePeriodTimeUnit,
-                         long initialDelay,
-                         @NotNull TimeUnit initialDelayTimeUnit,
-                         double decelerationFactor) {
-    this.delegateFunction = delegateFunction;
-    this.predicate = predicate;
-    this.onTimeoutFunction = onTimeoutFunction;
+               @NotNull Predicate<? super R> predicate,
+               @NotNull Function<WaitTimeoutEvent<T, R>, R> onTimeoutFunction,
+               long timeout,
+               @NotNull TimeUnit timeoutTimeUnit,
+               long gracePeriod,
+               @NotNull TimeUnit gracePeriodTimeUnit,
+               long initialDelay,
+               @NotNull TimeUnit initialDelayTimeUnit,
+               double decelerationFactor) {
+    this.delegateFunction = requireNonNull(delegateFunction, "delegateFunction must not be null.");
+    this.predicate = requireNonNull(predicate, "predicate must not be null.");
+    this.onTimeoutFunction = requireNonNull(onTimeoutFunction,
+                                            "onTimeoutFunction must not be null.");
     this.timeout = timeout;
-    this.timeoutTimeUnit = timeoutTimeUnit;
+    this.timeoutTimeUnit = requireNonNull(timeoutTimeUnit, "timeoutTimeUnit must not be null.");
     this.gracePeriod = gracePeriod;
-    this.gracePeriodTimeUnit = gracePeriodTimeUnit;
+    this.gracePeriodTimeUnit = requireNonNull(gracePeriodTimeUnit,
+                                              "gracePeriodTimeUnit must not be null.");
     this.initialDelay = initialDelay;
-    this.initialDelayTimeUnit = initialDelayTimeUnit;
+    this.initialDelayTimeUnit = requireNonNull(initialDelayTimeUnit,
+                                               "initialDelayTimeUnit must not be null.");
     this.decelerationFactor = decelerationFactor;
   }
 
-  public static <T, R> WaitFunctionBuilder<T, R> waitFor(Function<T, R> delegateFunction) {
+  public static <T, R> WaitFunctionBuilder<T, R> waitFor(@NotNull Function<T, R> delegateFunction) {
     return new WaitFunctionBuilderImpl<>(delegateFunction);
   }
 
@@ -166,6 +171,23 @@ public class WaitFunction<T, R> implements Function<T, R> {
   @NotNull
   public TimeUnit getTimeoutTimeUnit() {
     return timeoutTimeUnit;
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
+        .add("decelerationFactor", decelerationFactor)
+        .add("delegateFunction", delegateFunction)
+        .add("gracePeriod", gracePeriod)
+        .add("gracePeriodTimeUnit", gracePeriodTimeUnit)
+        .add("initialDelay", initialDelay)
+        .add("initialDelayTimeUnit", initialDelayTimeUnit)
+        .add("onTimeoutFunction", onTimeoutFunction)
+        .add("predicate", predicate)
+        .add("timeout", timeout)
+        .add("timeoutTimeUnit", timeoutTimeUnit)
+        .toString();
   }
 
   /**
@@ -232,22 +254,5 @@ public class WaitFunction<T, R> implements Function<T, R> {
     // wait at least one millisecond longer next time.
     newDelay = Math.max(newDelay + 1, (long) (newDelay * decelerationFactor));
     return newDelay;
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("decelerationFactor", decelerationFactor)
-        .add("delegateFunction", delegateFunction)
-        .add("gracePeriod", gracePeriod)
-        .add("gracePeriodTimeUnit", gracePeriodTimeUnit)
-        .add("initialDelay", initialDelay)
-        .add("initialDelayTimeUnit", initialDelayTimeUnit)
-        .add("onTimeoutFunction", onTimeoutFunction)
-        .add("predicate", predicate)
-        .add("timeout", timeout)
-        .add("timeoutTimeUnit", timeoutTimeUnit)
-        .toString();
   }
 }

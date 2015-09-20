@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.glue;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Function;
 
 import org.jetbrains.annotations.NotNull;
@@ -64,8 +66,8 @@ public class DescribedFunction<T, R> implements Function<T, R> {
    */
   protected DescribedFunction(@NotNull Function<T, R> delegateFunction,
                               @NotNull String description) {
-    this.delegateFunction = delegateFunction;
-    this.description = description;
+    this.delegateFunction = requireNonNull(delegateFunction, "delegateFunction must not be null.");
+    this.description = requireNonNull(description, "description must not be null.");
   }
 
   /**
@@ -79,6 +81,7 @@ public class DescribedFunction<T, R> implements Function<T, R> {
    */
   @NotNull
   public static <T, R> Builder<T, R> describe(@NotNull final Function<T, R> delegateFunction) {
+    requireNonNull(delegateFunction, "delegateFunction must not be null.");
     return new Builder<T, R>() {
       @NotNull
       @Override
