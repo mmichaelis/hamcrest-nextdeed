@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +42,7 @@ public class WaitTimeoutEventImpl<T, R> implements WaitTimeoutEvent<T, R> {
                               long consumedMs,
                               T item,
                               R lastResult) {
-    this.source = source;
+    this.source = requireNonNull(source, "source must not be null.");
     this.consumedMs = consumedMs;
     this.item = item;
     this.lastResult = lastResult;

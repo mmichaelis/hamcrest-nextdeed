@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.glue;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Predicate;
 
 import org.hamcrest.Matcher;
@@ -42,6 +44,7 @@ public final class HamcrestGlue {
    */
   @NotNull
   public static <T> Predicate<T> asPredicate(@NotNull final Matcher<T> delegateMatcher) {
+    requireNonNull(delegateMatcher, "delegateMatcher; must not be null.");
     return new Predicate<T>() {
       @Override
       public boolean apply(T input) {

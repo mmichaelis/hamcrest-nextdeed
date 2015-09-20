@@ -16,41 +16,50 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.concurrent.OnWaitFunctionSpy.spyOnWaitFunction;
+import static com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassModifierMatcher.classModifierContains;
+import static com.github.mmichaelis.hamcrest.nextdeed.reflect.InstantiableViaDefaultConstructor.isInstantiableViaDefaultConstructor;
+import static com.github.mmichaelis.hamcrest.nextdeed.reflect.MemberModifierMatcher.memberModifierContains;
 import static java.lang.String.valueOf;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 
-import com.github.mmichaelis.hamcrest.nextdeed.concurrent.Probe.ProbeBuilder;
-import com.github.mmichaelis.hamcrest.nextdeed.concurrent.Probe.ProbeBuilderImpl;
+import com.github.mmichaelis.hamcrest.nextdeed.glue.Consumer;
 
 import org.hamcrest.Description;
-import org.hamcrest.Matchers;
+import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
-import org.junit.AssumptionViolatedException;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
-import org.mockito.AdditionalAnswers;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -63,291 +72,245 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @since SINCE
  */
+@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+@RunWith(Parameterized.class)
 public class ProbeTest {
 
-  /**
-   * Remembers spy-mock on wait function.
-   */
-  private static final ThreadLocal<WaitFunction<SystemUnderTest, State>>
-      TL_WAIT_FUNCTION =
-      new ThreadLocal<>();
+  @NotNull
+  private final ProbeFacadeMode mode;
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
   @Rule
+  public ErrorCollector errorCollector = new ErrorCollector();
+  @Rule
   public TestName testName = new TestName();
 
-  @Test
-  public void throw_assertion_error_on_failure_no_message() throws Exception {
-    List<Long> usedTimeMillis = Collections.singletonList(1000L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest();
+  public ProbeTest(@NotNull ProbeFacadeMode mode) {
+    this.mode = mode;
+  }
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
-            .withInitialDelayMs(0L)
-            .withinMs(0L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
-    try {
-      configuredProbe.assertThat(new GetSystemState(), Matchers.equalTo(State.RUNNING));
-      fail("AssertionError should have been thrown");
-    } catch (AssertionError e) {
-      assertThat("All required information should be contained in exception message.",
-                 e.getMessage(),
-                 allOf(not(containsString("null")),
-                       containsString(valueOf(State.RUNNING)),
-                       containsString(valueOf(State.STOPPED))));
-    }
+  @Parameters(name = "{index}: Mode {0}")
+  public static Collection<Object[]> data() {
+    return asList(new Object[][]{
+        {ProbeFacadeMode.ASSERT},
+        {ProbeFacadeMode.ASSUME},
+        {ProbeFacadeMode.REQUIRE},
+    });
   }
 
   @Test
-  public void throw_assertion_error_on_failure_with_message() throws Exception {
+  public void throw_exception_on_failure_no_message() throws Exception {
     List<Long> usedTimeMillis = Collections.singletonList(1000L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest();
+    SystemUnderTest_SUT systemUnderTest = new SystemUnderTest_SUT();
 
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
+            .withInitialDelayMs(0L)
+            .withinMs(0L);
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                      usedTimeMillis);
+
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, new GetSystemState(), equalTo(SystemState.RUNNING));
+
+    assertThat("Exception should have been thrown.", result, notNullValue());
+    assertThat("All required information should be contained in exception message.",
+               result.getMessage(),
+               allOf(not(containsString("null")),
+                     containsString(valueOf(SystemState.RUNNING)),
+                     containsString(valueOf(SystemState.STOPPED))));
+  }
+
+  @Test
+  public void inform_timeout_handlers_on_failure() throws Exception {
+    List<Long> usedTimeMillis = Collections.singletonList(1000L);
+    SystemUnderTest_SUT systemUnderTest = new SystemUnderTest_SUT();
+
+    WaitTimeoutEventConsumer eventConsumer1 = new WaitTimeoutEventConsumer();
+    WaitTimeoutEventConsumer eventConsumer2 = new WaitTimeoutEventConsumer();
+
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
+            .withInitialDelayMs(0L)
+            .onTimeout(eventConsumer1)
+            .onTimeout(eventConsumer2)
+            .withinMs(0L);
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                      usedTimeMillis);
+
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, new GetSystemState(), equalTo(SystemState.RUNNING));
+
+    assertThat("Consumer 1 should have been informed.", eventConsumer1.getEvent(), notNullValue());
+    assertThat("Consumer 2 should have been informed.", eventConsumer2.getEvent(), notNullValue());
+
+    assertThat("Event should contain last result before failure.",
+               eventConsumer1.getEvent().getLastResult(), is(SystemState.STOPPED));
+
+    assertThat("Exception should have been thrown.", result, notNullValue());
+    assertThat("All required information should be contained in exception message.",
+               result.getMessage(),
+               allOf(not(containsString("null")),
+                     containsString(valueOf(SystemState.RUNNING)),
+                     containsString(valueOf(SystemState.STOPPED))));
+  }
+
+  @Test
+  public void throw_exception_on_failure_with_message() throws Exception {
+    List<Long> usedTimeMillis = Collections.singletonList(1000L);
+    SystemUnderTest_SUT systemUnderTest = new SystemUnderTest_SUT();
     String message = testName.getMethodName();
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withInitialDelayMs(0L)
             .withinMs(0L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
                       usedTimeMillis);
-    try {
-      configuredProbe.assertThat(message, new GetSystemState(), Matchers.equalTo(State.RUNNING));
-      fail("AssertionError should have been thrown");
-    } catch (AssertionError e) {
-      assertThat("All required information should be contained in exception message.",
-                 e.getMessage(),
-                 allOf(containsString(message),
-                       containsString(valueOf(State.RUNNING)),
-                       containsString(valueOf(State.STOPPED))));
-    }
+
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, message, new GetSystemState(), equalTo(SystemState.RUNNING));
+
+    assertThat("Exception should have been thrown.", result, notNullValue());
+    assertThat("All required information should be contained in exception message.",
+               result.getMessage(),
+               allOf(containsString(message),
+                     containsString(valueOf(SystemState.RUNNING)),
+                     containsString(valueOf(SystemState.STOPPED))));
   }
 
   @Test
-  public void throw_assumption_violated_exception_on_failure_no_message() throws Exception {
-    List<Long> usedTimeMillis = Collections.singletonList(1000L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest();
-
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
-            .withInitialDelayMs(0L)
-            .withinMs(0L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
-    try {
-      configuredProbe.assumeThat(new GetSystemState(),
-                                 Matchers.equalTo(State.RUNNING));
-      fail("AssumptionViolatedException should have been thrown");
-    } catch (AssumptionViolatedException e) {
-      assertThat("All required information should be contained in exception message.",
-                 e.getMessage(),
-                 allOf(not(containsString("null")),
-                       containsString(valueOf(State.RUNNING)),
-                       containsString(valueOf(State.STOPPED))));
-    }
-  }
-
-  @Test
-  public void throw_assumption_violated_exception_on_failure_with_message() throws Exception {
-    List<Long> usedTimeMillis = Collections.singletonList(1000L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest();
-
-    String message = testName.getMethodName();
-
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
-            .withInitialDelayMs(0L)
-            .withinMs(0L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
-    try {
-      configuredProbe.assumeThat(message,
-                                 new GetSystemState(),
-                                 Matchers.equalTo(State.RUNNING));
-      fail("AssumptionViolatedException should have been thrown");
-    } catch (AssumptionViolatedException e) {
-      assertThat("All required information should be contained in exception message.",
-                 e.getMessage(),
-                 allOf(containsString(message),
-                       containsString(valueOf(State.RUNNING)),
-                       containsString(valueOf(State.STOPPED))));
-    }
-  }
-
-  @Test
-  public void throw_wait_timeout_exception_on_failure_no_message() throws Exception {
-    List<Long> usedTimeMillis = Collections.singletonList(1000L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest();
-
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
-            .withInitialDelayMs(0L)
-            .withinMs(0L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
-
-    expectedException.expect(WaitTimeoutException.class);
-    expectedException.expectMessage(allOf(not(containsString("null")),
-                                          containsString(valueOf(State.RUNNING)),
-                                          containsString(valueOf(State.STOPPED))));
-
-    configuredProbe.requireThat(new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
-  }
-
-  @Test
-  public void throw_wait_timeout_exception_on_failure_with_message() throws Exception {
-    List<Long> usedTimeMillis = Collections.singletonList(1000L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest();
+  public void pass_on_second_try_with_message() throws Exception {
+    List<Long> usedTimeMillis = asList(1000L, 2000L);
+    SystemUnderTest_SUT
+        systemUnderTest = new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.RUNNING);
 
     String message = testName.getMethodName();
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
-            .withInitialDelayMs(0L)
-            .withinMs(0L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
-
-    expectedException.expect(WaitTimeoutException.class);
-    expectedException.expectMessage(allOf(containsString(message),
-                                          containsString(valueOf(State.RUNNING)),
-                                          containsString(valueOf(State.STOPPED))));
-
-    configuredProbe.requireThat(message,
-                                new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
-  }
-
-  @Test
-  public void pass_on_second_try() throws Exception {
-    List<Long> usedTimeMillis = Arrays.asList(1000L, 2000L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest(State.STOPPED, State.RUNNING);
-
-    String message = testName.getMethodName();
-
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withinMs(1000L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
+    OnWaitFunctionSpy functionSpy =
+        spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                          usedTimeMillis);
 
-    configuredProbe.requireThat(message,
-                                new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, message, new GetSystemState(), equalTo(SystemState.RUNNING));
 
-    WaitFunction<SystemUnderTest, State> spy = TL_WAIT_FUNCTION.get();
+    assertThat("No exception should have been thrown.", result, nullValue());
+
+    WaitFunction<SystemUnderTest_SUT, SystemState> spy = functionSpy.getWaitFunction();
     Mockito.verify(spy, times(1)).sleep(anyLong());
   }
 
   @Test
-  public void pass_requirement_on_eventual_match() throws Exception {
-    List<Long> usedTimeMillis = Arrays.asList(1000L, 2000L);
-    SystemUnderTest systemUnderTest =
-        new SystemUnderTest(State.STOPPED, State.RUNNING, State.RUNNING);
+  public void pass_on_second_try_without_message() throws Exception {
+    List<Long> usedTimeMillis = asList(1000L, 2000L);
+    SystemUnderTest_SUT
+        systemUnderTest = new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.RUNNING);
 
-    String message = testName.getMethodName();
-
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withinMs(1000L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
+    OnWaitFunctionSpy functionSpy =
+        spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                          usedTimeMillis);
 
-    configuredProbe.requireThat(message,
-                                new GetSystemState(),
-                                new SameStateTwice());
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, new GetSystemState(), equalTo(SystemState.RUNNING));
+
+    assertThat("No exception should have been thrown.", result, nullValue());
+
+    WaitFunction<SystemUnderTest_SUT, SystemState> spy = functionSpy.getWaitFunction();
+    Mockito.verify(spy, times(1)).sleep(anyLong());
   }
 
   @Test
-  public void pass_assumption_on_eventual_match() throws Exception {
-    List<Long> usedTimeMillis = Arrays.asList(1000L, 2000L);
-    SystemUnderTest systemUnderTest =
-        new SystemUnderTest(State.STOPPED, State.RUNNING, State.RUNNING);
+  public void pass_on_eventual_match() throws Exception {
+    List<Long> usedTimeMillis = asList(1000L, 2000L);
+    SystemUnderTest_SUT systemUnderTest =
+        new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.RUNNING, SystemState.RUNNING);
 
     String message = testName.getMethodName();
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withinMs(1000L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
+    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
                       usedTimeMillis);
 
-    configuredProbe.assumeThat(message,
-                               new GetSystemState(),
-                               new SameStateTwice());
-  }
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, message, new GetSystemState(), new SameStateTwice());
 
-  @Test
-  public void pass_assertion_on_eventual_match() throws Exception {
-    List<Long> usedTimeMillis = Arrays.asList(1000L, 2000L);
-    SystemUnderTest systemUnderTest =
-        new SystemUnderTest(State.STOPPED, State.RUNNING, State.RUNNING);
-
-    String message = testName.getMethodName();
-
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
-            .withinMs(1000L);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
-
-    configuredProbe.assertThat(message,
-                               new GetSystemState(),
-                               new SameStateTwice());
+    assertThat("No exception should have been thrown.", result, nullValue());
   }
 
   @Test
   public void deceleration_factor_is_forwarded_to_wait_function() throws Exception {
-    List<Long> usedTimeMillis = Arrays.asList(3L, 5L, 7L);
-    SystemUnderTest
+    List<Long> usedTimeMillis = asList(3L, 5L, 7L);
+    SystemUnderTest_SUT
         systemUnderTest =
-        new SystemUnderTest(State.STOPPED, State.STOPPED, State.RUNNING);
+        new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.STOPPED, SystemState.RUNNING);
 
     String message = testName.getMethodName();
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withInitialDelay(1, TimeUnit.MILLISECONDS)
             .deceleratePollingBy(2.0d)
             .and()
             .within(1L, TimeUnit.SECONDS);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
+    OnWaitFunctionSpy functionSpy =
+        spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                          usedTimeMillis);
 
-    configuredProbe.requireThat(message,
-                                new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, message, new GetSystemState(), equalTo(SystemState.RUNNING));
 
-    WaitFunction<SystemUnderTest, State> spy = TL_WAIT_FUNCTION.get();
+    assertThat("No exception should have been thrown.", result, nullValue());
+
+    WaitFunction<SystemUnderTest_SUT, SystemState> spy = functionSpy.getWaitFunction();
     ArgumentCaptor<Long> argument = ArgumentCaptor.forClass(Long.class);
     InOrder inOrder = Mockito.inOrder(spy);
     inOrder.verify(spy).sleep(argument.capture());
     inOrder.verify(spy).sleep(argument.capture());
     assertThat("Delays accelerate (thus polling decelerates).", argument.getAllValues(),
-               Matchers.equalTo(Arrays.asList(3L, 6L)));
+               equalTo(asList(3L, 6L)));
   }
 
   @Test
   public void initial_delay_2arg_is_forwarded_to_wait_function() throws Exception {
-    List<Long> usedTimeMillis = Arrays.asList(3L, 5L, 200L, 7L);
-    SystemUnderTest
+    List<Long> usedTimeMillis = asList(3L, 5L, 200L, 7L);
+    SystemUnderTest_SUT
         systemUnderTest =
-        new SystemUnderTest(State.STOPPED, State.STOPPED, State.STARTING, State.RUNNING);
+        new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.STOPPED, SystemState.STARTING,
+                                SystemState.RUNNING);
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withInitialDelay(100L, TimeUnit.MILLISECONDS)
             .deceleratePollingBy(1.5d)
             .and()
             .within(1L, TimeUnit.SECONDS);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
+    OnWaitFunctionSpy
+        functionSpy =
+        spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                          usedTimeMillis);
 
-    configuredProbe.requireThat(new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, new GetSystemState(), equalTo(SystemState.RUNNING));
 
-    WaitFunction<SystemUnderTest, State> spy = TL_WAIT_FUNCTION.get();
+    assertThat("No exception should have been thrown.", result, nullValue());
+
+    WaitFunction<SystemUnderTest_SUT, SystemState> spy = functionSpy.getWaitFunction();
     ArgumentCaptor<Long> argument = ArgumentCaptor.forClass(Long.class);
     InOrder inOrder = Mockito.inOrder(spy);
     inOrder.verify(spy).sleep(argument.capture());
@@ -355,7 +318,7 @@ public class ProbeTest {
     inOrder.verify(spy).sleep(argument.capture());
     assertThat("Initial delay is respected and eventually overridden when system becomes slow.",
                argument.getAllValues(),
-               Matchers.equalTo(Arrays.asList(100L, 150L, 225L)));
+               equalTo(asList(100L, 150L, 225L)));
   }
 
   @Test
@@ -364,24 +327,29 @@ public class ProbeTest {
     double decelerationFactor = 1.5d;
     long slowSystemMs = 300L;
 
-    List<Long> usedTimeMillis = Arrays.asList(3L, 5L, slowSystemMs, 7L);
-    SystemUnderTest
+    List<Long> usedTimeMillis = asList(3L, 5L, slowSystemMs, 7L);
+    SystemUnderTest_SUT
         systemUnderTest =
-        new SystemUnderTest(State.STOPPED, State.STOPPED, State.STARTING, State.RUNNING);
+        new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.STOPPED, SystemState.STARTING,
+                                SystemState.RUNNING);
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withInitialDelayMs(initialDelayMs)
             .deceleratePollingBy(decelerationFactor)
             .and()
             .within(1L, TimeUnit.SECONDS);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
+    OnWaitFunctionSpy functionSpy =
+        spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                          usedTimeMillis);
 
-    configuredProbe.requireThat(new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, new GetSystemState(), equalTo(SystemState.RUNNING));
 
-    WaitFunction<SystemUnderTest, State> spy = TL_WAIT_FUNCTION.get();
+    assertThat("No exception should have been thrown.", result, nullValue());
+
+    WaitFunction<SystemUnderTest_SUT, SystemState> spy = functionSpy.getWaitFunction();
     ArgumentCaptor<Long> argument = ArgumentCaptor.forClass(Long.class);
     InOrder inOrder = Mockito.inOrder(spy);
     inOrder.verify(spy).sleep(argument.capture());
@@ -389,7 +357,7 @@ public class ProbeTest {
     inOrder.verify(spy).sleep(argument.capture());
     assertThat("Initial delay is respected and eventually overridden when system becomes slow.",
                argument.getAllValues(),
-               Matchers.equalTo(Arrays.asList(
+               equalTo(asList(
                    initialDelayMs,
                    Math.round(initialDelayMs * decelerationFactor),
                    slowSystemMs)));
@@ -401,33 +369,38 @@ public class ProbeTest {
     long gracePeriodMs = 50L;
     double decelerationFactor = 1d;
 
-    List<Long> usedTimeMillis = Arrays.asList(100L, 100L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest(State.STOPPED, State.RUNNING);
+    List<Long> usedTimeMillis = asList(100L, 100L);
+    SystemUnderTest_SUT
+        systemUnderTest = new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.RUNNING);
 
     String message = testName.getMethodName();
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withInitialDelayMs(initialDelayMs)
             .withFinalGracePeriodMs(gracePeriodMs)
             .deceleratePollingBy(decelerationFactor)
             .and()
             .within(140L, TimeUnit.MILLISECONDS);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
+    OnWaitFunctionSpy
+        functionSpy =
+        spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                          usedTimeMillis);
 
-    configuredProbe.requireThat(message,
-                                new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, message, new GetSystemState(), equalTo(SystemState.RUNNING));
 
-    WaitFunction<SystemUnderTest, State> spy = TL_WAIT_FUNCTION.get();
+    assertThat("No exception should have been thrown.", result, nullValue());
+
+    WaitFunction<SystemUnderTest_SUT, SystemState> spy = functionSpy.getWaitFunction();
     ArgumentCaptor<Long> argument = ArgumentCaptor.forClass(Long.class);
     InOrder inOrder = Mockito.inOrder(spy);
     inOrder.verify(spy).sleep(argument.capture());
     assertThat(
         "Without grace period only 40 ms would remain after first poll. With grace we should get 90 ms.",
         argument.getAllValues(),
-        Matchers.equalTo(Collections.singletonList(90L)));
+        equalTo(Collections.singletonList(90L)));
   }
 
   @Test
@@ -436,33 +409,37 @@ public class ProbeTest {
     long gracePeriodMs = 50L;
     double decelerationFactor = 1d;
 
-    List<Long> usedTimeMillis = Arrays.asList(100L, 100L);
-    SystemUnderTest systemUnderTest = new SystemUnderTest(State.STOPPED, State.RUNNING);
+    List<Long> usedTimeMillis = asList(100L, 100L);
+    SystemUnderTest_SUT
+        systemUnderTest = new SystemUnderTest_SUT(SystemState.STOPPED, SystemState.RUNNING);
 
     String message = testName.getMethodName();
 
-    ProbeBuilder<SystemUnderTest, State> configuredProbe =
-        Probe.<SystemUnderTest, State>probing(systemUnderTest)
+    ProbeBuilder<SystemUnderTest_SUT, SystemState> configuredProbe =
+        Probe.<SystemUnderTest_SUT, SystemState>probing(systemUnderTest)
             .withInitialDelayMs(initialDelayMs)
             .withFinalGracePeriod(gracePeriodMs, TimeUnit.MILLISECONDS)
             .deceleratePollingBy(decelerationFactor)
             .and()
             .within(140L, TimeUnit.MILLISECONDS);
-    spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest, State>) configuredProbe,
-                      usedTimeMillis);
+    OnWaitFunctionSpy functionSpy =
+        spyOnWaitFunction((ProbeBuilderImpl<SystemUnderTest_SUT, SystemState>) configuredProbe,
+                          usedTimeMillis);
 
-    configuredProbe.requireThat(message,
-                                new GetSystemState(),
-                                Matchers.equalTo(State.RUNNING));
+    Throwable result =
+        new ProbeFacade<>(configuredProbe)
+            .run(mode, message, new GetSystemState(), equalTo(SystemState.RUNNING));
 
-    WaitFunction<SystemUnderTest, State> spy = TL_WAIT_FUNCTION.get();
+    assertThat("No exception should have been thrown.", result, nullValue());
+
+    WaitFunction<SystemUnderTest_SUT, SystemState> spy = functionSpy.getWaitFunction();
     ArgumentCaptor<Long> argument = ArgumentCaptor.forClass(Long.class);
     InOrder inOrder = Mockito.inOrder(spy);
     inOrder.verify(spy).sleep(argument.capture());
     assertThat(
         "Without grace period only 40 ms would remain after first poll. With grace we should get 90 ms.",
         argument.getAllValues(),
-        Matchers.equalTo(Collections.singletonList(90L)));
+        equalTo(Collections.singletonList(90L)));
   }
 
   @Test
@@ -494,118 +471,123 @@ public class ProbeTest {
     );
   }
 
-  /**
-   * Creates spy on wait function. Spy won't wait and the system time returned will be build from
-   * the given used time millis. So you only need to specify how long each call to the system will
-   * take.
-   *
-   * @param configuredProbe probe to configure wait function for
-   * @param usedTimeMillis  array of used times in milliseconds
-   */
-  private void spyOnWaitFunction(
-      ProbeBuilderImpl<SystemUnderTest, State> configuredProbe,
-      Iterable<Long> usedTimeMillis) {
-    final List<Long> timeMillis = getTimeMillis(usedTimeMillis);
-
-    configuredProbe.preProcessWaitFunction(
-        new Function<Function<SystemUnderTest, State>, Function<SystemUnderTest, State>>() {
-          @Override
-          public Function<SystemUnderTest, State> apply(
-              Function<SystemUnderTest, State> input) {
-            WaitFunction<SystemUnderTest, State> spy =
-                (WaitFunction<SystemUnderTest, State>) Mockito.spy(input);
-            try {
-              Mockito.doNothing().when(spy).sleep(anyLong());
-              Mockito.doAnswer(
-                  AdditionalAnswers.returnsElementsOf(timeMillis)).when(spy).nowMillis();
-            } catch (InterruptedException ignored) {
-            }
-            TL_WAIT_FUNCTION.set(spy);
-            return spy;
-          }
-        });
+  @Test
+  public void probeIsUtilityClass() throws Exception {
+    errorCollector.checkThat("Class must be final.",
+                             Probe.class,
+                             classModifierContains(Modifier.FINAL));
+    errorCollector.checkThat("Any constructors must be private.",
+                             asList(Probe.class.getDeclaredConstructors()),
+                             everyItem(memberModifierContains(Modifier.PRIVATE)));
+    assertThat("Default constructor must exist.",
+               Probe.class,
+               isInstantiableViaDefaultConstructor());
   }
 
-  /**
-   * Transform list of used time millis to the system millis returned during wait function. Thus
-   * this method internally knows exactly how many times the system millis are queried and needs
-   * to be adopted if this after changes.
-   *
-   * @param usedTimeMillis how long each call to the system takes
-   * @return time millis required for mocking wait function
-   */
-  @NotNull
-  private List<Long> getTimeMillis(Iterable<Long> usedTimeMillis) {
-    List<Long> timeMillis = new ArrayList<>();
-    long currentTime = 0L;
-    // start time to calculate timeout time
-    timeMillis.add(currentTime);
-    for (Long usedTimeMilli : usedTimeMillis) {
-      // time before evaluation
-      timeMillis.add(currentTime);
-      currentTime += usedTimeMilli;
-      // time after evaluation
-      timeMillis.add(currentTime);
-    }
-    return timeMillis;
+  private enum ProbeFacadeMode {
+    ASSERT,
+    ASSUME,
+    REQUIRE
   }
 
-  private enum State {
-    STARTING,
-    RUNNING,
-    STOPPED
-  }
-
-  private static class SystemUnderTest {
+  private static final class ProbeFacade<T, R>
+      implements ProbeAssert<T, R>, ProbeAssume<T, R>, ProbeRequire<T, R> {
 
     @NotNull
-    private final Deque<State> states;
+    private final ProbeBuilder<T, R> delegateProbeBuilder;
 
-    @NotNull
-    private State state = State.STOPPED;
-
-    private SystemUnderTest(@NotNull State... states) {
-      this(new ArrayDeque<>(Arrays.asList(states)));
+    private ProbeFacade(@NotNull ProbeBuilder<T, R> delegateProbeBuilder) {
+      this.delegateProbeBuilder = delegateProbeBuilder;
     }
 
-    private SystemUnderTest(@NotNull Deque<State> states) {
-      this.states = states;
+    @Override
+    public void assertThat(@NotNull Function<T, R> actualFunction,
+                           @NotNull Matcher<? super R> matcher) {
+      delegateProbeBuilder.assertThat(actualFunction, matcher);
     }
 
-    @NotNull
-    public State getState() {
-      if (!states.isEmpty()) {
-        state = states.pop();
+    @Override
+    public void assertThat(@Nullable String reason, @NotNull Function<T, R> actualFunction,
+                           @NotNull Matcher<? super R> matcher) {
+      delegateProbeBuilder.assertThat(reason, actualFunction, matcher);
+    }
+
+    @Override
+    public void assumeThat(@NotNull Function<T, R> actualFunction,
+                           @NotNull Matcher<? super R> matcher) {
+      delegateProbeBuilder.assumeThat(actualFunction, matcher);
+    }
+
+    @Override
+    public void assumeThat(@Nullable String reason, @NotNull Function<T, R> actualFunction,
+                           @NotNull Matcher<? super R> matcher) {
+      delegateProbeBuilder.assumeThat(reason, actualFunction, matcher);
+    }
+
+    @Override
+    public void requireThat(@NotNull Function<T, R> actualFunction,
+                            @NotNull Matcher<? super R> matcher) {
+      delegateProbeBuilder.requireThat(actualFunction, matcher);
+    }
+
+    @Override
+    public void requireThat(@Nullable String reason, @NotNull Function<T, R> actualFunction,
+                            @NotNull Matcher<? super R> matcher) {
+      delegateProbeBuilder.requireThat(reason, actualFunction, matcher);
+    }
+
+    @Nullable
+    public Throwable run(@NotNull ProbeFacadeMode mode,
+                         @NotNull Function<T, R> actualFunction,
+                         @NotNull Matcher<? super R> matcher) {
+      try {
+        switch (mode) {
+          case ASSERT:
+            assertThat(actualFunction, matcher);
+            break;
+          case ASSUME:
+            assumeThat(actualFunction, matcher);
+            break;
+          case REQUIRE:
+            requireThat(actualFunction, matcher);
+            break;
+        }
+      } catch (Throwable e) {
+        return e;
       }
-      return state;
+      return null;
     }
 
-
-    @Override
-    public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("hash", Integer.toHexString(System.identityHashCode(this)))
-          .add("state", state)
-          .add("states", states)
-          .toString();
+    @Nullable
+    public Throwable run(@NotNull ProbeFacadeMode mode,
+                         @Nullable String reason,
+                         @NotNull Function<T, R> actualFunction,
+                         @NotNull Matcher<? super R> matcher) {
+      try {
+        switch (mode) {
+          case ASSERT:
+            assertThat(reason, actualFunction, matcher);
+            break;
+          case ASSUME:
+            assumeThat(reason, actualFunction, matcher);
+            break;
+          case REQUIRE:
+            requireThat(reason, actualFunction, matcher);
+            break;
+        }
+      } catch (Throwable e) {
+        return e;
+      }
+      return null;
     }
   }
 
-  private static class GetSystemState implements Function<SystemUnderTest, State> {
+  private static class SameStateTwice extends TypeSafeMatcher<SystemState> {
 
-    @Override
-    public State apply(SystemUnderTest input) {
-      return input.getState();
-    }
-  }
-
-  private static class SameStateTwice extends TypeSafeMatcher<State> {
-
-    private AtomicReference<State> previousState = new AtomicReference<>();
+    private AtomicReference<SystemState> previousState = new AtomicReference<>();
 
     @Override
     public void describeTo(Description description) {
-
     }
 
     @Override
@@ -618,8 +600,23 @@ public class ProbeTest {
     }
 
     @Override
-    protected boolean matchesSafely(State item) {
+    protected boolean matchesSafely(SystemState item) {
       return item == previousState.getAndSet(item);
+    }
+  }
+
+  private static class WaitTimeoutEventConsumer
+      implements Consumer<WaitTimeoutEvent<SystemUnderTest_SUT, SystemState>> {
+
+    private WaitTimeoutEvent<SystemUnderTest_SUT, SystemState> event;
+
+    @Override
+    public void accept(WaitTimeoutEvent<SystemUnderTest_SUT, SystemState> event) {
+      this.event = event;
+    }
+
+    public WaitTimeoutEvent<SystemUnderTest_SUT, SystemState> getEvent() {
+      return event;
     }
   }
 }

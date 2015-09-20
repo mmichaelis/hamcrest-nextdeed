@@ -16,10 +16,15 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import com.google.common.base.Function;
+
+import com.github.mmichaelis.hamcrest.nextdeed.glue.Consumer;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -32,11 +37,36 @@ import java.util.Deque;
  */
 public class ProbeExampleTest {
 
+  private static final Logger LOG = getLogger(ProbeExampleTest.class);
+
   @Test
   public void simpleAssertion() throws Exception {
     Deque<String> strings = new ArrayDeque<>(Arrays.asList("Lorem", "Ipsum"));
     Probe.<Deque<String>, String>probing(strings)
         .withinMs(1L)
+        .assertThat(
+            new Function<Deque<String>, String>() {
+              @Override
+              public String apply(Deque<String> input) {
+                return input.pop().toLowerCase();
+              }
+            },
+            Matchers.equalTo("ipsum")
+        );
+  }
+
+  @Test
+  public void lifecycleObservation() throws Exception {
+    Deque<String> strings = new ArrayDeque<>(Arrays.asList("Lorem", "Ipsum"));
+    Probe.<Deque<String>, String>probing(strings)
+        .withinMs(1L)
+        .onTimeout(new Consumer<WaitTimeoutEvent<Deque<String>, String>>() {
+          @Override
+          public void accept(WaitTimeoutEvent<Deque<String>, String> event) {
+            LOG.debug("System state: {}", event.getItem());
+            LOG.debug("Last value: {}", event.getLastResult());
+          }
+        })
         .assertThat(
             new Function<Deque<String>, String>() {
               @Override
