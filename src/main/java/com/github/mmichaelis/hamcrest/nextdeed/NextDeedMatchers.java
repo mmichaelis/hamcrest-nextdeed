@@ -19,9 +19,15 @@ package com.github.mmichaelis.hamcrest.nextdeed;
 import com.google.common.base.Function;
 
 import com.github.mmichaelis.hamcrest.nextdeed.function.ApplyingMatcher;
+import com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassDeclaresConstructor;
+import com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassModifierMatcher;
+import com.github.mmichaelis.hamcrest.nextdeed.reflect.MemberModifierMatcher;
 
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Member;
 
 /**
  * <p>
@@ -53,6 +59,60 @@ public final class NextDeedMatchers {
   public static <F, T> Matcher<F> applying(@NotNull Function<F, T> function,
                                            @NotNull Matcher<? super T> delegateMatcher) {
     return ApplyingMatcher.applying(function, delegateMatcher);
+  }
+
+  /**
+   * Validates that a declared constructor with the given parameters exists.
+   *
+   * @param parameterTypes the parameter array
+   * @param <T>            the type of the class to check
+   * @return matcher
+   */
+  public static <T extends Class<?>> Matcher<T> declaresConstructor(
+      @Nullable Class<?>... parameterTypes) {
+    return ClassDeclaresConstructor.declaresConstructor(parameterTypes);
+  }
+
+  /**
+   * Matcher for modifiers of classes. Modifiers must be exactly as specified.
+   *
+   * @see java.lang.reflect.Modifier
+   * @see #classModifierContains(int)
+   * @since SINCE
+   */
+  public static <T extends Class<?>> Matcher<T> classModifierIs(int expectedModifier) {
+    return ClassModifierMatcher.classModifierIs(expectedModifier);
+  }
+
+  /**
+   * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
+   *
+   * @see java.lang.reflect.Modifier
+   * @since SINCE
+   */
+  public static <T extends Class<?>> Matcher<T> classModifierContains(int expectedModifier) {
+    return ClassModifierMatcher.classModifierContains(expectedModifier);
+  }
+
+  /**
+   * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
+   *
+   * @see java.lang.reflect.Modifier
+   * @since SINCE
+   */
+  public static <T extends Member> Matcher<T> memberModifierContains(int expectedModifier) {
+    return MemberModifierMatcher.memberModifierContains(expectedModifier);
+  }
+
+  /**
+   * Matcher for modifiers of members. Modifiers must be exactly as specified.
+   *
+   * @see java.lang.reflect.Modifier
+   * @see #classModifierContains(int)
+   * @since SINCE
+   */
+  public static <T extends Member> Matcher<T> memberModifierIs(int expectedModifier) {
+    return MemberModifierMatcher.memberModifierIs(expectedModifier);
   }
 
 }

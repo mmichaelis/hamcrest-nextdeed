@@ -16,18 +16,12 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
-import static com.google.common.base.Optional.fromNullable;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.base.Supplier;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -48,27 +42,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
    *
    * @since SINCE
    */
-  public static final int MINIMUM_SLEEP_TIME_MS = 1;
-  /**
-   * Initial delay to wait if we need to wait. Using 0L as base as a delay
-   * can never go below this value and for unit tests we do not want to have
-   * high delays.
-   *
-   * @since SINCE
-   */
-  private static final long DEFAULT_INITIAL_DELAY_MS = 0L;
-  /**
-   * Factor by which the polling factor decelerates.
-   *
-   * @since SINCE
-   */
-  private static final double DEFAULT_DECELERATION_FACTOR = 1.1;
-  /**
-   * A grace period for the last poll.
-   *
-   * @since SINCE
-   */
-  private static final long DEFAULT_GRACE_PERIOD_MS = 0L;
+  private static final int MINIMUM_SLEEP_TIME_MS = 1;
   /**
    * Function to continuously determine a result until it matches the
    * expectations denoted by {@link #predicate}.
@@ -117,7 +91,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
   private final TimeUnit initialDelayTimeUnit;
   private final double decelerationFactor;
 
-  protected WaitFunction(@NotNull Function<T, R> delegateFunction,
+  WaitFunction(@NotNull Function<T, R> delegateFunction,
                          @NotNull Predicate<? super R> predicate,
                          @NotNull Function<WaitTimeoutEvent<T, R>, R> onTimeoutFunction,
                          long timeout,
@@ -139,8 +113,8 @@ public class WaitFunction<T, R> implements Function<T, R> {
     this.decelerationFactor = decelerationFactor;
   }
 
-  public static <T, R> Builder<T, R> waitFor(Function<T, R> delegateFunction) {
-    return new BuilderImpl<>(delegateFunction);
+  public static <T, R> WaitFunctionBuilder<T, R> waitFor(Function<T, R> delegateFunction) {
+    return new WaitFunctionBuilderImpl<>(delegateFunction);
   }
 
   @Override
@@ -258,227 +232,6 @@ public class WaitFunction<T, R> implements Function<T, R> {
     // wait at least one millisecond longer next time.
     newDelay = Math.max(newDelay + 1, (long) (newDelay * decelerationFactor));
     return newDelay;
-  }
-
-  /**
-   * <p>
-   * A builder for WaitFunctions.
-   * </p>
-   *
-   * @param <T> input the function will receive
-   * @param <R> output the function will provide
-   * @since SINCE
-   */
-  public interface Builder<T, R> extends Supplier<Function<T, R>>, WaitBuilder {
-    /**
-     * Predicate which the returned function value must fulfill. Defaults to
-     * always true.
-     *
-     * @param predicate predicate to use
-     * @return self-reference
-     */
-    @NotNull
-    Builder<T, R> toFulfill(@NotNull Predicate<? super R> predicate);
-
-    /**
-     * <p>
-     * Function to apply to timeout event on timeout. The function might consider to throw an
-     * exception for example or ignore the actual timeout but return some default result
-     * instead.
-     * </p>
-     *
-     * @param timeoutFunction function to call on timeout
-     * @return self-reference
-     */
-    @NotNull
-    Builder<T, R> onTimeout(@NotNull Function<WaitTimeoutEvent<T, R>, R> timeoutFunction);
-
-
-    @Override
-    @NotNull
-    Builder<T, R> withinMs(long timeoutMs);
-
-    @Override
-    @NotNull
-    Builder<T, R> within(long timeout, @NotNull TimeUnit timeUnit);
-
-    @Override
-    @NotNull
-    Builder<T, R> withFinalGracePeriodMs(long gracePeriodMs);
-
-    @Override
-    @NotNull
-    Builder<T, R> withFinalGracePeriod(long gracePeriod, @NotNull TimeUnit timeUnit);
-
-    @Override
-    @NotNull
-    Builder<T, R> withInitialDelayMs(long initialDelayMs);
-
-    @Override
-    @NotNull
-    Builder<T, R> withInitialDelay(long initialDelay, @NotNull TimeUnit timeUnit);
-
-    @Override
-    @NotNull
-    Builder<T, R> deceleratePollingBy(double decelerationFactor);
-
-    @Override
-    @NotNull
-    Builder<T, R> and();
-  }
-
-  private static final class BuilderImpl<T, R> implements Builder<T, R> {
-
-    private final Function<T, R> delegateFunction;
-    @NotNull
-    private Predicate<? super R> predicate = Predicates.alwaysTrue();
-    private long timeout;
-    @NotNull
-    private TimeUnit timeoutTimeUnit = TimeUnit.MILLISECONDS;
-    private long gracePeriod = DEFAULT_GRACE_PERIOD_MS;
-    @NotNull
-    private TimeUnit gracePeriodTimeUnit = TimeUnit.MILLISECONDS;
-    private long initialDelay = DEFAULT_INITIAL_DELAY_MS;
-    @NotNull
-    private TimeUnit initialDelayTimeUnit = TimeUnit.MILLISECONDS;
-    private double decelerationFactor = DEFAULT_DECELERATION_FACTOR;
-    @Nullable
-    private Function<WaitTimeoutEvent<T, R>, R> timeoutFunction;
-
-    public BuilderImpl(Function<T, R> delegateFunction) {
-      this.delegateFunction = delegateFunction;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> toFulfill(@NotNull Predicate<? super R> predicate) {
-      this.predicate = predicate;
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> withinMs(long timeoutMs) {
-      within(timeoutMs, TimeUnit.MILLISECONDS);
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> within(long timeout, @NotNull TimeUnit timeUnit) {
-      Preconditions.checkArgument(timeout >= 0L, "Timeout value must be positive.");
-      this.timeout = timeout;
-      timeoutTimeUnit = timeUnit;
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> withFinalGracePeriodMs(long gracePeriodMs) {
-      withFinalGracePeriod(gracePeriodMs, TimeUnit.MILLISECONDS);
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> withFinalGracePeriod(long gracePeriod,
-                                              @NotNull TimeUnit timeUnit) {
-      Preconditions.checkArgument(gracePeriod >= 0, "Grace period value must be positive.");
-      this.gracePeriod = gracePeriod;
-      gracePeriodTimeUnit = timeUnit;
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> withInitialDelayMs(long initialDelayMs) {
-      withInitialDelay(initialDelayMs, TimeUnit.MILLISECONDS);
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> withInitialDelay(long initialDelay,
-                                          @NotNull TimeUnit timeUnit) {
-      Preconditions.checkArgument(initialDelay >= 0, "Initial delay must be positive.");
-      this.initialDelay = initialDelay;
-      initialDelayTimeUnit = timeUnit;
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> deceleratePollingBy(double decelerationFactor) {
-      Preconditions
-          .checkArgument(decelerationFactor >= 1, "Factor must be greater than or equal to 1.");
-      this.decelerationFactor = decelerationFactor;
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> onTimeout(@NotNull Function<WaitTimeoutEvent<T, R>, R> timeoutFunction) {
-      this.timeoutFunction = timeoutFunction;
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public Builder<T, R> and() {
-      return this;
-    }
-
-    @Override
-    public Function<T, R> get() {
-      return new WaitFunction<>(
-          delegateFunction,
-          predicate,
-          fromNullable(timeoutFunction).or(new Supplier<Function<WaitTimeoutEvent<T, R>, R>>() {
-            @Override
-            public Function<WaitTimeoutEvent<T, R>, R> get() {
-              return new FailWithTimeoutException<>();
-            }
-          }),
-          timeout,
-          timeoutTimeUnit,
-          gracePeriod,
-          gracePeriodTimeUnit,
-          initialDelay,
-          initialDelayTimeUnit,
-          decelerationFactor
-      );
-    }
-
-    @Override
-    public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("hash", Integer.toHexString(System.identityHashCode(this)))
-          .add("decelerationFactor", decelerationFactor)
-          .add("delegateFunction", delegateFunction)
-          .add("gracePeriod", gracePeriod)
-          .add("gracePeriodTimeUnit", gracePeriodTimeUnit)
-          .add("initialDelay", initialDelay)
-          .add("initialDelayTimeUnit", initialDelayTimeUnit)
-          .add("predicate", predicate)
-          .add("timeout", timeout)
-          .add("timeoutFunction", timeoutFunction)
-          .add("timeoutTimeUnit", timeoutTimeUnit)
-          .toString();
-    }
-  }
-
-  private static class FailWithTimeoutException<T, R>
-      implements Function<WaitTimeoutEvent<T, R>, R> {
-
-    @Override
-    public R apply(@Nullable WaitTimeoutEvent<T, R> input) {
-      if (input == null) {
-        // In contrast to Java 8 Function Guava enforces functions to handle null values.
-        throw new WaitTimeoutException();
-      }
-      throw new WaitTimeoutException(input.describe());
-    }
-
   }
 
   @Override
