@@ -17,40 +17,89 @@ reports which sometimes do not even require to set an assertion message.
 *Hamcrest &mdash; Next Deed* is an extension to Hamcrest and especially its library for even
 more matchers you may find useful.
 
-The first version of *Hamcrest &mdash; Next Deed* contains especially one matcher:
+The first version of *Hamcrest &mdash; Next Deed* was dedicated to a strategy to wait for the expected value for a certain amount of time and was inspired by an algorithm used successfully for several years now at [CoreMedia][] especially but not only for UI tests. The pattern has shown that it is quite common, especially for any integration test, that you might have to wait and that you might to take some surprises into account as mentioned in the blog post [Haste makes waste][haste-minds].
 
 \[[Top][]]
 
-## WaitFor
- 
-The WaitFor matcher introduces matching for state changes which might take a while until they
-become effective. It implements the wait pattern as introduced in [Haste makes waste][haste-minds].
-The matcher will wait for the matched object to reach a certain state within a given timeout.
+## Available Matchers
 
-In addition, as standard matchers won't check a mutable aspect of the matched object the initial version of
-*Hamcrest &mdash; Next Deed* contains a matcher which retrieves an aspect of the matched object and
-hands it over to some standard Hamcrest matcher.
+\[[Top][]]
 
-Thus a typical usage looks like this:
+### Probe &mdash;  Waiting For State
+
+*Probe* is the result of the wait pattern adopted for general use with Hamcrest. A typical example looks like this:
 
 ```java
-ComponentUnderTest cut = ...;
-State expectedState = ...;
-Function<ComponentUnderTest,State> stateFunction = new Function<>() { ... };
-assertThat(componentUnderTest,
-           waitFor(applying(stateFunction, equalTo(expectedState)), 2, SECONDS));
+Probe.<System, State>probing(system)
+     .withinMs(1L)
+     .assertThat(
+         new Function<System, State>() {
+           @Override
+           public State apply(System input) {
+             return input.getState();
+           }
+         },
+         equalTo(State.RUNNING)
+     );
 ```
 
-In Java 8 this one will look even better &ndash; and would not require the preliminary function
-interface which comes with the `ApplyingMatcher`.
+The algorithm ensures that the system has enough time to actually reach this state.
 
-This pattern has proven to work very well since 2012 with great success especially in UI tests where
-it takes some time until a wanted state is reached.
+The API makes use of [Guava: Google Core Libraries for Java][Guava] to make Java 8 features (functions, predicates, etc.) already available for Java 7.
 
-The wait-algorithm is decelerating regarding polls to the component under test. This is a learning
-when we first tried to poll very frequently that the component under test was busy answering the
-polls instead of trying to reach the wanted state (in this case we were polling Solr for having
-indexed a given document).
+\[[Top][]]
+
+### Applying Matcher &mdash; Transform Before Comparison
+
+A simpler approach than waiting is that you have an object to run assertions on where you have no matcher at hand. For example &ndash; as above &ndash; the state of a system. The example above using the *applying matcher* which does not wait:
+
+```java
+assertThat(system,
+           applying(
+               new Function<System, State>() {
+                 @Override
+                 public State apply(System input) {
+                   return input.getState();
+                 }
+               },
+               equalTo(State.RUNNING)
+           )
+);
+```
+
+In this example it is a little bit of overhead as you might directly do the assertion on `system.getState()`. You still might find this one useful as in this example:
+
+```java
+expectedException.expectCause(allOf(
+    Matchers.<Throwable>instanceOf(AssertionError.class),
+    applying((input) -> input.getMessage(),
+             allOf(
+                 containsString("lorem"),
+                 containsString("ipsum")
+             ))
+));
+```
+
+\[[Top][]]
+
+### Reflection Matchers
+
+The following shows some of the reflection matchers which might be used to validate code style for utility classes &ndash; and in the same run ensures some more code coverage:
+
+```java
+@Test
+public void probeIsUtilityClass() throws Exception {
+  errorCollector.checkThat("Class must be final.",
+                           Probe.class,
+                           classModifierContains(Modifier.FINAL));
+  errorCollector.checkThat("Any constructors must be private.",
+                           asList(Probe.class.getDeclaredConstructors()),
+                           everyItem(memberModifierContains(Modifier.PRIVATE)));
+  assertThat("Default constructor must exist.",
+             Probe.class,
+             isInstantiableViaDefaultConstructor());
+}
+```
 
 \[[Top][]]
 
@@ -64,9 +113,14 @@ the meaning?
 ## References
 
 * [Olaf Kummer: Haste makes waste | Minds][haste-minds]
-* [shields.io][]
-    providing out-of-the-box badges like the license badge
+* [shields.io][] &mdash; providing out-of-the-box badges like the license badge
 * [circleci.com][]
+
+\[[Top][]]
+
+## Bookmarks
+
+* [StackEdit][stackedit] &mdash; online Markdown Editor
 
 \[[Home][]]&nbsp;\[[Building][]]&nbsp;\[[Releasing][]]&nbsp;\[[Javadoc][]]&nbsp;\[[License][]]&nbsp;\[[Top][]]
 
@@ -77,6 +131,11 @@ the meaning?
 [Trevels-2011]: <http://jedicoder.blogspot.de/2011/11/automated-gradle-project-deployment-to.html> "Yennick Trevels: Automated Gradle project deployment to Sonatype OSS Repository"
 [shields.io]: <http://shields.io/> "Shields.io: Quality metadata badges for open source projects"
 [circleci.com]: <https://circleci.com/> "Continuous Integration and Deployment - CircleCI"
+[stackedit]: <https://stackedit.io/> "StackEdit – Editor"
+[CoreMedia]: <http://www.coremedia.com/> "CoreMedia"
+[Guava]: <https://github.com/google/guava> "Guava: Google Core Libraries for Java"
+
+<!-- Project Links -->
 
 [Home]: <./README.md> "Home"
 [Building]: <./BUILDING.md> "Building Hamcrest Next Deed"
