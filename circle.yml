@@ -16,7 +16,7 @@ machine:
 
 test:
   override:
-    - ./gradlew clean check jacocoTestReport coveralls --info
+    - ./gradlew clean check jacocoTestReport coveralls javadoc --info
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/build/.*-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;

@@ -21,13 +21,12 @@
  * <dl>
  * <dt><strong>Example:</strong></dt>
  * <dd>
- * <pre>{@code
- * Deque<String> strings = new ArrayDeque<>(Arrays.asList("Lorem", "Ipsum"));
+ * <pre>{@code Deque<String> strings = new ArrayDeque<>(Arrays.asList("Lorem", "Ipsum"));
  * Probe.<Deque<String>, String>probing(strings)
  *      .withinMs(1L)
  *      .assertThat(
  *                  new Function<Deque<String>, String>() {
- *                    @Override
+ *                    &#64;Override
  *                    public String apply(Deque<String> input) {
  *                      return input.pop().toLowerCase();
  *                    }

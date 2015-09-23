@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * @param <T> the type of system you are probing
  * @param <R> the type of state variable you are polling
  */
-public interface ProbeBuilder<T, R> extends WaitBuilder, ProbeAssert<T,R>, ProbeAssume<T, R>,
+public interface ProbeBuilder<T, R> extends WaitBuilder, ProbeAssert<T, R>, ProbeAssume<T, R>,
                                             ProbeRequire<T, R> {
 
   @NotNull
@@ -83,6 +83,7 @@ public interface ProbeBuilder<T, R> extends WaitBuilder, ProbeAssert<T,R>, Probe
    * </p>
    *
    * @param eventConsumer consumer for the timeout event
+   * @return self-reference
    */
   @NotNull
   ProbeBuilder<T, R> onTimeout(@NotNull Consumer<WaitTimeoutEvent<T, R>> eventConsumer);

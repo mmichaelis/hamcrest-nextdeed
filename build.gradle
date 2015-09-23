@@ -134,6 +134,15 @@ jar {
   }
 }
 
+allprojects {
+  tasks.withType(Javadoc) {
+    options.footer '<em>Hamcrest &mdash; Next Deed</em> <a href="https://github.com/mmichaelis/hamcrest-nextdeed">@GitHub</a>'
+    options.links 'http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/',
+                  'http://hamcrest.org/JavaHamcrest/javadoc/1.3/',
+                  'http://docs.oracle.com/javase/7/docs/api'
+  }
+}
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
   from tasks.javadoc.destinationDir
