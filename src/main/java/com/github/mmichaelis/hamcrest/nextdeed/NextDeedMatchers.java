@@ -76,6 +76,9 @@ public final class NextDeedMatchers {
   /**
    * Matcher for modifiers of classes. Modifiers must be exactly as specified.
    *
+   * @param expectedModifier modifiers to validate
+   * @param <T>              the class whose modifiers shall be checked
+   * @return matcher
    * @see java.lang.reflect.Modifier
    * @see #classModifierContains(int)
    * @since 1.0.0
@@ -87,6 +90,9 @@ public final class NextDeedMatchers {
   /**
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
+   * @param expectedModifier modifiers to validate
+   * @param <T>              the class whose modifiers shall be checked
+   * @return matcher
    * @see java.lang.reflect.Modifier
    * @since 1.0.0
    */
@@ -97,6 +103,9 @@ public final class NextDeedMatchers {
   /**
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
+   * @param expectedModifier modifiers to validate
+   * @param <T>              member type (field, method)
+   * @return matcher
    * @see java.lang.reflect.Modifier
    * @since 1.0.0
    */
@@ -107,8 +116,11 @@ public final class NextDeedMatchers {
   /**
    * Matcher for modifiers of members. Modifiers must be exactly as specified.
    *
+   * @param expectedModifier modifiers to validate
+   * @param <T>              member type (field, method)
+   * @return matcher
    * @see java.lang.reflect.Modifier
-   * @see #classModifierContains(int)
+   * @see #memberModifierContains(int)
    * @since 1.0.0
    */
   public static <T extends Member> Matcher<T> memberModifierIs(int expectedModifier) {

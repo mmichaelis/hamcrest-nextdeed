@@ -17,6 +17,7 @@
 package com.github.mmichaelis.hamcrest.nextdeed.reflect;
 
 import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Matcher for modifiers of classes.
@@ -41,11 +42,14 @@ public class ClassModifierMatcher<T extends Class<?>> extends ModifierMatcherBas
   /**
    * Matcher for modifiers of classes. Modifiers must be exactly as specified.
    *
-   * @param <T> the class whose modifiers shall be checked
+   * @param expectedModifier modifiers to validate
+   * @param <T>              the class whose modifiers shall be checked
+   * @return matcher
    * @see java.lang.reflect.Modifier
    * @see #classModifierContains(int)
    * @since 1.0.0
    */
+  @NotNull
   public static <T extends Class<?>> Matcher<T> classModifierIs(int expectedModifier) {
     return new ClassModifierMatcher<>(expectedModifier, true);
   }
@@ -53,10 +57,13 @@ public class ClassModifierMatcher<T extends Class<?>> extends ModifierMatcherBas
   /**
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
-   * @param <T> the class whose modifiers shall be checked
+   * @param expectedModifier modifiers to validate
+   * @param <T>              the class whose modifiers shall be checked
+   * @return matcher
    * @see java.lang.reflect.Modifier
    * @since 1.0.0
    */
+  @NotNull
   public static <T extends Class<?>> Matcher<T> classModifierContains(int expectedModifier) {
     return new ClassModifierMatcher<>(expectedModifier, false);
   }

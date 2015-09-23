@@ -19,6 +19,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.reflect;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
  * Depending on the security manager protected as well as private default constructors will be
  * found.
  *
+ * @param <T> class to validate
  * @since 1.0.0
  */
 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
@@ -47,9 +49,11 @@ public class InstantiableViaDefaultConstructor<T extends Class<?>>
    * Depending on the security manager protected as well as private default constructors will be
    * found.
    *
+   * @param <T> class to validate
    * @return matcher
    * @since 1.0.0
    */
+  @NotNull
   public static <T extends Class<?>> Matcher<T> isInstantiableViaDefaultConstructor() {
     return new InstantiableViaDefaultConstructor<>();
   }

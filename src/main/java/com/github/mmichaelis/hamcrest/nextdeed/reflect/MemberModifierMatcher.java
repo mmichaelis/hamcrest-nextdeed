@@ -17,12 +17,14 @@
 package com.github.mmichaelis.hamcrest.nextdeed.reflect;
 
 import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Member;
 
 /**
  * Matcher for modifiers of class members such as constructors, methods and fields.
  *
+ * @param <T> member type (field, method)
  * @see java.lang.reflect.Modifier
  * @since 1.0.0
  */
@@ -42,10 +44,14 @@ public class MemberModifierMatcher<T extends Member> extends ModifierMatcherBase
   /**
    * Matcher for modifiers of members. Modifiers must be exactly as specified.
    *
+   * @param expectedModifier modifiers to validate
+   * @param <T>              member type (field, method)
+   * @return matcher
    * @see java.lang.reflect.Modifier
    * @see #memberModifierContains(int)
    * @since 1.0.0
    */
+  @NotNull
   public static <T extends Member> Matcher<T> memberModifierIs(int expectedModifier) {
     return new MemberModifierMatcher<>(expectedModifier, true);
   }
@@ -53,9 +59,13 @@ public class MemberModifierMatcher<T extends Member> extends ModifierMatcherBase
   /**
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
+   * @param expectedModifier modifiers to validate
+   * @param <T>              member type (field, method)
+   * @return matcher
    * @see java.lang.reflect.Modifier
    * @since 1.0.0
    */
+  @NotNull
   public static <T extends Member> Matcher<T> memberModifierContains(int expectedModifier) {
     return new MemberModifierMatcher<>(expectedModifier, false);
   }
