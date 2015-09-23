@@ -37,21 +37,21 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> input type of function
  * @param <R> output type of function
- * @since SINCE
+ * @since 1.0.0
  */
 public class DescribedFunction<T, R> implements Function<T, R> {
 
   /**
    * The function to describe.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final Function<T, R> delegateFunction;
   /**
    * The description of the function.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final String description;
@@ -62,7 +62,7 @@ public class DescribedFunction<T, R> implements Function<T, R> {
    * @param delegateFunction function to describe (and to forward any requests to)
    * @param description      description to use
    * @see #describe(Function)
-   * @since SINCE
+   * @since 1.0.0
    */
   protected DescribedFunction(@NotNull Function<T, R> delegateFunction,
                               @NotNull String description) {
@@ -77,7 +77,7 @@ public class DescribedFunction<T, R> implements Function<T, R> {
    * @param <T>              input type of function
    * @param <R>              output type of function
    * @return builder for described function
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   public static <T, R> Builder<T, R> describe(@NotNull final Function<T, R> delegateFunction) {
@@ -97,7 +97,7 @@ public class DescribedFunction<T, R> implements Function<T, R> {
    * Redirects any calls to the delegate function.
    * </p>
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @Override
   public R apply(T input) {
@@ -108,7 +108,7 @@ public class DescribedFunction<T, R> implements Function<T, R> {
    * Actually provides the description for the delegate function.
    *
    * @return description
-   * @since SINCE
+   * @since 1.0.0
    */
   @Override
   public String toString() {
@@ -120,7 +120,7 @@ public class DescribedFunction<T, R> implements Function<T, R> {
    *
    * @param <T> input type of described function
    * @param <R> output type of described function
-   * @since SINCE
+   * @since 1.0.0
    */
   public interface Builder<T, R> {
 
@@ -129,7 +129,7 @@ public class DescribedFunction<T, R> implements Function<T, R> {
      *
      * @param description description for the function
      * @return describing function wrapper
-     * @since SINCE
+     * @since 1.0.0
      */
     @NotNull
     Function<T, R> as(@NotNull String description);

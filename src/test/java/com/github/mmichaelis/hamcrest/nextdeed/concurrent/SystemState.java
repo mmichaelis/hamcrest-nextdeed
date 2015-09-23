@@ -19,7 +19,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 /**
  * System States for System under Test.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 enum SystemState {
   STARTING,

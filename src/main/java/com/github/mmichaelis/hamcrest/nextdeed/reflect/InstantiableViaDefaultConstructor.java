@@ -29,7 +29,7 @@ import java.lang.reflect.InvocationTargetException;
  * Depending on the security manager protected as well as private default constructors will be
  * found.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 public class InstantiableViaDefaultConstructor<T extends Class<?>>
@@ -48,7 +48,7 @@ public class InstantiableViaDefaultConstructor<T extends Class<?>>
    * found.
    *
    * @return matcher
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Class<?>> Matcher<T> isInstantiableViaDefaultConstructor() {
     return new InstantiableViaDefaultConstructor<>();

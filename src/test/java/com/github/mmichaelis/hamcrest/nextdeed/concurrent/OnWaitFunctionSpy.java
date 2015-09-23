@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 import java.util.List;
 
 /**
- * @since SINCE
+ * @since 1.0.0
  */
 public class OnWaitFunctionSpy {
   private WaitFunction<SystemUnderTest_SUT, SystemState> waitFunction;

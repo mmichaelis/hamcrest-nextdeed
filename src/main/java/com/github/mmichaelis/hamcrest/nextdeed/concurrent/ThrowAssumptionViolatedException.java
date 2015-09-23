@@ -26,7 +26,7 @@ import org.junit.AssumptionViolatedException;
 /**
  * Strategy to timeout with assumption violation.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 final class ThrowAssumptionViolatedException<T, R>
     implements Function<WaitTimeoutEvent<T, R>, R> {

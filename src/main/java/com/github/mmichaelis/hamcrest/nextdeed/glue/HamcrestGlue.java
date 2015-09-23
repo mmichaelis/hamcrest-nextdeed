@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Glue to Hamcrest, for example to transform a matcher into a predicate.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public final class HamcrestGlue {
 
@@ -40,7 +40,7 @@ public final class HamcrestGlue {
    * @param delegateMatcher matcher to wrap as predicate
    * @param <T>             input type the matcher accepts
    * @return wrapping predicate
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   public static <T> Predicate<T> asPredicate(@NotNull final Matcher<T> delegateMatcher) {

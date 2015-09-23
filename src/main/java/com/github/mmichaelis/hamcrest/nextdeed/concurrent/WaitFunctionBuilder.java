@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <T> input the function will receive
  * @param <R> output the function will provide
- * @since SINCE
+ * @since 1.0.0
  */
 public interface WaitFunctionBuilder<T, R> extends Supplier<Function<T, R>>, WaitBuilder {
   /**

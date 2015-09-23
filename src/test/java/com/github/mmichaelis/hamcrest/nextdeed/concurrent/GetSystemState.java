@@ -22,7 +22,7 @@ import com.google.common.base.Function;
  * Function to retrieve system state.
  *
  * @see SystemUnderTest_SUT
- * @since SINCE
+ * @since 1.0.0
  */
 class GetSystemState implements Function<SystemUnderTest_SUT, SystemState> {
 

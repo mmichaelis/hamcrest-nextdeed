@@ -23,7 +23,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 
 /**
- * @since SINCE
+ * @since 1.0.0
  */
 public class WaitTimeoutExceptionTest {
 

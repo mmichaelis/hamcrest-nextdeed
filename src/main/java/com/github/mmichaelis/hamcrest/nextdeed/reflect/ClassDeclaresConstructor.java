@@ -29,7 +29,7 @@ import java.util.Arrays;
  * Validates that a class declares a constructor with the given parameters.
  *
  * @param <T> the type of the class to check
- * @since SINCE
+ * @since 1.0.0
  */
 public class ClassDeclaresConstructor<T extends Class<?>> extends TypeSafeMatcher<T> {
 

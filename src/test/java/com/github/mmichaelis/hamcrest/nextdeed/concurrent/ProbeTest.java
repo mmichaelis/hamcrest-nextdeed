@@ -70,7 +70,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * {@link ProbeBuilder}. The main focus
  * is to test that the given arguments are correctly handed over to the wait function.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 @RunWith(Parameterized.class)

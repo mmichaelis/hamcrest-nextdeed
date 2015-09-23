@@ -32,7 +32,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 /**
  * Tests {@link FailWithTimeoutExceptionFunction}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 @RunWith(MockitoJUnitRunner.class)
 public class FailWithTimeoutExceptionFunctionTest {

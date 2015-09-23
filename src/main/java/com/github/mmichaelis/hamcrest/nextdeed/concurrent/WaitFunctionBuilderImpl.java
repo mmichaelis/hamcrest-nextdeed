@@ -32,14 +32,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @since SINCE
+ * @since 1.0.0
  */
 final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
 
   /**
    * A grace period for the last poll.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   private static final long DEFAULT_GRACE_PERIOD_MS = 0L;
   /**
@@ -47,13 +47,13 @@ final class WaitFunctionBuilderImpl<T, R> implements WaitFunctionBuilder<T, R> {
    * can never go below this value and for unit tests we do not want to have
    * high delays.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   private static final long DEFAULT_INITIAL_DELAY_MS = 0L;
   /**
    * Factor by which the polling factor decelerates.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   private static final double DEFAULT_DECELERATION_FACTOR = 1.1;
 

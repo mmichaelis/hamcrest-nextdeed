@@ -70,14 +70,14 @@ import org.jetbrains.annotations.NotNull;
  * </dd>
  * </dl>
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public final class Probe {
 
   /**
    * Utility class constructor. You must not instantiate this :-)
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   private Probe() {
     // Utility class
@@ -90,7 +90,7 @@ public final class Probe {
    * @param <R>    the type of state variable you are polling
    * @param target the system under test
    * @return Builder for your waiting assertion, ...
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   public static <T, R> ProbeBuilder<T, R> probing(@NotNull T target) {

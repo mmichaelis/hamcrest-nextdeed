@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Strategy to timeout with assertion error.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 final class ThrowAssertionError<T, R> implements Function<WaitTimeoutEvent<T, R>, R> {
 

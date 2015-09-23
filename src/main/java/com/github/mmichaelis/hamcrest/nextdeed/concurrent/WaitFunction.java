@@ -35,21 +35,21 @@ import java.util.concurrent.TimeUnit;
  * outcome.
  * </p>
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class WaitFunction<T, R> implements Function<T, R> {
 
   /**
    * Minimum time to sleep between polls.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   private static final int MINIMUM_SLEEP_TIME_MS = 1;
   /**
    * Function to continuously determine a result until it matches the
    * expectations denoted by {@link #predicate}.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final Function<T, R> delegateFunction;
@@ -58,7 +58,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
    * Predicate to determine if the retrieved result by the given function meets
    * the expectations.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final Predicate<? super R> predicate;
@@ -66,7 +66,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
   /**
    * Function to determine what to do on timeout.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final Function<WaitTimeoutEvent<T, R>, R> onTimeoutFunction;
@@ -74,14 +74,14 @@ public class WaitFunction<T, R> implements Function<T, R> {
    * Amount of timeout.
    *
    * @see #timeoutTimeUnit
-   * @since SINCE
+   * @since 1.0.0
    */
   private final long timeout;
   /**
    * Unit for timeout.
    *
    * @see #timeout
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final TimeUnit timeoutTimeUnit;
@@ -207,7 +207,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
    * testing purpose.
    *
    * @return time in milliseconds
-   * @since SINCE
+   * @since 1.0.0
    */
   @VisibleForTesting
   long nowMillis() {
@@ -221,7 +221,7 @@ public class WaitFunction<T, R> implements Function<T, R> {
    * actually reach the desired state.
    * </p>
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   private long sleepAndRecalculateDelay(long previousDelay,
                                         long deadlineTimeMs,

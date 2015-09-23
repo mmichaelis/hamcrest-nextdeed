@@ -29,7 +29,7 @@ import org.junit.AssumptionViolatedException;
  *
  * @param <T> the type of system you are probing
  * @param <R> the type of state variable you are polling
- * @since SINCE
+ * @since 1.0.0
  */
 public interface ProbeAssume<T, R> {
   /**

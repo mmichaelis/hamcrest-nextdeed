@@ -78,7 +78,7 @@ public final class NextDeedMatchers {
    *
    * @see java.lang.reflect.Modifier
    * @see #classModifierContains(int)
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Class<?>> Matcher<T> classModifierIs(int expectedModifier) {
     return ClassModifierMatcher.classModifierIs(expectedModifier);
@@ -88,7 +88,7 @@ public final class NextDeedMatchers {
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
    * @see java.lang.reflect.Modifier
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Class<?>> Matcher<T> classModifierContains(int expectedModifier) {
     return ClassModifierMatcher.classModifierContains(expectedModifier);
@@ -98,7 +98,7 @@ public final class NextDeedMatchers {
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
    * @see java.lang.reflect.Modifier
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Member> Matcher<T> memberModifierContains(int expectedModifier) {
     return MemberModifierMatcher.memberModifierContains(expectedModifier);
@@ -109,7 +109,7 @@ public final class NextDeedMatchers {
    *
    * @see java.lang.reflect.Modifier
    * @see #classModifierContains(int)
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Member> Matcher<T> memberModifierIs(int expectedModifier) {
     return MemberModifierMatcher.memberModifierIs(expectedModifier);

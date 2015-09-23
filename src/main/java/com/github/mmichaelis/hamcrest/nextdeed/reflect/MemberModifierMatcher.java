@@ -24,7 +24,7 @@ import java.lang.reflect.Member;
  * Matcher for modifiers of class members such as constructors, methods and fields.
  *
  * @see java.lang.reflect.Modifier
- * @since SINCE
+ * @since 1.0.0
  */
 public class MemberModifierMatcher<T extends Member> extends ModifierMatcherBase<T> {
 
@@ -44,7 +44,7 @@ public class MemberModifierMatcher<T extends Member> extends ModifierMatcherBase
    *
    * @see java.lang.reflect.Modifier
    * @see #memberModifierContains(int)
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Member> Matcher<T> memberModifierIs(int expectedModifier) {
     return new MemberModifierMatcher<>(expectedModifier, true);
@@ -54,7 +54,7 @@ public class MemberModifierMatcher<T extends Member> extends ModifierMatcherBase
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
    * @see java.lang.reflect.Modifier
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Member> Matcher<T> memberModifierContains(int expectedModifier) {
     return new MemberModifierMatcher<>(expectedModifier, false);

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Implementation of event when a WaitFunction times out.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 @SuppressWarnings("MethodParameterOfConcreteClass")
 public class WaitTimeoutEventImpl<T, R> implements WaitTimeoutEvent<T, R> {

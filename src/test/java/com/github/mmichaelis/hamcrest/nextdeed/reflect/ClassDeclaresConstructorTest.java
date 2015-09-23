@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * Tests {@link ClassDeclaresConstructor}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class ClassDeclaresConstructorTest {
 

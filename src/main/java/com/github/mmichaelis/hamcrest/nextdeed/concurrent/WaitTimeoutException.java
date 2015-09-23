@@ -21,7 +21,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
  * In contrast to {@link java.util.concurrent.TimeoutException} this is an
  * unchecked exception.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class WaitTimeoutException extends RuntimeException {
 

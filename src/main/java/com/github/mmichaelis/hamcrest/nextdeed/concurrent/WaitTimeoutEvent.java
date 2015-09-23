@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Event when a WaitFunction times out.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public interface WaitTimeoutEvent<T, R> {
 
@@ -29,7 +29,7 @@ public interface WaitTimeoutEvent<T, R> {
    * Get the source of the timeout event.
    *
    * @return source
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitFunction<T, R> getSource();
@@ -38,7 +38,7 @@ public interface WaitTimeoutEvent<T, R> {
    * Get the consumed milliseconds before the timeout occurred.
    *
    * @return consumed time in milliseconds
-   * @since SINCE
+   * @since 1.0.0
    */
   long getConsumedMs();
 
@@ -46,7 +46,7 @@ public interface WaitTimeoutEvent<T, R> {
    * Get item the delegate function got applied to.
    *
    * @return item; might be {@code null} depending on the input parameters of the function
-   * @since SINCE
+   * @since 1.0.0
    */
   T getItem();
 
@@ -55,7 +55,7 @@ public interface WaitTimeoutEvent<T, R> {
    * predicate.
    *
    * @return result; might be null depending on the delegate function handed over to WaitFunction
-   * @since SINCE
+   * @since 1.0.0
    */
   R getLastResult();
 

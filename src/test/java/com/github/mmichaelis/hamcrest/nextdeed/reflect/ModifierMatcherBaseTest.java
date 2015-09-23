@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * @since SINCE
+ * @since 1.0.0
  */
 @RunWith(Parameterized.class)
 public class ModifierMatcherBaseTest {

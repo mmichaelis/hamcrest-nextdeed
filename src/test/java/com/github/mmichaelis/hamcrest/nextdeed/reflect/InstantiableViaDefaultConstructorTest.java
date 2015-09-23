@@ -29,7 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Tests {@link InstantiableViaDefaultConstructor}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class InstantiableViaDefaultConstructorTest {
 

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 /**
  * Logs the test name and specifies an indent for subsequent log output.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class LogTestName extends TestWatcher {
 

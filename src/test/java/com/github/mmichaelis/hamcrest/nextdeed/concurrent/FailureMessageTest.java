@@ -27,7 +27,7 @@ import org.junit.rules.ExpectedException;
 /**
  * Tests {@link FailureMessage}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class FailureMessageTest {
 

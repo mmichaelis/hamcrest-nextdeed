@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Strategy to timeout with timeout exception.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 final class ThrowWaitTimeoutException<T, R>
     implements Function<WaitTimeoutEvent<T, R>, R> {

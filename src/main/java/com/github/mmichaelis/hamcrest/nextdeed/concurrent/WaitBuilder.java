@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * Interface for any wait-related builders. Using this interface you might forward
  * any configuration options directly to a {@code WaitFunction}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public interface WaitBuilder {
 
@@ -42,7 +42,7 @@ public interface WaitBuilder {
    *
    * @param timeoutMs timeout in milliseconds; must be greater than or equal to 0
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder withinMs(long timeoutMs);
@@ -62,7 +62,7 @@ public interface WaitBuilder {
    * @param timeout  timeout amount; must be greater than or equal to 0
    * @param timeUnit timeout time unit
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder within(long timeout, @NotNull TimeUnit timeUnit);
@@ -85,7 +85,7 @@ public interface WaitBuilder {
    *
    * @param gracePeriodMs grace period in milliseconds; must be greater than or equal to 0
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder withFinalGracePeriodMs(long gracePeriodMs);
@@ -109,7 +109,7 @@ public interface WaitBuilder {
    * @param gracePeriod grace period; must be greater than or equal to 0
    * @param timeUnit    time unit of grace period
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder withFinalGracePeriod(long gracePeriod, @NotNull TimeUnit timeUnit);
@@ -129,7 +129,7 @@ public interface WaitBuilder {
    *
    * @param initialDelayMs initial delay in milliseconds; must be greater than or equal to 0
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder withInitialDelayMs(long initialDelayMs);
@@ -150,7 +150,7 @@ public interface WaitBuilder {
    * @param initialDelay initial delay; must be greater than or equal to 0
    * @param timeUnit     time unit of initial delay
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder withInitialDelay(long initialDelay, @NotNull TimeUnit timeUnit);
@@ -161,7 +161,7 @@ public interface WaitBuilder {
    *
    * @param decelerationFactor factor to decelerate; must be greater than or equal to 1
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder deceleratePollingBy(double decelerationFactor);
@@ -172,7 +172,7 @@ public interface WaitBuilder {
    * </p>
    *
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   WaitBuilder and();

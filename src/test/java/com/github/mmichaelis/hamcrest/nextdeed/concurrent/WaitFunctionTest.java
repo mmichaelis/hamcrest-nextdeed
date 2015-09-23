@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Tests {@link WaitFunction}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class WaitFunctionTest {
 

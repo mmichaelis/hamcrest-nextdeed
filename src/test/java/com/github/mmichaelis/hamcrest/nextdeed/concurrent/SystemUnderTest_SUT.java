@@ -27,7 +27,7 @@ import java.util.Deque;
 /**
  * System under Test.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 class SystemUnderTest_SUT {
 

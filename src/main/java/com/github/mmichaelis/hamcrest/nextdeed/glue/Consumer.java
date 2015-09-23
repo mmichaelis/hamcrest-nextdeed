@@ -21,7 +21,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.glue;
  *
  * @param <T> the type of the input to the operation
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public interface Consumer<T> {
   /**

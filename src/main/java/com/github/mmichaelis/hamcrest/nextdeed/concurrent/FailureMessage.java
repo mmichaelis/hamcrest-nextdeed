@@ -31,28 +31,28 @@ import org.jetbrains.annotations.Nullable;
  * Build the failure message just as Hamcrest does in {@code MatcherAssert}.
  *
  * @param <R> type of the result
- * @since SINCE
+ * @since 1.0.0
  */
 final class FailureMessage<R> {
 
   /**
    * The last result which will be used to build the failure message.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @Nullable
   private final R lastResult;
   /**
    * Description for the failure.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @Nullable
   private final String reason;
   /**
    * Matcher which did not accept the last result.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final Matcher<? super R> matcher;
@@ -63,7 +63,7 @@ final class FailureMessage<R> {
    * @param lastResult last result
    * @param reason     reason given as e. g. assertion message
    * @param matcher    matcher which did not match the last result
-   * @since SINCE
+   * @since 1.0.0
    */
   FailureMessage(@Nullable R lastResult,
                  @Nullable String reason,
@@ -77,7 +77,7 @@ final class FailureMessage<R> {
    * Create the message.
    *
    * @return message
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   public String getMessage() {

@@ -17,6 +17,6 @@
 /**
  * Matchers using reflection to validate classes and their members.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 package com.github.mmichaelis.hamcrest.nextdeed.reflect;

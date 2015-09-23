@@ -21,7 +21,7 @@ import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @since SINCE
+ * @since 1.0.0
  */
 public class TestFunctions {
 

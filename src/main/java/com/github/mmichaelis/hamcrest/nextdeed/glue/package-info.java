@@ -17,6 +17,6 @@
 /**
  * This package contains glue code to third party libraries.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 package com.github.mmichaelis.hamcrest.nextdeed.glue;

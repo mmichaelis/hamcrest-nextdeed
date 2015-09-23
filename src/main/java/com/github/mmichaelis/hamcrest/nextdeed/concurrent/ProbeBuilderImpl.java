@@ -37,35 +37,35 @@ import java.util.concurrent.TimeUnit;
 /**
  * Implementation of {@link ProbeBuilder}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
 
   /**
    * Builder for delegate builder for {@link WaitFunction}.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final WaitFunctionBuilder<T, R> waitFunctionBuilder;
   /**
    * Target, typically the system under test, which will be probed.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final T target;
   /**
    * Consumers which will be called upon timeout.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   @NotNull
   private final Collection<Consumer<WaitTimeoutEvent<T, R>>> onTimeoutConsumers = new ArrayList<>();
   /**
    * Function to retrieve the actual value from the system under test.
    *
-   * @since SINCE
+   * @since 1.0.0
    */
   private Function<T, R> actualFunction;
   private Function<Function<T, R>, Function<T, R>> waitFunctionPreProcessor =
@@ -218,7 +218,7 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
    *
    * @param waitFunctionPreProcessor function to map wait function
    * @return self-reference
-   * @since SINCE
+   * @since 1.0.0
    */
   @VisibleForTesting
   @NotNull

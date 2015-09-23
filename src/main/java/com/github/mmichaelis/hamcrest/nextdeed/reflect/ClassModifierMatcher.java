@@ -22,7 +22,7 @@ import org.hamcrest.Matcher;
  * Matcher for modifiers of classes.
  *
  * @see java.lang.reflect.Modifier
- * @since SINCE
+ * @since 1.0.0
  */
 public class ClassModifierMatcher<T extends Class<?>> extends ModifierMatcherBase<T> {
 
@@ -42,7 +42,7 @@ public class ClassModifierMatcher<T extends Class<?>> extends ModifierMatcherBas
    *
    * @see java.lang.reflect.Modifier
    * @see #classModifierContains(int)
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Class<?>> Matcher<T> classModifierIs(int expectedModifier) {
     return new ClassModifierMatcher<>(expectedModifier, true);
@@ -52,7 +52,7 @@ public class ClassModifierMatcher<T extends Class<?>> extends ModifierMatcherBas
    * Matcher for modifiers of classes. All defined modifiers must be set, but there may be more.
    *
    * @see java.lang.reflect.Modifier
-   * @since SINCE
+   * @since 1.0.0
    */
   public static <T extends Class<?>> Matcher<T> classModifierContains(int expectedModifier) {
     return new ClassModifierMatcher<>(expectedModifier, false);

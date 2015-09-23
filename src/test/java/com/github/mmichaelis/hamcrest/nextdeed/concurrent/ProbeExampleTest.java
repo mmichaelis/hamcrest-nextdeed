@@ -33,7 +33,7 @@ import java.util.Deque;
 /**
  * This test especially exists to show some examples for using Probes.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class ProbeExampleTest {
 

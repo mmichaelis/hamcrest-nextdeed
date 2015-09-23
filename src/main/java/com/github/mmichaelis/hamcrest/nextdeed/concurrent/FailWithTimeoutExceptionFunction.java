@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Default strategy for {@link WaitFunction} to fail with {@link WaitTimeoutException} on timeout.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 final class FailWithTimeoutExceptionFunction<T, R>
     implements Function<WaitTimeoutEvent<T, R>, R> {

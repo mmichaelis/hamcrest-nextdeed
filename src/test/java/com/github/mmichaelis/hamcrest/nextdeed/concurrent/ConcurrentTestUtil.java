@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Utilities for concurrent tests.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public final class ConcurrentTestUtil {
 

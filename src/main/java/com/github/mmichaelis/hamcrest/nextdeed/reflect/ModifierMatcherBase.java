@@ -27,7 +27,7 @@ import java.lang.reflect.Modifier;
  * Matcher for modifiers of class members such as constructors, methods and fields.
  *
  * @see Modifier
- * @since SINCE
+ * @since 1.0.0
  */
 public abstract class ModifierMatcherBase<T> extends TypeSafeMatcher<T> {
 
@@ -43,7 +43,7 @@ public abstract class ModifierMatcherBase<T> extends TypeSafeMatcher<T> {
    * @param strict           if {@code true}, all given modifiers must be set, if {@code false} at
    *                         least these modifiers must be set
    * @see Modifier
-   * @since SINCE
+   * @since 1.0.0
    */
   public ModifierMatcherBase(int expectedModifier, String typeName, boolean strict) {
     this.expectedModifier = expectedModifier;
@@ -72,7 +72,7 @@ public abstract class ModifierMatcherBase<T> extends TypeSafeMatcher<T> {
    * @param item item to retrieve modifiers from
    * @return modifiers
    * @see Modifier
-   * @since SINCE
+   * @since 1.0.0
    */
   protected abstract int getModifiers(T item);
 

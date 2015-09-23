@@ -31,7 +31,7 @@ import java.lang.reflect.Modifier;
 /**
  * Tests {@link MemberModifierMatcher}.
  *
- * @since SINCE
+ * @since 1.0.0
  */
 public class MemberModifierMatcherTest {
 
