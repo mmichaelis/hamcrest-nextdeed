@@ -20,19 +20,25 @@ credentials and keys. Mind that you generate a personal access token for GitHub 
 
 ## Basic Usage
 
-* determine current version
+* **determine current version**
 
     ```
     $ ./gradlew currentVersion
     ```
 
-* dry run release
+* **dry run release**
 
     ```
     ./gradlew release -Prelease.dryRun [-Prelease.disableChecks]
     ```
 
-* release with next incremental version (see [7 Understanding Maven Version Numbers][version-numbers])
+    Mind that also the dry run already does some file replacement (SINCE keyword replaced by
+    current version). So you might use this to do the replacement right before the release
+    and commit the change.
+    
+* **release increment**
+
+    Release the next incremental version (see [7 Understanding Maven Version Numbers][version-numbers]):
 
     ```
     $ ./gradlew release
@@ -43,31 +49,35 @@ credentials and keys. Mind that you generate a personal access token for GitHub 
     * `README.md`: `Version: x.y.z` is replaced by current version
     * `**/*.java`: pattern `SINCE` is replaced by current version
 
-* publish release
+* **publish release**
 
-    Currently to publish the release use:
+    To publish the release just use:
     
     ```
     $ ./gradlew uploadArchives publishGhPages
     ```
 
-    *Note:* `uploadArchives` will automatically determine by the evaluated version if this will
+    `publishGhPages` will upload [Javadoc][]. 
+
+    - - -
+
+    > **Note:** `uploadArchives` will automatically determine by the evaluated version if this will
     be a snapshot release or a normal release. If you want to deploy a (snapshot) release only
     to your local maven repository add the property `local` to your Gradle run:
+    >
+    > ```
+    > $ ./gradlew uploadArchives -Plocal
+    > ```
     
-    ```
-    $ ./gradlew uploadArchives -Plocal
-    ```
+    - - -
     
-    As soon as the `maven-publish` plugin left the incubator this might be replaced with:
-    
-    ```
-    $ ./gradlew publish
-    ```
-
-    `publishGhPages` will upload [Javadoc][]. 
+    > **Future:** As soon as the `maven-publish` plugin left the incubator this might be replaced with:
+    >
+    > ```
+    > $ ./gradlew publish
+    > ```
         
-* change to another minor or version number
+* **Optional:** *change to another minor or version number*
 
     ```
     $ ./gradlew markNextVersion -Prelease.nextVersion=1.0.0
