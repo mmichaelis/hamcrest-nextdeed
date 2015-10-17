@@ -16,6 +16,7 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.image;
 
+import static org.junit.Assert.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.github.mmichaelis.hamcrest.nextdeed.config.NextDeedConfiguration;
@@ -34,6 +35,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 /**
+ * Tests {@link ImageIsEqual}.
+ *
  * @since SINCE
  */
 public class ImageIsEqualTest {
@@ -43,6 +46,7 @@ public class ImageIsEqualTest {
   private static final int SIZE = 8;
   private static final int TILE_SIZE = 2;
   private BufferedImage redWhiteImage;
+  private BufferedImage anotherRedWhiteImage;
   private BufferedImage greenWhiteImage;
 
   @Rule
@@ -58,6 +62,14 @@ public class ImageIsEqualTest {
         .tileColor(Color.RED)
         .background(Color.WHITE)
         .build();
+    anotherRedWhiteImage = new CheckersImageBuilderImpl()
+        .width(SIZE)
+        .height(SIZE)
+        .tileHeight(TILE_SIZE)
+        .tileWidth(TILE_SIZE)
+        .tileColor(Color.RED)
+        .background(Color.WHITE)
+        .build();
     greenWhiteImage = new CheckersImageBuilderImpl()
         .width(SIZE)
         .height(SIZE)
@@ -66,6 +78,16 @@ public class ImageIsEqualTest {
         .tileColor(Color.GREEN)
         .background(Color.WHITE)
         .build();
+  }
+
+  @Test
+  public void imageIsEqualToItself() throws Exception {
+    assertThat(redWhiteImage, ImageIsEqual.imageEqualTo(redWhiteImage));
+  }
+
+  @Test
+  public void imageIsEqualToSameImage() throws Exception {
+    assertThat(redWhiteImage, ImageIsEqual.imageEqualTo(anotherRedWhiteImage));
   }
 
   @Test

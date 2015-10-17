@@ -22,13 +22,13 @@ import static org.junit.Assert.fail;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Supplier;
 
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.concurrent.Callable;
-import java.util.function.Supplier;
 
 /**
  * Validates assertion/assumption errors which cannot be tested with

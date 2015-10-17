@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.Assert.assertThat;
 
+import com.google.common.base.Supplier;
+
 import com.github.mmichaelis.hamcrest.nextdeed.ExceptionValidator;
 
 import org.hamcrest.Matchers;
@@ -31,7 +33,6 @@ import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;
-import java.util.function.Supplier;
 
 /**
  * Tests {@link IsSerializable}.
