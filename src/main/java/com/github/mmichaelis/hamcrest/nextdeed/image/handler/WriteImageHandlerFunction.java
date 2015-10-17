@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.mmichaelis.hamcrest.nextdeed.image;
+package com.github.mmichaelis.hamcrest.nextdeed.image.handler;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
@@ -25,6 +25,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.io.Files;
 
 import com.github.mmichaelis.hamcrest.nextdeed.glue.BiFunction;
+import com.github.mmichaelis.hamcrest.nextdeed.image.ImageException;
+import com.github.mmichaelis.hamcrest.nextdeed.image.ImageType;
 import com.github.mmichaelis.hamcrest.nextdeed.incubator.FileConflictResolver;
 
 import org.jetbrains.annotations.NotNull;

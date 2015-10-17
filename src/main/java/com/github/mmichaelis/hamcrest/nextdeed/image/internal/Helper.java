@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.mmichaelis.hamcrest.nextdeed.image;
+package com.github.mmichaelis.hamcrest.nextdeed.image.internal;
 
 import org.jetbrains.annotations.NotNull;
 

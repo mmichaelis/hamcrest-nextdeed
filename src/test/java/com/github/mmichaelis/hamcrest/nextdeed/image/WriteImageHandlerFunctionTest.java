@@ -18,6 +18,8 @@ package com.github.mmichaelis.hamcrest.nextdeed.image;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import com.github.mmichaelis.hamcrest.nextdeed.image.handler.WriteImageHandlerFunction;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

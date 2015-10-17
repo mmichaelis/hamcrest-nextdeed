@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.mmichaelis.hamcrest.nextdeed.image;
+package com.github.mmichaelis.hamcrest.nextdeed.image.handler;
 
 import static com.github.mmichaelis.hamcrest.nextdeed.config.NextDeedConfiguration.propertyName;
 import static com.github.mmichaelis.hamcrest.nextdeed.config.PropagatedTestDetails.createDefaults;
@@ -23,6 +23,7 @@ import static java.util.Collections.singletonMap;
 import com.google.common.base.Function;
 
 import com.github.mmichaelis.hamcrest.nextdeed.config.NextDeedTestConfiguration;
+import com.github.mmichaelis.hamcrest.nextdeed.image.ImageType;
 
 import org.apache.commons.configuration.Configuration;
 

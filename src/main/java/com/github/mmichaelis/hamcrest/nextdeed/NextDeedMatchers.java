@@ -21,6 +21,9 @@ import com.google.common.base.Function;
 import com.github.mmichaelis.hamcrest.nextdeed.exception.IsJavaCompliantExceptionMatcher;
 import com.github.mmichaelis.hamcrest.nextdeed.exception.JavaComplianceLevel;
 import com.github.mmichaelis.hamcrest.nextdeed.function.ApplyingMatcher;
+import com.github.mmichaelis.hamcrest.nextdeed.glue.BiFunction;
+import com.github.mmichaelis.hamcrest.nextdeed.image.ImageIsEqual;
+import com.github.mmichaelis.hamcrest.nextdeed.image.ImageType;
 import com.github.mmichaelis.hamcrest.nextdeed.io.IsSerializable;
 import com.github.mmichaelis.hamcrest.nextdeed.io.IsSerializable.BareSerializableMatcher;
 import com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassDeclaresConstructor;
@@ -35,6 +38,7 @@ import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Member;
 import java.util.ResourceBundle;
 
@@ -313,6 +317,49 @@ public final class NextDeedMatchers {
   @Deprecated
   public static <T extends Class<?>> Matcher<T> isInstantiableViaDefaultConstructor() {
     return InstantiableViaDefaultConstructor.isInstantiableViaDefaultConstructor();
+  }
+
+  /**
+   * <p>
+   * Comparison without image handler. On failure standard mismatch description is generated.
+   * </p>
+   *
+   * @param expectedImage image to compare to
+   * @return matcher
+   * @since SINCE
+   */
+  @NotNull
+  public static Matcher<BufferedImage> imageEqualTo(@NotNull BufferedImage expectedImage) {
+    return ImageIsEqual.imageEqualTo(expectedImage);
+  }
+
+  /**
+   * <p>
+   * Comparison with image handler. The image handler will be called upon mismatch description to
+   * each image used during comparison and might provide more details of the image or even store
+   * the images for later reference in a report folder.
+   * </p>
+   * <dl>
+   * <dt><strong>Image Handler:</strong></dt>
+   * <dd>
+   * <p>
+   * The image handler gets the type of the image (actual, expected or difference) and the
+   * corresponding image. The output will be appended to the mismatch description and might
+   * either provide some details on the image or if you store the files you might want to
+   * output the location where to find the image.
+   * </p>
+   * </dd>
+   * </dl>
+   *
+   * @param expectedImage        expected image
+   * @param imageHandlerFunction image handler called during mismatch description
+   * @return matcher
+   * @since SINCE
+   */
+  @NotNull
+  public static Matcher<BufferedImage> imageEqualTo(@NotNull BufferedImage expectedImage,
+                                                    @NotNull BiFunction<ImageType, BufferedImage, String> imageHandlerFunction) {
+    return ImageIsEqual.imageEqualTo(expectedImage, imageHandlerFunction);
   }
 
 }

@@ -16,44 +16,120 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.image;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 import com.github.mmichaelis.hamcrest.nextdeed.glue.BiFunction;
+import com.github.mmichaelis.hamcrest.nextdeed.image.internal.DefaultSampleComparisonProcessor;
+import com.github.mmichaelis.hamcrest.nextdeed.image.internal.Helper;
+import com.github.mmichaelis.hamcrest.nextdeed.image.internal.PixelCountingSampleProcessingListener;
+import com.github.mmichaelis.hamcrest.nextdeed.image.internal.SampleComparisonProcessor;
+import com.github.mmichaelis.hamcrest.nextdeed.image.internal.SampleProcessingCompositeContext;
 
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ImageObserver;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 
 /**
+ * Compares two images if they are equal.
+ *
  * @since SINCE
  */
 public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
 
-  private static final Logger LOG = getLogger(ImageIsEqual.class);
   private static final ThreadLocal<BufferedImage> tlDiffImage = new ThreadLocal<>();
 
-  @Nullable
+  @NotNull
   private final BufferedImage expectedImage;
   @Nullable
   private final BiFunction<ImageType, BufferedImage, String> imageHandlerFunction;
 
-  public ImageIsEqual(@Nullable BufferedImage expectedImage) {
+  /**
+   * <p>
+   * Comparison without image handler. On failure standard mismatch description is generated.
+   * </p>
+   *
+   * @param expectedImage image to compare to
+   * @since SINCE
+   */
+  public ImageIsEqual(@NotNull BufferedImage expectedImage) {
     this(expectedImage, null);
   }
 
-  public ImageIsEqual(@Nullable BufferedImage expectedImage,
+  /**
+   * <p>
+   * Comparison with image handler. The image handler will be called upon mismatch description to
+   * each image used during comparison and might provide more details of the image or even store
+   * the images for later reference in a report folder.
+   * </p>
+   * <dl>
+   * <dt><strong>Image Handler:</strong></dt>
+   * <dd>
+   * <p>
+   * The image handler gets the type of the image (actual, expected or difference) and the
+   * corresponding image. The output will be appended to the mismatch description and might
+   * either provide some details on the image or if you store the files you might want to
+   * output the location where to find the image.
+   * </p>
+   * </dd>
+   * </dl>
+   *
+   * @param expectedImage        expected image
+   * @param imageHandlerFunction image handler called during mismatch description
+   * @since SINCE
+   */
+  public ImageIsEqual(@NotNull BufferedImage expectedImage,
                       @Nullable BiFunction<ImageType, BufferedImage, String> imageHandlerFunction) {
     this.expectedImage = expectedImage;
     this.imageHandlerFunction = imageHandlerFunction;
+  }
+
+  /**
+   * <p>
+   * Comparison without image handler. On failure standard mismatch description is generated.
+   * </p>
+   *
+   * @param expectedImage image to compare to
+   * @return matcher
+   * @since SINCE
+   */
+  @NotNull
+  public static Matcher<BufferedImage> imageEqualTo(@NotNull BufferedImage expectedImage) {
+    return new ImageIsEqual(expectedImage);
+  }
+
+  /**
+   * <p>
+   * Comparison with image handler. The image handler will be called upon mismatch description to
+   * each image used during comparison and might provide more details of the image or even store
+   * the images for later reference in a report folder.
+   * </p>
+   * <dl>
+   * <dt><strong>Image Handler:</strong></dt>
+   * <dd>
+   * <p>
+   * The image handler gets the type of the image (actual, expected or difference) and the
+   * corresponding image. The output will be appended to the mismatch description and might
+   * either provide some details on the image or if you store the files you might want to
+   * output the location where to find the image.
+   * </p>
+   * </dd>
+   * </dl>
+   *
+   * @param expectedImage        expected image
+   * @param imageHandlerFunction image handler called during mismatch description
+   * @return matcher
+   * @since SINCE
+   */
+  @NotNull
+  public static Matcher<BufferedImage> imageEqualTo(@NotNull BufferedImage expectedImage,
+                                                    @NotNull BiFunction<ImageType, BufferedImage, String> imageHandlerFunction) {
+    return new ImageIsEqual(expectedImage, imageHandlerFunction);
   }
 
   @Override
@@ -66,11 +142,8 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
   }
 
   @Override
-  protected boolean matchesSafely(BufferedImage actualImage) {
+  protected boolean matchesSafely(@NotNull BufferedImage actualImage) {
     disposeDiffImage();
-    if (actualImage == null) {
-      return expectedImage == null;
-    }
     if (actualImage == expectedImage) {
       return true;
     }
@@ -78,27 +151,30 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
   }
 
   @Override
-  protected void describeMismatchSafely(BufferedImage actualImage,
-                                        Description mismatchDescription) {
+  protected void describeMismatchSafely(@NotNull BufferedImage actualImage,
+                                        @NotNull Description mismatchDescription) {
+    String actualText =
+        (imageHandlerFunction == null) ? String.valueOf(actualImage)
+                                       : imageHandlerFunction.apply(ImageType.ACTUAL, actualImage);
+
     try {
-      if ((actualImage == null) || (expectedImage == null)) {
-        super.describeMismatchSafely(actualImage, mismatchDescription);
-      } else if (!widthIsEqualTo(actualImage) && !heightIsEqualTo(actualImage)) {
-        mismatchDescription.appendText("has different dimensions than ").appendValue(actualImage);
+      if (!widthIsEqualTo(actualImage) && !heightIsEqualTo(actualImage)) {
+        mismatchDescription.appendText(actualText).appendText(" has different dimensions");
       } else if (!typeIsEqualTo(actualImage)) {
-        mismatchDescription.appendText("has type ")
+        mismatchDescription
+            .appendText(actualText)
+            .appendText(" has type ")
             .appendText(Helper.imageTypeString(actualImage))
             .appendText(" rather than expected ")
             .appendText(Helper.imageTypeString(expectedImage));
       } else if (!colorModelIsEqualTo(actualImage)) {
-        mismatchDescription.appendText("has different color model than ").appendValue(actualImage);
+        mismatchDescription.appendText(actualText).appendText("has different color model");
       } else if (!isComparableTo(actualImage)) {
-        mismatchDescription.appendText("was not comparable to ").appendValue(actualImage);
+        mismatchDescription.appendText("was not comparable to ").appendText(actualText);
       } else if (imageHandlerFunction == null) {
         super.describeMismatchSafely(actualImage, mismatchDescription);
       } else {
         BufferedImage difference = tlDiffImage.get();
-        String actualText = imageHandlerFunction.apply(ImageType.ACTUAL, actualImage);
         String differenceText = imageHandlerFunction.apply(ImageType.DIFFERENCE, difference);
         mismatchDescription
             .appendText("is different to ")
@@ -124,7 +200,9 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
 
   private boolean imagesAreEqual(@NotNull BufferedImage actualImage,
                                  @NotNull BufferedImage diffImage) {
-    final SampleComparisonProcessor sampleComparisonProcessor = new DefaultSampleComparisonProcessor();
+    final PixelCountingSampleProcessingListener
+        pixelProcessingListener =
+        new PixelCountingSampleProcessingListener();
     Graphics2D graphics = diffImage.createGraphics();
     graphics.drawImage(expectedImage, 0, 0, null);
     graphics.setComposite(new Composite() {
@@ -132,19 +210,18 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
       public CompositeContext createContext(ColorModel srcColorModel,
                                             ColorModel dstColorModel,
                                             RenderingHints hints) {
-        return new SampleProcessingCompositeContext(sampleComparisonProcessor);
+        SampleComparisonProcessor sampleComparisonProcessor =
+            new DefaultSampleComparisonProcessor();
+        SampleProcessingCompositeContext
+            compositeContext =
+            new SampleProcessingCompositeContext(sampleComparisonProcessor);
+        compositeContext.addPixelListener(pixelProcessingListener);
+        return compositeContext;
       }
     });
-    graphics.drawImage(actualImage, 0, 0, new ImageObserver() {
-      @Override
-      public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-        LOG.info("imageUpdate: I<{}>, Inf<{}>, x<{}>, y<{}>, w<{}>, h<{}>", img, infoflags, x, y,
-                 width, height);
-        return true;
-      }
-    });
+    graphics.drawImage(actualImage, 0, 0, null);
     graphics.dispose();
-    return false;
+    return pixelProcessingListener.getDifferent() == 0;
   }
 
   @NotNull
@@ -169,22 +246,18 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
   }
 
   private boolean typeIsEqualTo(@NotNull BufferedImage actualImage) {
-    assert expectedImage != null;
     return actualImage.getType() == expectedImage.getType();
   }
 
   private boolean widthIsEqualTo(@NotNull RenderedImage actualImage) {
-    assert expectedImage != null;
     return actualImage.getWidth() == expectedImage.getWidth();
   }
 
   private boolean heightIsEqualTo(@NotNull RenderedImage actualImage) {
-    assert expectedImage != null;
     return actualImage.getHeight() == expectedImage.getHeight();
   }
 
   private boolean colorModelIsEqualTo(@NotNull RenderedImage actualImage) {
-    assert expectedImage != null;
     return actualImage.getColorModel().equals(expectedImage.getColorModel());
   }
 

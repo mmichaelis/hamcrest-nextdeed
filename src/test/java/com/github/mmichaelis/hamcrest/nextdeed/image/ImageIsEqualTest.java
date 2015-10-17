@@ -16,10 +16,11 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.image;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.image.ImageIsEqual.imageEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import com.github.mmichaelis.hamcrest.nextdeed.config.NextDeedConfiguration;
 import com.github.mmichaelis.hamcrest.nextdeed.config.PropagatedTestDetails;
 
 import org.junit.Before;
@@ -30,9 +31,6 @@ import org.slf4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 /**
  * Tests {@link ImageIsEqual}.
@@ -82,35 +80,17 @@ public class ImageIsEqualTest {
 
   @Test
   public void imageIsEqualToItself() throws Exception {
-    assertThat(redWhiteImage, ImageIsEqual.imageEqualTo(redWhiteImage));
+    assertThat(redWhiteImage, imageEqualTo(redWhiteImage));
   }
 
   @Test
   public void imageIsEqualToSameImage() throws Exception {
-    assertThat(redWhiteImage, ImageIsEqual.imageEqualTo(anotherRedWhiteImage));
+    assertThat(redWhiteImage, imageEqualTo(anotherRedWhiteImage));
   }
 
   @Test
-  public void poc() throws Exception {
-    ImageIsEqual imageIsEqual = new ImageIsEqual(redWhiteImage);
-    LOG.info("Test Name: {}",
-             NextDeedConfiguration.HAMCREST_NEXT_DEED_CONFIG.get().getString("testName"));
-/*
-    assertThat(greenWhiteImage, imageIsEqual);
-*/
+  public void imageIsNotEqualToOther() throws Exception {
+    assertThat(redWhiteImage, not(imageEqualTo(greenWhiteImage)));
   }
 
-  @Test
-  public void system() throws Exception {
-    Properties properties = System.getProperties();
-    for (Entry<Object, Object> entry : properties.entrySet()) {
-      LOG.info("{} = {}", entry.getKey(), entry.getValue());
-    }
-
-    Map<String, String> map = System.getenv();
-    for (Entry<String, String> entry : map.entrySet()) {
-      LOG.info("{} = {}", entry.getKey(), entry.getValue());
-    }
-
-  }
 }
