@@ -1,0 +1,27 @@
+# EditorConfig is awesome: http://EditorConfig.org
+#
+# All available options within IntelliJ idea can be found here:
+# https://github.com/JetBrains/intellij-community/tree/master/plugins/editorconfig/src/org/editorconfig/configmanagement
+#
+# There is an open issue to support even more formatting so that this might replace the
+# Idea codestyle settings completely one day:
+# Support editorconfig domain settings : WEB-16195 <https://youtrack.jetbrains.com/issue/WEB-16195>
+#
+
+# top-most EditorConfig file
+root = true
+
+[*]
+charset = utf-8
+continuation_indent_size = 4
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+trim_trailing_whitespace = true
+
+[*.sh]
+end_of_line = lf
+
+[*.bat]
+end_of_line = crlf
