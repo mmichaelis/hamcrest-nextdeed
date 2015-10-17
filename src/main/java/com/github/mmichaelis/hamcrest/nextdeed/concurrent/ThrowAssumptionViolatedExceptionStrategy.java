@@ -28,7 +28,7 @@ import org.junit.AssumptionViolatedException;
  *
  * @since 1.0.0
  */
-final class ThrowAssumptionViolatedException<T, R>
+final class ThrowAssumptionViolatedExceptionStrategy<T, R>
     implements Function<WaitTimeoutEvent<T, R>, R> {
 
   /**
@@ -40,7 +40,7 @@ final class ThrowAssumptionViolatedException<T, R>
    */
   private final Matcher<? super R> matcher;
 
-  public ThrowAssumptionViolatedException(String reason, Matcher<? super R> matcher) {
+  public ThrowAssumptionViolatedExceptionStrategy(String reason, Matcher<? super R> matcher) {
     this.reason = reason;
     this.matcher = matcher;
   }

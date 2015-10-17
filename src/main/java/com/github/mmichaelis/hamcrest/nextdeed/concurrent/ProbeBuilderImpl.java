@@ -160,7 +160,7 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
     checkThat(
         actualFunction,
         matcher,
-        new ThrowAssertionError<T, R>(reason, matcher));
+        new ThrowAssertionErrorStrategy<T, R>(reason, matcher));
   }
 
   @Override
@@ -176,7 +176,7 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
     checkThat(
         actualFunction,
         matcher,
-        new ThrowAssumptionViolatedException<T, R>(reason, matcher));
+        new ThrowAssumptionViolatedExceptionStrategy<T, R>(reason, matcher));
   }
 
   @Override
@@ -192,7 +192,7 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
     checkThat(
         actualFunction,
         matcher,
-        new ThrowWaitTimeoutException<T, R>(reason, matcher));
+        new ThrowWaitTimeoutExceptionStrategy<T, R>(reason, matcher));
   }
 
   @Override

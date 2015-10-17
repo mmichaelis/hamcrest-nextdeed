@@ -23,6 +23,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
  *
  * @since 1.0.0
  */
+@SuppressWarnings("unused")
 public class WaitTimeoutException extends RuntimeException {
 
   private static final long serialVersionUID = 575405375016958830L;
@@ -40,5 +41,12 @@ public class WaitTimeoutException extends RuntimeException {
 
   public WaitTimeoutException(Throwable cause) {
     super(cause);
+  }
+
+  protected WaitTimeoutException(String message,
+                                 Throwable cause,
+                                 boolean enableSuppression,
+                                 boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
   }
 }

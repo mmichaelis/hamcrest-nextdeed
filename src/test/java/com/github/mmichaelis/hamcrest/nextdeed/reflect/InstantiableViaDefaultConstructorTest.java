@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @since 1.0.0
  */
+@SuppressWarnings("deprecation")
 public class InstantiableViaDefaultConstructorTest {
 
   @Test

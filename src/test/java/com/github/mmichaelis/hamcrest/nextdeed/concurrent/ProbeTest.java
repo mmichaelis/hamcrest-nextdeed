@@ -16,10 +16,11 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers.classModifierContains;
+import static com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers.declaresNoArgumentsConstructor;
+import static com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers.isInstantiableWithNoArguments;
+import static com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers.memberModifierContains;
 import static com.github.mmichaelis.hamcrest.nextdeed.concurrent.OnWaitFunctionSpy.spyOnWaitFunction;
-import static com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassModifierMatcher.classModifierContains;
-import static com.github.mmichaelis.hamcrest.nextdeed.reflect.InstantiableViaDefaultConstructor.isInstantiableViaDefaultConstructor;
-import static com.github.mmichaelis.hamcrest.nextdeed.reflect.MemberModifierMatcher.memberModifierContains;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.allOf;
@@ -473,15 +474,17 @@ public class ProbeTest {
 
   @Test
   public void probeIsUtilityClass() throws Exception {
-    errorCollector.checkThat("Class must be final.",
-                             Probe.class,
-                             classModifierContains(Modifier.FINAL));
-    errorCollector.checkThat("Any constructors must be private.",
-                             asList(Probe.class.getDeclaredConstructors()),
-                             everyItem(memberModifierContains(Modifier.PRIVATE)));
-    assertThat("Default constructor must exist.",
-               Probe.class,
-               isInstantiableViaDefaultConstructor());
+    assertThat(Probe.class,
+               allOf(
+                   declaresNoArgumentsConstructor(),
+                   classModifierContains(Modifier.FINAL),
+                   isInstantiableWithNoArguments()
+               )
+    );
+
+    assertThat("Any constructors must be private.",
+               asList(Probe.class.getDeclaredConstructors()),
+               everyItem(memberModifierContains(Modifier.PRIVATE)));
   }
 
   private enum ProbeFacadeMode {

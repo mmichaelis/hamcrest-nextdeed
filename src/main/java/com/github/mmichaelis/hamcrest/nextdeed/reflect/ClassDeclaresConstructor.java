@@ -21,6 +21,7 @@ import com.google.common.base.MoreObjects;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -40,6 +41,7 @@ public class ClassDeclaresConstructor<T extends Class<?>> extends TypeSafeMatche
    * Create matcher validating that a declared constructor with the given parameters exist.
    *
    * @param parameterTypes the parameter array
+   * @since 1.0.0
    */
   public ClassDeclaresConstructor(@Nullable Class<?>... parameterTypes) {
     this.parameterTypes = (parameterTypes == null) ? null : parameterTypes.clone();
@@ -51,10 +53,26 @@ public class ClassDeclaresConstructor<T extends Class<?>> extends TypeSafeMatche
    * @param parameterTypes the parameter array
    * @param <T>            the type of the class to check
    * @return matcher
+   * @see #declaresNoArgumentsConstructor()
+   * @since 1.0.0
    */
+  @NotNull
   public static <T extends Class<?>> Matcher<T> declaresConstructor(
       @Nullable Class<?>... parameterTypes) {
     return new ClassDeclaresConstructor<>(parameterTypes);
+  }
+
+  /**
+   * Validates that a declared constructor with no parameters exists.
+   *
+   * @param <T> the type of the class to check
+   * @return matcher
+   * @see #declaresConstructor(Class[])
+   * @since SINCE
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> declaresNoArgumentsConstructor() {
+    return new ClassDeclaresConstructor<>();
   }
 
   @Override

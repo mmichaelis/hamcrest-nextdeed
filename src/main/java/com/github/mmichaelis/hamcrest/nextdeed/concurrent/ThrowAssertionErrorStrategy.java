@@ -16,19 +16,21 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Optional;
 
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Strategy to timeout with timeout exception.
+ * Strategy to timeout with assertion error.
  *
  * @since 1.0.0
  */
-final class ThrowWaitTimeoutException<T, R>
-    implements Function<WaitTimeoutEvent<T, R>, R> {
+final class ThrowAssertionErrorStrategy<T, R> implements Function<WaitTimeoutEvent<T, R>, R> {
 
   /**
    * Custom message for assertion error.
@@ -39,7 +41,7 @@ final class ThrowWaitTimeoutException<T, R>
    */
   private final Matcher<? super R> matcher;
 
-  public ThrowWaitTimeoutException(String reason, Matcher<? super R> matcher) {
+  public ThrowAssertionErrorStrategy(String reason, Matcher<? super R> matcher) {
     this.reason = reason;
     this.matcher = matcher;
   }
@@ -48,10 +50,7 @@ final class ThrowWaitTimeoutException<T, R>
   public R apply(@Nullable WaitTimeoutEvent<T, R> input) {
     assert input != null : "null values unexpected";
     R lastResult = input.getLastResult();
-    if (!matcher.matches(lastResult)) {
-      throw new WaitTimeoutException(
-          new FailureMessage<>(lastResult, reason, matcher).getMessage());
-    }
+    assertThat(Optional.fromNullable(reason).or(""), lastResult, matcher);
     // Will never get here unless as last validation the actual value eventually matches,
     // which actually means that the matcher responds differently on the same value.
     return lastResult;

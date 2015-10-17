@@ -23,11 +23,11 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/exception/JavaComplianceLevel.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/exception/Messages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/exception/package-info.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/helper/FileConflictResolver.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/helper/PathConflictResolver.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/DefaultImageFileProvider.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageException.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/WriteImageHandlerFunction.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/FileConflictResolver.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/PathConflictResolver.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/SystemPropertyChanger.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/package-info.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/io/IoMessages.java" charset="UTF-8" />
@@ -66,9 +66,9 @@
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/exception/ExceptionMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/exception/IsJavaCompliantExceptionMatcherTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/glue/HamcrestGlueTest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/helper/FileConflictResolverTest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/helper/PathConflictResolverTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageIsEqualTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/FileConflictResolverTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/PathConflictResolverTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/io/IoMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/io/IsSerializableTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/reflect/InstantiableViaDefaultConstructorTest.java" charset="UTF-8" />

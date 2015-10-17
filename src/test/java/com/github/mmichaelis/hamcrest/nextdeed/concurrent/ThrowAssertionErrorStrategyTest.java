@@ -41,7 +41,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @since 1.0.0
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ThrowAssertionErrorTest {
+public class ThrowAssertionErrorStrategyTest {
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
@@ -60,7 +60,7 @@ public class ThrowAssertionErrorTest {
   public void setUp() throws Exception {
     failureMessage = "some message";
     matcherDescription = "expected string";
-    timeoutExceptionFunction = new ThrowAssertionError<>(failureMessage,
+    timeoutExceptionFunction = new ThrowAssertionErrorStrategy<>(failureMessage,
                                                          containsString(matcherDescription));
   }
 

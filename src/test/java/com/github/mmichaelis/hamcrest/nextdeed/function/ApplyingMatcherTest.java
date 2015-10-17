@@ -17,14 +17,17 @@
 package com.github.mmichaelis.hamcrest.nextdeed.function;
 
 import static com.github.mmichaelis.hamcrest.nextdeed.function.ApplyingMatcher.applying;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.Assert.assertThat;
 
 import com.google.common.base.Function;
 
 import com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -69,8 +72,22 @@ public class ApplyingMatcherTest {
     }
 
     assertThat("Comparison should have failed.", caughtError, notNullValue());
-    assertThat("Message should contain shape from match.", caughtError.getMessage(), Matchers
-        .containsString(firstShape));
+    assertThat("Message should contain shape from match.",
+               caughtError.getMessage(),
+               containsString(firstShape));
+  }
+
+  @Test
+  public void relevantInformationInToString() throws Exception {
+    String shape = "cat";
+    Matcher<String> delegateMatcher = equalTo(shape);
+    Function<Shapeshifter, String> function = new GetShape();
+    Matcher<Shapeshifter> matcher = applying(function, delegateMatcher);
+    assertThat(matcher, Matchers.hasToString(Matchers.allOf(
+        stringContainsInOrder("delegateMatcher", String.valueOf(delegateMatcher)),
+        stringContainsInOrder("function", String.valueOf(function)),
+        containsString("lastValue")
+    )));
   }
 
   private static class Shapeshifter {

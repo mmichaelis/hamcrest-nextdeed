@@ -32,8 +32,10 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @param <T> class to validate
  * @since 1.0.0
+ * @deprecated Use {@link InstantiableViaConstructor} instead.
  */
-@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
+@SuppressWarnings({"ThrowableResultOfMethodCallIgnored", "unused", "deprecation"})
+@Deprecated
 public class InstantiableViaDefaultConstructor<T extends Class<?>>
     extends CustomTypeSafeMatcher<T> {
 
@@ -52,8 +54,10 @@ public class InstantiableViaDefaultConstructor<T extends Class<?>>
    * @param <T> class to validate
    * @return matcher
    * @since 1.0.0
+   * @deprecated Use {@link InstantiableViaConstructor#isInstantiableWithNoArguments()} instead.
    */
   @NotNull
+  @Deprecated
   public static <T extends Class<?>> Matcher<T> isInstantiableViaDefaultConstructor() {
     return new InstantiableViaDefaultConstructor<>();
   }

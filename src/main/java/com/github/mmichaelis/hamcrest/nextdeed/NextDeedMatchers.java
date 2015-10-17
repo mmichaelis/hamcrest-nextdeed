@@ -18,16 +18,25 @@ package com.github.mmichaelis.hamcrest.nextdeed;
 
 import com.google.common.base.Function;
 
+import com.github.mmichaelis.hamcrest.nextdeed.exception.IsJavaCompliantExceptionMatcher;
+import com.github.mmichaelis.hamcrest.nextdeed.exception.JavaComplianceLevel;
 import com.github.mmichaelis.hamcrest.nextdeed.function.ApplyingMatcher;
+import com.github.mmichaelis.hamcrest.nextdeed.io.IsSerializable;
+import com.github.mmichaelis.hamcrest.nextdeed.io.IsSerializable.BareSerializableMatcher;
 import com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassDeclaresConstructor;
+import com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassDeclaresMethod;
 import com.github.mmichaelis.hamcrest.nextdeed.reflect.ClassModifierMatcher;
+import com.github.mmichaelis.hamcrest.nextdeed.reflect.InstantiableViaConstructor;
+import com.github.mmichaelis.hamcrest.nextdeed.reflect.InstantiableViaDefaultConstructor;
 import com.github.mmichaelis.hamcrest.nextdeed.reflect.MemberModifierMatcher;
+import com.github.mmichaelis.hamcrest.nextdeed.util.ResourceBundleContainsKey;
 
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Member;
+import java.util.ResourceBundle;
 
 /**
  * <p>
@@ -67,10 +76,24 @@ public final class NextDeedMatchers {
    * @param parameterTypes the parameter array
    * @param <T>            the type of the class to check
    * @return matcher
+   * @see #declaresNoArgumentsConstructor()
    */
   public static <T extends Class<?>> Matcher<T> declaresConstructor(
       @Nullable Class<?>... parameterTypes) {
     return ClassDeclaresConstructor.declaresConstructor(parameterTypes);
+  }
+
+  /**
+   * Validates that a declared constructor with no parameters exists.
+   *
+   * @param <T> the type of the class to check
+   * @return matcher
+   * @see #declaresConstructor(Class[])
+   * @since SINCE
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> declaresNoArgumentsConstructor() {
+    return ClassDeclaresConstructor.declaresNoArgumentsConstructor();
   }
 
   /**
@@ -125,6 +148,171 @@ public final class NextDeedMatchers {
    */
   public static <T extends Member> Matcher<T> memberModifierIs(int expectedModifier) {
     return MemberModifierMatcher.memberModifierIs(expectedModifier);
+  }
+
+  /**
+   * Validates that the exception (or object) is compliant to standard Java Exceptions at
+   * a certain compliance level. For example an exception cause exists since Java 1.1.
+   *
+   * @param level Java level to check
+   * @param <T>   type of the exception/object
+   * @return matcher
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> isJavaCompliantException(
+      @NotNull JavaComplianceLevel level) {
+    return IsJavaCompliantExceptionMatcher.isJavaCompliantException(level);
+  }
+
+  /**
+   * <p>
+   * Simple check that an object serializes and deserializes. You might want to extend
+   * it with additional checks if the deserialized object matches your requirements
+   * (see {@link BareSerializableMatcher#deserializedResultMatches(Matcher)}).
+   * </p>
+   *
+   * @param <T> type to check
+   * @return matcher
+   * @see BareSerializableMatcher#deserializedResultMatches(Matcher)
+   * @see BareSerializableMatcher#and()
+   * @see #isSerializable(Class)
+   * @since SINCE
+   */
+  @SuppressWarnings("MethodReturnOfConcreteClass")
+  @NotNull
+  public static <T> BareSerializableMatcher<T> isSerializable() {
+    return IsSerializable.isSerializable();
+  }
+
+  /**
+   * <p>
+   * Simple check that an object serializes and deserializes. You might want to extend
+   * it with additional checks if the deserialized object matches your requirements
+   * (see {@link BareSerializableMatcher#deserializedResultMatches(Matcher)}).
+   * </p>
+   *
+   * @param <T>       type to check
+   * @param typeToken token to successfully resolve {@code <T>}.
+   * @return matcher
+   * @see BareSerializableMatcher#deserializedResultMatches(Matcher)
+   * @see BareSerializableMatcher#and()
+   * @since SINCE
+   */
+  @SuppressWarnings({"MethodReturnOfConcreteClass", "UnusedParameters"})
+  @NotNull
+  public static <T> BareSerializableMatcher<T> isSerializable(Class<T> typeToken) {
+    return IsSerializable.isSerializable(typeToken);
+  }
+
+  /**
+   * Validates that a resource bundle contains the given key.
+   *
+   * @param expectedKey expected key
+   * @return matcher
+   */
+  @NotNull
+  public static Matcher<ResourceBundle> resourceBundleContainsKey(@NotNull String expectedKey) {
+    return ResourceBundleContainsKey.resourceBundleContainsKey(expectedKey);
+  }
+
+  /**
+   * Validates that a declared method with the possibly given parameters exists.
+   *
+   * @param methodName     name of the method
+   * @param parameterTypes the parameter array; {@code null} for ignoring parameters and just search
+   *                       for name
+   * @param <T>            the type of the class to check
+   * @return matcher
+   * @see #declaresMethodWithName(String)
+   * @see #declaresNoArgumentsMethod(String)
+   * @since SINCE
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> declaresMethod(
+      @NotNull String methodName,
+      @Nullable Class<?>... parameterTypes) {
+    return ClassDeclaresMethod.declaresMethod(methodName, parameterTypes);
+  }
+
+  /**
+   * Validates that a declared method with no arguments exists.
+   *
+   * @param methodName name of the method
+   * @param <T>        the type of the class to check
+   * @return matcher
+   * @see #declaresMethod(String, Class[])
+   * @see #declaresMethodWithName(String)
+   * @since SINCE
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> declaresNoArgumentsMethod(
+      @NotNull String methodName) {
+    return ClassDeclaresMethod.declaresNoArgumentsMethod(methodName);
+  }
+
+  /**
+   * Validates that a declared method with the given name exists, no matter what parameters the
+   * method has.
+   *
+   * @param methodName name of the method
+   * @param <T>        the type of the class to check
+   * @return matcher
+   * @see #declaresMethod(String, Class[])
+   * @see #declaresNoArgumentsMethod(String)
+   * @since SINCE
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> declaresMethodWithName(
+      @NotNull String methodName) {
+    return ClassDeclaresMethod.declaresMethodWithName(methodName);
+  }
+
+  /**
+   * Validates that a declared constructor with the given parameters exists and can be
+   * instantiated.
+   *
+   * @param parameters the parameter array
+   * @param <T>        the type of the class to check
+   * @return matcher
+   * @see #isInstantiableWithNoArguments()
+   * @since SINCE
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> isInstantiableWith(
+      @Nullable Object... parameters) {
+    return InstantiableViaConstructor.isInstantiableWith(parameters);
+  }
+
+  /**
+   * Validates that a declared constructor with no arguments exists and can be
+   * instantiated.
+   *
+   * @param <T> the type of the class to check
+   * @return matcher
+   * @see #isInstantiableWith(Object...)
+   * @since SINCE
+   */
+  @NotNull
+  public static <T extends Class<?>> Matcher<T> isInstantiableWithNoArguments() {
+    return InstantiableViaConstructor.isInstantiableWithNoArguments();
+  }
+
+  /**
+   * Validates that the given class is instantiable via default constructor. This means that
+   * the default constructor must exist and that it must be able to be called without exceptions.
+   * Depending on the security manager protected as well as private default constructors will be
+   * found.
+   *
+   * @param <T> class to validate
+   * @return matcher
+   * @since SINCE
+   * @deprecated Use {@link InstantiableViaConstructor#isInstantiableWithNoArguments()} instead.
+   */
+  @SuppressWarnings("deprecation")
+  @NotNull
+  @Deprecated
+  public static <T extends Class<?>> Matcher<T> isInstantiableViaDefaultConstructor() {
+    return InstantiableViaDefaultConstructor.isInstantiableViaDefaultConstructor();
   }
 
 }

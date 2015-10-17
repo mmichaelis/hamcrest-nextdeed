@@ -42,7 +42,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @since 1.0.0
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ThrowAssumptionViolatedExceptionTest {
+public class ThrowAssumptionViolatedExceptionStrategyTest {
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
@@ -61,7 +61,7 @@ public class ThrowAssumptionViolatedExceptionTest {
   public void setUp() throws Exception {
     failureMessage = "some message";
     matcherDescription = "expected string";
-    timeoutExceptionFunction = new ThrowAssumptionViolatedException<>(failureMessage,
+    timeoutExceptionFunction = new ThrowAssumptionViolatedExceptionStrategy<>(failureMessage,
                                                               containsString(matcherDescription));
   }
 

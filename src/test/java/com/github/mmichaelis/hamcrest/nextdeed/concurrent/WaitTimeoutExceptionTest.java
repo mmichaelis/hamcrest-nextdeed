@@ -16,51 +16,93 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers.applying;
+import static com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers.isJavaCompliantException;
+import static com.github.mmichaelis.hamcrest.nextdeed.NextDeedMatchers.isSerializable;
+import static com.github.mmichaelis.hamcrest.nextdeed.exception.JavaComplianceLevel.JAVA_1_7;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import com.google.common.base.Function;
+
 import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TestName;
 
 /**
+ * Tests {@link WaitTimeoutException}.
+ *
  * @since 1.0.0
  */
 public class WaitTimeoutExceptionTest {
 
-  @Rule
-  public ExpectedException expectedException = ExpectedException.none();
-  @Rule
-  public TestName testName = new TestName();
+  private static final Function<Throwable, String>
+      GET_MESSAGE_FUNCTION =
+      new Function<Throwable, String>() {
+        @Override
+        public String apply(Throwable input) {
+          return input.getMessage();
+        }
+      };
+
+  private static final Function<Throwable, Throwable>
+      GET_CAUSE_FUNCTION =
+      new Function<Throwable, Throwable>() {
+        @Override
+        public Throwable apply(Throwable input) {
+          return input.getCause();
+        }
+      };
 
   @Test
-  public void noArgConstructor() throws Exception {
-    expectedException.expect(WaitTimeoutException.class);
-    expectedException.expectCause(Matchers.nullValue(Throwable.class));
-    expectedException.expectMessage(Matchers.emptyOrNullString());
-    throw new WaitTimeoutException();
+  public void fulfillsJavaComplianceLevel() throws Exception {
+    assertThat(WaitTimeoutException.class,
+               isJavaCompliantException(JAVA_1_7));
   }
 
   @Test
-  public void onlyCauseConstructor() throws Exception {
-    expectedException.expect(WaitTimeoutException.class);
-    expectedException.expectCause(Matchers.<Exception>instanceOf(IllegalStateException.class));
-    expectedException.expectMessage(Matchers.containsString(IllegalStateException.class.getName()));
-    throw new WaitTimeoutException(new IllegalStateException());
+  public void defaultExceptionIsSerializable() throws Exception {
+    assertThat(new WaitTimeoutException(), isSerializable());
   }
 
   @Test
-  public void onlyMessageConstructor() throws Exception {
-    expectedException.expect(WaitTimeoutException.class);
-    expectedException.expectCause(Matchers.nullValue(Throwable.class));
-    expectedException.expectMessage(Matchers.containsString(testName.getMethodName()));
-    throw new WaitTimeoutException(testName.getMethodName());
+  public void withMessageExceptionIsSerializable() throws Exception {
+    String message = "some message";
+    assertThat(new WaitTimeoutException(message),
+               isSerializable(Throwable.class)
+                   .and()
+                   .deserializedResultMatches(
+                       applying(GET_MESSAGE_FUNCTION, equalTo(message))
+                   )
+    );
   }
 
   @Test
-  public void messageAndCauseConstructor() throws Exception {
-    expectedException.expect(WaitTimeoutException.class);
-    expectedException.expectCause(Matchers.<Exception>instanceOf(IllegalStateException.class));
-    expectedException.expectMessage(Matchers.containsString(testName.getMethodName()));
-    throw new WaitTimeoutException(testName.getMethodName(), new IllegalStateException());
+  public void withCauseExceptionIsSerializable() throws Exception {
+    Throwable someCause = new RuntimeException();
+    assertThat(new WaitTimeoutException(someCause),
+               isSerializable(Throwable.class)
+                   .and()
+                   .deserializedResultMatches(
+                       applying(GET_CAUSE_FUNCTION, Matchers.notNullValue())
+                   )
+    );
   }
+
+  @Test
+  public void withMessageCauseExceptionIsSerializable() throws Exception {
+    String message = "some message";
+    Throwable someCause = new RuntimeException();
+    assertThat(new WaitTimeoutException(message, someCause),
+               isSerializable(Throwable.class)
+                   .and()
+                   .deserializedResultMatches(
+                       allOf(
+                           applying(GET_MESSAGE_FUNCTION, equalTo(message)),
+                           applying(GET_CAUSE_FUNCTION, Matchers.notNullValue())
+                       )
+                   )
+    );
+  }
+
 }
