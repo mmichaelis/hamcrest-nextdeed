@@ -54,7 +54,8 @@ public class InstantiableViaConstructor<T extends Class<?>> extends IssuesMatche
    * Create matcher validating that a declared constructor with the given parameters exist and
    * can be instantiated.
    *
-   * @param parameters the parameter array
+   * @param parameters the parameter array; must not contain {@code null} values as otherwise the
+   *                   type cannot be guessed
    * @since SINCE
    */
   public InstantiableViaConstructor(@Nullable Object... parameters) {
@@ -105,17 +106,6 @@ public class InstantiableViaConstructor<T extends Class<?>> extends IssuesMatche
     return new InstantiableViaConstructor<>();
   }
 
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("parameters", (parameters == null) ? null : Arrays.asList(parameters))
-        .add("parameterTypes", (parameterTypes == null) ? null : Arrays.asList(parameterTypes))
-        .add("super", super.toString())
-        .toString();
-  }
-
   @Override
   protected void validate(@NotNull T item, @NotNull Collection<Issue> issues) {
     Constructor<?> constructor;
@@ -131,6 +121,16 @@ public class InstantiableViaConstructor<T extends Class<?>> extends IssuesMatche
     } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
       issues.add(issue(messages().cannotInstantiateWithConstructor(parameterTypes, e)));
     }
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
+        .add("parameters", (parameters == null) ? null : Arrays.asList(parameters))
+        .add("parameterTypes", (parameterTypes == null) ? null : Arrays.asList(parameterTypes))
+        .add("super", super.toString())
+        .toString();
   }
 
 }
