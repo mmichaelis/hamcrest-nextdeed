@@ -48,9 +48,11 @@ import org.jetbrains.annotations.NotNull;
 public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
 
   @NotNull
-  private final ThreadLocal<T> lastValue = new ThreadLocal<>();
+  private final Reference<T> lastValueReference = new ReferenceImpl<>();
+
   @NotNull
   private final Function<F, T> function;
+
   @NotNull
   private final Matcher<? super T> delegateMatcher;
 
@@ -100,21 +102,32 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
         .add("super", super.toString())
         .add("delegateMatcher", delegateMatcher)
         .add("function", function)
-        .add("lastValue", lastValue)
+        .add("lastValueReference", lastValueReference)
         .toString();
   }
 
   @Override
   protected boolean matchesSafely(F item) {
-    lastValue.set(function.apply(item));
-    return delegateMatcher.matches(lastValue.get());
+    synchronized (lastValueReference) {
+      return delegateMatcher.matches(lastValueReference.set(function.apply(item)));
+    }
   }
 
   @Override
   protected void describeMismatchSafely(F item, @NotNull Description mismatchDescription) {
-    // Ignoring item, expecting that it did not change between call to describeMismatch and matches.
-    delegateMatcher.describeMismatch(lastValue.get(),
-                                     requireNonNull(mismatchDescription,
-                                                    "mismatchDescription must not be null."));
+    boolean recalculationRequired = false;
+    T actualValue = null;
+    synchronized (lastValueReference) {
+      if (lastValueReference.isSet()) {
+        actualValue = lastValueReference.remove();
+      } else {
+        recalculationRequired = true;
+      }
+    }
+    if (recalculationRequired) {
+      actualValue = function.apply(item);
+    }
+
+    delegateMatcher.describeMismatch(actualValue, mismatchDescription);
   }
 }
