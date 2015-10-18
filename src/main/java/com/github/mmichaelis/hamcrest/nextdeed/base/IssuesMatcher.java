@@ -18,6 +18,8 @@ package com.github.mmichaelis.hamcrest.nextdeed.base;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import com.google.common.base.MoreObjects;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
@@ -52,13 +54,7 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
 
   private static final Logger LOG = getLogger(IssuesMatcher.class);
 
-  private static final ThreadLocal<Collection<Issue>> ISSUES_THREAD_LOCAL =
-      new ThreadLocal<Collection<Issue>>() {
-        @Override
-        protected Collection<Issue> initialValue() {
-          return new HashSet<>();
-        }
-      };
+  private final Collection<Issue> issues = new HashSet<>();
   private String message;
 
   protected IssuesMatcher() {
@@ -80,35 +76,37 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
 
   @Override
   protected final boolean matchesSafely(T item) {
-    ISSUES_THREAD_LOCAL.remove();
-    Collection<Issue> issues = ISSUES_THREAD_LOCAL.get();
-    validate(item, issues);
-    boolean issuesEmpty = issues.isEmpty();
-    if (issuesEmpty) {
-      ISSUES_THREAD_LOCAL.remove();
+    Collection<Issue> newIssues = new HashSet<>();
+    validate(item, newIssues);
+    synchronized (issues) {
+      issues.clear();
+      issues.addAll(newIssues);
     }
-    return issuesEmpty;
+    return issues.isEmpty();
   }
 
   @Override
   protected final void describeMismatchSafely(T item, Description mismatchDescription) {
-    Collection<Issue> issues = ISSUES_THREAD_LOCAL.get();
-    issues = possiblyRecalculateIssues(item, issues);
-    ISSUES_THREAD_LOCAL.remove();
+    Collection<Issue> mismatchIssues;
+    synchronized (issues) {
+      mismatchIssues = new HashSet<>(issues);
+      issues.clear();
+    }
+    mismatchIssues = possiblyRecalculateIssues(item, mismatchIssues);
     mismatchDescription
         .appendText("was ")
         .appendValue(item);
-    if (issues.size() == 1) {
+    if (mismatchIssues.size() == 1) {
       mismatchDescription
           .appendText(" with 1 issue: ")
-          .appendText(issues.iterator().next().getMessage());
+          .appendText(mismatchIssues.iterator().next().getMessage());
     } else {
       mismatchDescription
           .appendText(" with ")
-          .appendText(Integer.toString(issues.size()))
+          .appendText(Integer.toString(mismatchIssues.size()))
           .appendText(" issues: ")
           .appendText(System.lineSeparator());
-      for (Issue issue : issues) {
+      for (Issue issue : mismatchIssues) {
         mismatchDescription.appendText("    * ")
             .appendText(issue.getMessage())
             .appendText(System.lineSeparator());
@@ -118,20 +116,28 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
 
   protected abstract void validate(@NotNull T item, @NotNull Collection<Issue> issues);
 
-  private Collection<Issue> possiblyRecalculateIssues(T item,
-                                                      Collection<Issue> issues) {
-    if (issues.isEmpty()) {
-      // As this should not happen, it is o. k. to have no code-coverage here.
+  private Collection<Issue> possiblyRecalculateIssues(@NotNull T item,
+                                                      @NotNull Collection<Issue> mismatchIssues) {
+    if (mismatchIssues.isEmpty()) {
       LOG.warn("Unexpected state: No issues were recorded, but describeMismatch has been called. "
                + "Re-triggering match for retrieving issues. This might produce unexpected "
                + "results if the component under test changed its state meanwhile.");
-      if (matchesSafely(item)) {
+      validate(item, mismatchIssues);
+      if (!mismatchIssues.isEmpty()) {
         LOG.warn(
             "Seems the state of the component under test has changed meanwhile. No issues were found.");
       }
-      issues = ISSUES_THREAD_LOCAL.get();
     }
-    return issues;
+    return mismatchIssues;
   }
 
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
+        .add("issues", issues)
+        .add("message", message)
+        .add("super", super.toString())
+        .toString();
+  }
 }

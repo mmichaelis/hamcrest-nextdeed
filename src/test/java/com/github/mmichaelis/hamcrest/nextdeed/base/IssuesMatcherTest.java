@@ -24,6 +24,7 @@ import com.google.common.base.Supplier;
 
 import com.github.mmichaelis.hamcrest.nextdeed.ExceptionValidator;
 
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
@@ -39,6 +40,7 @@ import java.util.concurrent.Callable;
  *
  * @since SINCE
  */
+@SuppressWarnings("ThrowableResultOfMethodCallIgnored")
 public class IssuesMatcherTest {
 
   @Rule
@@ -46,14 +48,14 @@ public class IssuesMatcherTest {
 
   @Test
   public void passWithoutIssues() throws Exception {
-    IssuesMatcherUnderTest<String> matcherUnderTest = new IssuesMatcherUnderTest<>();
+    Matcher<String> matcherUnderTest = new IssuesMatcherUnderTest<>();
     String probeString = testName.getMethodName();
     assertThat(probeString, matcherUnderTest);
   }
 
   @Test
   public void failForNullValue() throws Exception {
-    IssuesMatcherUnderTest<String> matcherUnderTest = new IssuesMatcherUnderTest<>();
+    Matcher<String> matcherUnderTest = new IssuesMatcherUnderTest<>();
     assertThat(null, not(matcherUnderTest));
   }
 
@@ -124,7 +126,6 @@ public class IssuesMatcherTest {
                    issueMessage
                )
     );
-
   }
 
   @Test
@@ -166,6 +167,36 @@ public class IssuesMatcherTest {
                        probeString,
                        issueMessage2
                    )
+               )
+    );
+  }
+
+  @Test
+  public void producesUsefulMessagesInConjunctionWithIsNotMatcher() throws Exception {
+    final Matcher<String> matcherUnderTest = new IssuesMatcherUnderTest<>();
+    final String probeString = testName.getMethodName();
+
+    Supplier<AssertionError> validator =
+        new ExceptionValidator<>(
+            new Callable<Void>() {
+              @Override
+              public Void call() throws Exception {
+                assertThat(probeString, not(matcherUnderTest));
+                return null;
+              }
+            },
+            AssertionError.class
+        );
+    AssertionError e = validator.get();
+    String errorMessage = e.getMessage();
+    assertThat("Expected and actual should be contained in order.",
+               errorMessage,
+               stringContainsInOrder(
+                   "Expected:",
+                   "not",
+                   "has no issues",
+                   "but:",
+                   probeString
                )
     );
   }
