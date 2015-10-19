@@ -19,6 +19,8 @@ package com.github.mmichaelis.hamcrest.nextdeed.base;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -54,29 +57,57 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
 
   private static final Logger LOG = getLogger(IssuesMatcher.class);
 
-  private final Collection<Issue> issues = new HashSet<>();
-  private String message;
+  private final Collection<Issue> issues = new ArrayList<>();
+  private final Supplier<String> messageSupplier;
 
   protected IssuesMatcher() {
-    this("has no issues");
+    this(Suppliers.ofInstance("has no issues"));
   }
 
-  protected IssuesMatcher(@NotNull String description, Object... args) {
-    message = MessageFormat.format(description, args);
+  protected IssuesMatcher(@NotNull final String description, final Object... args) {
+    this(new Supplier<String>() {
+      @Override
+      public String get() {
+        return MessageFormat.format(description, args);
+      }
+    });
   }
 
-  public static Issue issue(@NotNull String message, Object... args) {
-    return new IssueImpl(MessageFormat.format(message, args));
+  protected IssuesMatcher(@NotNull Supplier<String> messageSupplier) {
+    this.messageSupplier = messageSupplier;
+  }
+
+  public static Issue issue(@NotNull final String message, final Object... args) {
+    return new IssueImpl(new Supplier<String>() {
+      @Override
+      public String get() {
+        return MessageFormat.format(message, args);
+      }
+    });
+  }
+
+  public static Issue issue(@NotNull Supplier<String> messageSupplier) {
+    return new IssueImpl(messageSupplier);
   }
 
   @Override
   public final void describeTo(Description description) {
-    description.appendText(message);
+    description.appendText(messageSupplier.get());
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
+        .add("issues", issues)
+        .add("messageSupplier", messageSupplier)
+        .add("super", super.toString())
+        .toString();
   }
 
   @Override
   protected final boolean matchesSafely(T item) {
-    Collection<Issue> newIssues = new HashSet<>();
+    Collection<Issue> newIssues = new ArrayList<>();
     validate(item, newIssues);
     synchronized (issues) {
       issues.clear();
@@ -86,7 +117,7 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
   }
 
   @Override
-  protected final void describeMismatchSafely(T item, Description mismatchDescription) {
+  protected final void describeMismatchSafely(@NotNull T item, @NotNull Description mismatchDescription) {
     Collection<Issue> mismatchIssues;
     synchronized (issues) {
       mismatchIssues = new HashSet<>(issues);
@@ -94,8 +125,8 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
     }
     mismatchIssues = possiblyRecalculateIssues(item, mismatchIssues);
     mismatchDescription
-        .appendText("was ")
-        .appendValue(item);
+        .appendText("was ");
+    describeMismatchedItem(item, mismatchDescription);
     if (mismatchIssues.size() == 1) {
       mismatchDescription
           .appendText(" with 1 issue: ")
@@ -114,6 +145,10 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
     }
   }
 
+  protected void describeMismatchedItem(@NotNull T item, @NotNull Description mismatchDescription) {
+    mismatchDescription.appendValue(item);
+  }
+
   protected abstract void validate(@NotNull T item, @NotNull Collection<Issue> issues);
 
   private Collection<Issue> possiblyRecalculateIssues(@NotNull T item,
@@ -129,15 +164,5 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
       }
     }
     return mismatchIssues;
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("issues", issues)
-        .add("message", message)
-        .add("super", super.toString())
-        .toString();
   }
 }

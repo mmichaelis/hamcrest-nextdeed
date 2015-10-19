@@ -16,16 +16,21 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.image;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.image.Messages.messages;
+import static com.github.mmichaelis.hamcrest.nextdeed.image.internal.Helper.imageTypeString;
+
+import com.google.common.base.Supplier;
+
+import com.github.mmichaelis.hamcrest.nextdeed.base.Issue;
+import com.github.mmichaelis.hamcrest.nextdeed.base.IssuesMatcher;
 import com.github.mmichaelis.hamcrest.nextdeed.glue.BiFunction;
 import com.github.mmichaelis.hamcrest.nextdeed.image.internal.DefaultSampleComparisonProcessor;
-import com.github.mmichaelis.hamcrest.nextdeed.image.internal.Helper;
 import com.github.mmichaelis.hamcrest.nextdeed.image.internal.PixelCountingSampleProcessingListener;
 import com.github.mmichaelis.hamcrest.nextdeed.image.internal.SampleComparisonProcessor;
 import com.github.mmichaelis.hamcrest.nextdeed.image.internal.SampleProcessingCompositeContext;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,15 +39,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
+import java.util.Collection;
 
 /**
  * Compares two images if they are equal.
  *
  * @since SINCE
  */
-public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
-
-  private static final ThreadLocal<BufferedImage> tlDiffImage = new ThreadLocal<>();
+public class ImageIsEqual extends IssuesMatcher<BufferedImage> {
 
   @NotNull
   private final BufferedImage expectedImage;
@@ -83,8 +87,17 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
    * @param imageHandlerFunction image handler called during mismatch description
    * @since SINCE
    */
-  public ImageIsEqual(@NotNull BufferedImage expectedImage,
-                      @Nullable BiFunction<ImageType, BufferedImage, String> imageHandlerFunction) {
+  public ImageIsEqual(@NotNull final BufferedImage expectedImage,
+                      @Nullable final BiFunction<ImageType, BufferedImage, String> imageHandlerFunction) {
+    super(new Supplier<String>() {
+      @Override
+      public String get() {
+        if (imageHandlerFunction == null) {
+          return String.valueOf(expectedImage);
+        }
+        return imageHandlerFunction.apply(ImageType.EXPECTED, expectedImage);
+      }
+    });
     this.expectedImage = expectedImage;
     this.imageHandlerFunction = imageHandlerFunction;
   }
@@ -133,73 +146,84 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
   }
 
   @Override
-  public void describeTo(Description description) {
-    if (imageHandlerFunction != null) {
-      description.appendText(imageHandlerFunction.apply(ImageType.EXPECTED, expectedImage));
-    } else {
-      description.appendValue(expectedImage);
-    }
-  }
-
-  @Override
-  protected boolean matchesSafely(@NotNull BufferedImage actualImage) {
-    disposeDiffImage();
-    if (actualImage == expectedImage) {
-      return true;
-    }
-    return isComparableTo(actualImage) && imagesAreEqual(actualImage) && disposeDiffImage();
-  }
-
-  @Override
-  protected void describeMismatchSafely(@NotNull BufferedImage actualImage,
+  protected void describeMismatchedItem(@NotNull BufferedImage item,
                                         @NotNull Description mismatchDescription) {
-    String actualText =
-        (imageHandlerFunction == null) ? String.valueOf(actualImage)
-                                       : imageHandlerFunction.apply(ImageType.ACTUAL, actualImage);
-
-    try {
-      if (!widthIsEqualTo(actualImage) && !heightIsEqualTo(actualImage)) {
-        mismatchDescription.appendText(actualText).appendText(" has different dimensions");
-      } else if (!typeIsEqualTo(actualImage)) {
-        mismatchDescription
-            .appendText(actualText)
-            .appendText(" has type ")
-            .appendText(Helper.imageTypeString(actualImage))
-            .appendText(" rather than expected ")
-            .appendText(Helper.imageTypeString(expectedImage));
-      } else if (!colorModelIsEqualTo(actualImage)) {
-        mismatchDescription.appendText(actualText).appendText("has different color model");
-      } else if (!isComparableTo(actualImage)) {
-        mismatchDescription.appendText("was not comparable to ").appendText(actualText);
-      } else if (imageHandlerFunction == null) {
-        super.describeMismatchSafely(actualImage, mismatchDescription);
-      } else {
-        BufferedImage difference = tlDiffImage.get();
-        String differenceText = imageHandlerFunction.apply(ImageType.DIFFERENCE, difference);
-        mismatchDescription
-            .appendText("is different to ")
-            .appendText(actualText)
-            .appendText(" as can be seen in ")
-            .appendText(differenceText);
-      }
-    } finally {
-      disposeDiffImage();
+    if (imageHandlerFunction == null) {
+      super.describeMismatchedItem(item, mismatchDescription);
+    } else {
+      mismatchDescription.appendText(imageHandlerFunction.apply(ImageType.ACTUAL, item));
     }
   }
 
-  private boolean disposeDiffImage() {
-    tlDiffImage.remove();
-    return true;
+  @Override
+  protected void validate(@NotNull BufferedImage actualImage, @NotNull Collection<Issue> issues) {
+    if (actualImage == expectedImage) {
+      return;
+    }
+    boolean comparable = validateComparable(actualImage, issues);
+    if (comparable) {
+      validateImage(actualImage, issues);
+    }
   }
 
-  private boolean imagesAreEqual(@NotNull BufferedImage actualImage) {
-    BufferedImage diffImageTarget = createDiffImageTarget(actualImage);
-    tlDiffImage.set(diffImageTarget);
-    return imagesAreEqual(actualImage, diffImageTarget);
+  private boolean validateComparable(@NotNull BufferedImage actualImage,
+                                     @NotNull Collection<Issue> issues) {
+    return validateWidth(actualImage, issues) &&
+           validateHeight(actualImage, issues) &&
+           validateType(actualImage, issues) &&
+           validateColorModel(actualImage, issues);
   }
 
-  private boolean imagesAreEqual(@NotNull BufferedImage actualImage,
-                                 @NotNull BufferedImage diffImage) {
+  private boolean validateColorModel(@NotNull RenderedImage actualImage,
+                                     @NotNull Collection<Issue> issues) {
+    ColorModel actualImageColorModel = actualImage.getColorModel();
+    ColorModel expectedImageColorModel = expectedImage.getColorModel();
+    boolean comparable = actualImageColorModel.equals(expectedImageColorModel);
+    if (!comparable) {
+      issues.add(issue(messages().colorModelDiffers(expectedImageColorModel,
+                                                    actualImageColorModel)));
+    }
+    return comparable;
+  }
+
+  private boolean validateType(@NotNull BufferedImage actualImage,
+                               @NotNull Collection<Issue> issues) {
+    int actualImageType = actualImage.getType();
+    int expectedImageType = expectedImage.getType();
+    boolean comparable = actualImageType == expectedImageType;
+    if (!comparable) {
+      issues.add(issue(messages().typeDiffers(imageTypeString(expectedImage),
+                                              imageTypeString(actualImage))));
+    }
+    return comparable;
+  }
+
+  private boolean validateHeight(@NotNull RenderedImage actualImage,
+                                 @NotNull Collection<Issue> issues) {
+    int actualImageHeight = actualImage.getHeight();
+    int expectedImageHeight = expectedImage.getHeight();
+    boolean comparable = actualImageHeight == expectedImageHeight;
+    if (!comparable) {
+      issues
+          .add(issue(messages().heightDiffers(expectedImageHeight, actualImageHeight)));
+    }
+    return comparable;
+  }
+
+  private boolean validateWidth(@NotNull RenderedImage actualImage,
+                                @NotNull Collection<Issue> issues) {
+    int actualImageWidth = actualImage.getWidth();
+    int expectedImageWidth = expectedImage.getWidth();
+    boolean comparable = actualImageWidth == expectedImageWidth;
+    if (!comparable) {
+      issues.add(issue(messages().widthDiffers(expectedImageWidth, actualImageWidth)));
+    }
+    return comparable;
+  }
+
+  private void validateImage(@NotNull BufferedImage actualImage, @NotNull Collection<Issue> issues) {
+    final BufferedImage diffImage = createDiffImageTarget(actualImage);
+
     final PixelCountingSampleProcessingListener
         pixelProcessingListener =
         new PixelCountingSampleProcessingListener();
@@ -221,8 +245,24 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
     });
     graphics.drawImage(actualImage, 0, 0, null);
     graphics.dispose();
-    return pixelProcessingListener.getDifferent() == 0;
+
+    final long differentPixels = pixelProcessingListener.getDifferent();
+    if (differentPixels != 0) {
+      issues.add(issue(new Supplier<String>() {
+        @Override
+        public String get() {
+          if (imageHandlerFunction == null) {
+            return messages().imageDiffers(differentPixels, 0, null);
+          } else {
+            return messages().imageDiffers(differentPixels,
+                                           1,
+                                           imageHandlerFunction.apply(ImageType.DIFFERENCE, diffImage));
+          }
+        }
+      }));
+    }
   }
+
 
   @NotNull
   private BufferedImage createDiffImageTarget(@NotNull BufferedImage actualImage) {
@@ -236,29 +276,6 @@ public class ImageIsEqual extends TypeSafeMatcher<BufferedImage> {
           new BufferedImage(actualImage.getWidth(), actualImage.getHeight(), actualImage.getType());
     }
     return difference;
-  }
-
-  private boolean isComparableTo(@NotNull BufferedImage actualImage) {
-    return typeIsEqualTo(actualImage)
-           && widthIsEqualTo(actualImage)
-           && heightIsEqualTo(actualImage)
-           && colorModelIsEqualTo(actualImage);
-  }
-
-  private boolean typeIsEqualTo(@NotNull BufferedImage actualImage) {
-    return actualImage.getType() == expectedImage.getType();
-  }
-
-  private boolean widthIsEqualTo(@NotNull RenderedImage actualImage) {
-    return actualImage.getWidth() == expectedImage.getWidth();
-  }
-
-  private boolean heightIsEqualTo(@NotNull RenderedImage actualImage) {
-    return actualImage.getHeight() == expectedImage.getHeight();
-  }
-
-  private boolean colorModelIsEqualTo(@NotNull RenderedImage actualImage) {
-    return actualImage.getColorModel().equals(expectedImage.getColorModel());
   }
 
 }

@@ -22,8 +22,10 @@ import static org.junit.Assert.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.github.mmichaelis.hamcrest.nextdeed.config.PropagatedTestDetails;
+import com.github.mmichaelis.hamcrest.nextdeed.image.handler.WriteImageHandlerFunction;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -31,6 +33,7 @@ import org.slf4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
 
 /**
  * Tests {@link ImageIsEqual}.
@@ -91,6 +94,25 @@ public class ImageIsEqualTest {
   @Test
   public void imageIsNotEqualToOther() throws Exception {
     assertThat(redWhiteImage, not(imageEqualTo(greenWhiteImage)));
+  }
+
+  @Test
+  @Ignore("fails, replace with message validation")
+  public void pocFailure() throws Exception {
+    assertThat(redWhiteImage, imageEqualTo(greenWhiteImage));
+  }
+
+  @Test
+  @Ignore("fails, replace with message validation")
+  public void pocFailure2() throws Exception {
+    assertThat(redWhiteImage, imageEqualTo(greenWhiteImage, new WriteImageHandlerFunction()));
+  }
+
+  @Test
+  @Ignore("fails, replace with message validation")
+  public void pocFailure3() throws Exception {
+    assertThat(redWhiteImage, not(
+        imageEqualTo(anotherRedWhiteImage, new WriteImageHandlerFunction())));
   }
 
 }

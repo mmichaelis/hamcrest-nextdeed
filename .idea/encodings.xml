@@ -28,6 +28,8 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/function/ReferenceImpl.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageException.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageIsEqual.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageMessages.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/Messages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/handler/DefaultImageFileProvider.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/handler/WriteImageHandlerFunction.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/AbstractBandPixelProcessingListener.java" charset="UTF-8" />
@@ -69,6 +71,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/util/UtilMessages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/META-INF/mmichaelis/default-hamcrest-nextdeed.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/exception/Bundle.properties" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/image/Bundle.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/io/Bundle.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/reflect/Bundle.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/util/Bundle.properties" charset="UTF-8" />

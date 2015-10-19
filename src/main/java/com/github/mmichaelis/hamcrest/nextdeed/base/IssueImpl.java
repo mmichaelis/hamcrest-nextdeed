@@ -17,10 +17,10 @@
 package com.github.mmichaelis.hamcrest.nextdeed.base;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 /**
  * Implementation for {@link Issue}.
@@ -30,41 +30,28 @@ import java.util.Objects;
 final class IssueImpl implements Issue {
 
   @NotNull
-  private final String message;
+  private final Supplier<String> messageSupplier;
 
   IssueImpl(@NotNull String message) {
-    this.message = message;
+    messageSupplier = Suppliers.ofInstance(message);
+  }
+
+  IssueImpl(@NotNull Supplier<String> messageSupplier) {
+    this.messageSupplier = messageSupplier;
   }
 
   @NotNull
   @Override
   public String getMessage() {
-    return message;
+    return messageSupplier.get();
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(message);
-  }
-
-  @SuppressWarnings("LocalVariableOfConcreteClass")
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-    IssueImpl other = (IssueImpl) obj;
-    return Objects.equals(message, other.message);
-  }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("message", message)
+        .add("messageSupplier", messageSupplier)
         .toString();
   }
 }
