@@ -16,6 +16,7 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.base;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.base.Messages.messages;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.google.common.base.MoreObjects;
@@ -43,9 +44,7 @@ import java.util.HashSet;
  * <p>
  * This is similar to {@link org.hamcrest.DiagnosingMatcher} with the difference that the match
  * is not calculated twice -- which might be wrong for integration tests, where between two
- * matches the state might change. Nevertheless it feels weird to use a ThreadLocal internally
- * to store the state and rely on {@code describeMismatch} being called for sure after the match
- * has been tried.
+ * matches the state might change.
  * </p>
  * </dd>
  * </dl>
@@ -60,8 +59,11 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
   private final Collection<Issue> issues = new ArrayList<>();
   private final Supplier<String> messageSupplier;
 
+  /**
+   * Constructor with default expectation message.
+   */
   protected IssuesMatcher() {
-    this(Suppliers.ofInstance("has no issues"));
+    this(Suppliers.ofInstance(messages().hasNoIssues()));
   }
 
   protected IssuesMatcher(@NotNull final String description, final Object... args) {
@@ -117,7 +119,8 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
   }
 
   @Override
-  protected final void describeMismatchSafely(@NotNull T item, @NotNull Description mismatchDescription) {
+  protected final void describeMismatchSafely(@NotNull T item,
+                                              @NotNull Description mismatchDescription) {
     Collection<Issue> mismatchIssues;
     synchronized (issues) {
       mismatchIssues = new HashSet<>(issues);
@@ -145,10 +148,23 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
     }
   }
 
+  /**
+   * Describe the mismatched item. By default {@link Description#appendValue(Object)} is used.
+   *
+   * @param item                actual item to describe on mismatch
+   * @param mismatchDescription description for mismatched item
+   */
   protected void describeMismatchedItem(@NotNull T item, @NotNull Description mismatchDescription) {
     mismatchDescription.appendValue(item);
   }
 
+  /**
+   * Validate item and add issues to the provided collection. The matcher itself signals success
+   * if no issues were collected.
+   *
+   * @param item   actual item to validate
+   * @param issues issues
+   */
   protected abstract void validate(@NotNull T item, @NotNull Collection<Issue> issues);
 
   private Collection<Issue> possiblyRecalculateIssues(@NotNull T item,

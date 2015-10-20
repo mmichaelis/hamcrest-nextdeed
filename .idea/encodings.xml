@@ -6,9 +6,11 @@
     <file url="file://$PROJECT_DIR$/LICENSE.md" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/build.gradle" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/NextDeedMatchers.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/BaseMessages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/Issue.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/IssueImpl.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/IssuesMatcher.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/Messages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/MessagesProxyProvider.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/package-info.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/concurrent/ThrowAssertionErrorStrategy.java" charset="UTF-8" />
@@ -70,6 +72,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/util/ResourceBundleContainsKey.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/util/UtilMessages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/META-INF/mmichaelis/default-hamcrest-nextdeed.properties" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/base/Bundle.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/exception/Bundle.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/image/Bundle.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/io/Bundle.properties" charset="UTF-8" />
