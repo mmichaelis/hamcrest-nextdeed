@@ -17,7 +17,6 @@
 package com.github.mmichaelis.hamcrest.nextdeed.base;
 
 import static com.github.mmichaelis.hamcrest.nextdeed.base.Messages.messages;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Supplier;
@@ -26,12 +25,10 @@ import com.google.common.base.Suppliers;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * <p>
@@ -43,8 +40,8 @@ import java.util.HashSet;
  * <dd>
  * <p>
  * This is similar to {@link org.hamcrest.DiagnosingMatcher} with the difference that the match
- * is not calculated twice -- which might be wrong for integration tests, where between two
- * matches the state might change.
+ * is not calculated twice. This behavior of the {@code DiagnosingMatcher} might be wrong for
+ * integration tests, where between two matches the state might change.
  * </p>
  * </dd>
  * </dl>
@@ -53,8 +50,6 @@ import java.util.HashSet;
  * @since SINCE
  */
 public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
-
-  private static final Logger LOG = getLogger(IssuesMatcher.class);
 
   private final Collection<Issue> issues = new ArrayList<>();
   private final Supplier<String> messageSupplier;
@@ -80,7 +75,7 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
   }
 
   public static Issue issue(@NotNull final String message, final Object... args) {
-    return new IssueImpl(new Supplier<String>() {
+    return issue(new Supplier<String>() {
       @Override
       public String get() {
         return MessageFormat.format(message, args);
@@ -121,12 +116,7 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
   @Override
   protected final void describeMismatchSafely(@NotNull T item,
                                               @NotNull Description mismatchDescription) {
-    Collection<Issue> mismatchIssues;
-    synchronized (issues) {
-      mismatchIssues = new HashSet<>(issues);
-      issues.clear();
-    }
-    mismatchIssues = possiblyRecalculateIssues(item, mismatchIssues);
+    Collection<Issue> mismatchIssues = clearIssues();
     mismatchDescription
         .appendText("was ");
     describeMismatchedItem(item, mismatchDescription);
@@ -149,6 +139,21 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
   }
 
   /**
+   * Clear issues and return the old value of the issues.
+   *
+   * @return old issues
+   */
+  @NotNull
+  protected Collection<Issue> clearIssues() {
+    Collection<Issue> mismatchIssues;
+    synchronized (issues) {
+      mismatchIssues = new ArrayList<>(issues);
+      // issues.clear();
+    }
+    return mismatchIssues;
+  }
+
+  /**
    * Describe the mismatched item. By default {@link Description#appendValue(Object)} is used.
    *
    * @param item                actual item to describe on mismatch
@@ -167,18 +172,4 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
    */
   protected abstract void validate(@NotNull T item, @NotNull Collection<Issue> issues);
 
-  private Collection<Issue> possiblyRecalculateIssues(@NotNull T item,
-                                                      @NotNull Collection<Issue> mismatchIssues) {
-    if (mismatchIssues.isEmpty()) {
-      LOG.warn("Unexpected state: No issues were recorded, but describeMismatch has been called. "
-               + "Re-triggering match for retrieving issues. This might produce unexpected "
-               + "results if the component under test changed its state meanwhile.");
-      validate(item, mismatchIssues);
-      if (!mismatchIssues.isEmpty()) {
-        LOG.warn(
-            "Seems the state of the component under test has changed meanwhile. No issues were found.");
-      }
-    }
-    return mismatchIssues;
-  }
 }

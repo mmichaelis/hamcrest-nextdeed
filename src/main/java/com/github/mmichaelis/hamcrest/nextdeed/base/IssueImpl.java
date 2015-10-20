@@ -33,7 +33,7 @@ final class IssueImpl implements Issue {
   private final Supplier<String> messageSupplier;
 
   IssueImpl(@NotNull String message) {
-    messageSupplier = Suppliers.ofInstance(message);
+    this(Suppliers.ofInstance(message));
   }
 
   IssueImpl(@NotNull Supplier<String> messageSupplier) {

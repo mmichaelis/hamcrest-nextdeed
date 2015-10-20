@@ -80,7 +80,9 @@
     <file url="file://$PROJECT_DIR$/src/main/resources/com/github/mmichaelis/hamcrest/nextdeed/util/Bundle.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/ExceptionValidator.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/NextDeedMatchersTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/BaseMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/HamcrestNextdeedExceptionTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/IoMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/IssueImplTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/IssuesMatcherTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/MessagesProxyProviderTest.java" charset="UTF-8" />

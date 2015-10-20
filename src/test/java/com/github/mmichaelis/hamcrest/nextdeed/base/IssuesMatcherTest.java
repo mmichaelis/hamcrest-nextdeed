@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.base;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.Assert.assertThat;
@@ -152,7 +154,7 @@ public class IssuesMatcherTest {
     String errorMessage = e.getMessage();
     assertThat("Expected and actual should be contained in order.",
                errorMessage,
-               Matchers.allOf(
+               allOf(
                    stringContainsInOrder(
                        "Expected:",
                        "has no issues",
@@ -201,6 +203,22 @@ public class IssuesMatcherTest {
     );
   }
 
+  @Test
+  public void hasToStringMethod() throws Exception {
+    IssuesMatcherUnderTest<String> matcherUnderTest = new IssuesMatcherUnderTest<>("description");
+    String issueMessage = "some issue";
+    String probeString = testName.getMethodName();
+    matcherUnderTest.addIssue(issueMessage);
+    matcherUnderTest.matches(probeString);
+
+    assertThat(matcherUnderTest, hasToString(
+                   allOf(
+                       Matchers.containsString("issues"),
+                       Matchers.containsString("messageSupplier")
+                   ))
+    );
+  }
+
   private static final class IssuesMatcherUnderTest<T> extends IssuesMatcher<T> {
 
     private final Collection<Issue> testIssues = new HashSet<>();
@@ -214,6 +232,12 @@ public class IssuesMatcherTest {
 
     public void addIssue(String message) {
       testIssues.add(issue(message));
+    }
+
+    @NotNull
+    @Override
+    public Collection<Issue> clearIssues() {
+      return super.clearIssues();
     }
 
     @Override
