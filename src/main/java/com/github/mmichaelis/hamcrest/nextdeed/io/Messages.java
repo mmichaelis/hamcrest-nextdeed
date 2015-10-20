@@ -16,14 +16,14 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.io;
 
-import static com.github.mmichaelis.hamcrest.nextdeed.base.BaseMessages.MESSAGES;
+import static com.github.mmichaelis.hamcrest.nextdeed.base.MessagesProxyProvider.MESSAGES_PROXY;
 
-import com.github.mmichaelis.hamcrest.nextdeed.base.BaseMessages;
+import com.github.mmichaelis.hamcrest.nextdeed.base.MessagesProxyProvider;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Convenience facade to {@link BaseMessages}.
+ * Convenience facade to {@link MessagesProxyProvider}.
  *
  * @since SINCE
  */
@@ -41,6 +41,6 @@ final class Messages {
    */
   @NotNull
   public static IoMessages messages() {
-    return MESSAGES.of(IoMessages.class);
+    return MESSAGES_PROXY.of(IoMessages.class);
   }
 }

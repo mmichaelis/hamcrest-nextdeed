@@ -45,7 +45,7 @@ public abstract class MessagesTestCase {
 
   protected MessagesTestCase(@NotNull Class<?> messageInterface) {
     this.messageInterface = messageInterface;
-    bundle = BaseMessages.getBundle(messageInterface);
+    bundle = MessagesProxyProvider.getBundle(messageInterface);
   }
 
   @Test

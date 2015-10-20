@@ -16,7 +16,7 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.exception;
 
-import static com.github.mmichaelis.hamcrest.nextdeed.base.BaseMessages.withRawMessages;
+import static com.github.mmichaelis.hamcrest.nextdeed.base.MessagesProxyProvider.withRawMessages;
 import static com.github.mmichaelis.hamcrest.nextdeed.exception.IsJavaCompliantExceptionMatcher.isJavaCompliantException;
 import static com.github.mmichaelis.hamcrest.nextdeed.exception.JavaComplianceLevel.JAVA_1_1;
 import static com.github.mmichaelis.hamcrest.nextdeed.exception.JavaComplianceLevel.JAVA_1_4;

@@ -71,8 +71,8 @@ import java.util.concurrent.Callable;
  * Daniel Reuter)</a>
  * @since SINCE
  */
-public enum BaseMessages {
-  MESSAGES;
+public enum MessagesProxyProvider {
+  MESSAGES_PROXY;
 
   /**
    * The handler which maps method names to the corresponding resource bundle keys.
@@ -115,7 +115,7 @@ public enum BaseMessages {
     return new Callable<Void>() {
       @Override
       public Void call() throws Exception {
-        try (AutoCloseable ignored = MESSAGES.overrideAsRaw(messageClass)) {
+        try (AutoCloseable ignored = MESSAGES_PROXY.overrideAsRaw(messageClass)) {
           return delegateCallable.call();
         }
       }

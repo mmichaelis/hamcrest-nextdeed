@@ -16,7 +16,7 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.io;
 
-import static com.github.mmichaelis.hamcrest.nextdeed.base.BaseMessages.withRawMessages;
+import static com.github.mmichaelis.hamcrest.nextdeed.base.MessagesProxyProvider.withRawMessages;
 import static com.github.mmichaelis.hamcrest.nextdeed.io.IsSerializable.isSerializable;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;

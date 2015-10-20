@@ -16,7 +16,7 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.base;
 
-import static com.github.mmichaelis.hamcrest.nextdeed.base.BaseMessages.MESSAGES;
+import static com.github.mmichaelis.hamcrest.nextdeed.base.MessagesProxyProvider.MESSAGES_PROXY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.junit.Assert.assertThat;
@@ -32,11 +32,11 @@ import java.util.MissingResourceException;
 import java.util.concurrent.Callable;
 
 /**
- * Tests {@link BaseMessages}.
+ * Tests {@link MessagesProxyProvider}.
  *
  * @since SINCE
  */
-public class BaseMessagesTest {
+public class MessagesProxyProviderTest {
 
   private static final Class<BaseMessagesTestMessages>
       MESSAGE_CLASS =
@@ -53,7 +53,7 @@ public class BaseMessagesTest {
 
   @Test
   public void canGetRawPropertyValueDuringTestsForBackedPropertyValue() throws Exception {
-    try (AutoCloseable ignored = MESSAGES.overrideAsRaw(MESSAGE_CLASS)) {
+    try (AutoCloseable ignored = MESSAGES_PROXY.overrideAsRaw(MESSAGE_CLASS)) {
       String message = messages().backedBundleProperty();
       assertThat(message, equalTo("backedBundleProperty()"));
     }
@@ -68,7 +68,7 @@ public class BaseMessagesTest {
 
   @Test
   public void canGetRawPropertyValueDuringTestsForArgumentPropertyValue() throws Exception {
-    try (AutoCloseable ignored = MESSAGES.overrideAsRaw(MESSAGE_CLASS)) {
+    try (AutoCloseable ignored = MESSAGES_PROXY.overrideAsRaw(MESSAGE_CLASS)) {
       String theArgument = "the argument";
       String message = messages().withArgumentProperty(theArgument);
       assertThat(message, equalTo("withArgumentProperty(the argument)"));
@@ -77,7 +77,7 @@ public class BaseMessagesTest {
 
   @Test
   public void canExecuteFunctionWithRawPropertyValues() throws Exception {
-    BaseMessages.withRawMessages(
+    MessagesProxyProvider.withRawMessages(
         MESSAGE_CLASS,
         new Callable<Void>() {
           @Override
@@ -115,11 +115,11 @@ public class BaseMessagesTest {
 
   @Test
   public void providesRelevantInformationInToString() throws Exception {
-    assertThat(MESSAGES, hasToString(Matchers.containsString("proxyCache")));
+    assertThat(MESSAGES_PROXY, hasToString(Matchers.containsString("proxyCache")));
   }
 
   private BaseMessagesTestMessages messages() {
-    return MESSAGES.of(MESSAGE_CLASS);
+    return MESSAGES_PROXY.of(MESSAGE_CLASS);
   }
 
 }

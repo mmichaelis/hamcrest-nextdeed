@@ -16,10 +16,12 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.base.messages;
 
+import com.github.mmichaelis.hamcrest.nextdeed.base.MessagesProxyProviderTest;
+
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Support for {@link com.github.mmichaelis.hamcrest.nextdeed.base.BaseMessagesTest}.
+ * Support for {@link MessagesProxyProviderTest}.
  *
  * @since SINCE
  */
