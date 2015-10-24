@@ -19,6 +19,9 @@ package com.github.mmichaelis.hamcrest.nextdeed.function;
 import com.google.common.base.MoreObjects;
 
 /**
+ * Stores a value for later reference. Fails on {@link #get()} if
+ * no value has been set before. The stored value might be {@code null}.
+ *
  * @since SINCE
  */
 public class ReferenceImpl<T> implements Reference<T> {
@@ -26,6 +29,12 @@ public class ReferenceImpl<T> implements Reference<T> {
   private T value;
   private boolean set;
 
+  /**
+   * Retrieve the stored value.
+   *
+   * @return stored value; might be {@code null}
+   * @throws IllegalStateException if value has not been set before
+   */
   @Override
   public synchronized T get() {
     if (!set) {
@@ -34,6 +43,12 @@ public class ReferenceImpl<T> implements Reference<T> {
     return value;
   }
 
+  /**
+   * Sets a value to store.
+   *
+   * @param value value to store; might be {@code null}
+   * @return stored value, so that you might use it in a chained call
+   */
   @Override
   public synchronized T set(T value) {
     set = true;
@@ -41,11 +56,22 @@ public class ReferenceImpl<T> implements Reference<T> {
     return value;
   }
 
+  /**
+   * Validates if value is set.
+   *
+   * @return {@code true} if value is set, false {@code otherwise}
+   */
   @Override
   public synchronized boolean isSet() {
     return set;
   }
 
+  /**
+   * Removes the stored value and sets the reference to unset state.
+   *
+   * @return previously stored value; might be {@code null}, especially if it has not been set
+   * before
+   */
   @Override
   public synchronized T remove() {
     T result = value;

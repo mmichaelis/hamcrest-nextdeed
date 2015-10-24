@@ -82,7 +82,6 @@
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/NextDeedMatchersTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/BaseMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/HamcrestNextdeedExceptionTest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/IoMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/IssueImplTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/IssuesMatcherTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/base/MessagesProxyProviderTest.java" charset="UTF-8" />
@@ -98,6 +97,7 @@
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/config/PropagatedTestDetailsTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/exception/ExceptionMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/exception/IsJavaCompliantExceptionMatcherTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/function/ReferenceImplTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/glue/HamcrestGlueTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageIsEqualTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/image/WriteImageHandlerFunctionTest.java" charset="UTF-8" />
