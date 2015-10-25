@@ -16,6 +16,7 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.function;
 
+import static java.lang.String.valueOf;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Function;
@@ -34,10 +35,16 @@ import org.jetbrains.annotations.NotNull;
  * <dl>
  * <dt><strong>Note:</strong></dt>
  * <dd>
+ * <p>
  * In order not to report a different value on failure than used for comparison the previously
  * transformed value is stored per thread when matching is tried. As a consequence
  * {@link #describeMismatchSafely(Object, Description)} ignores the item expecting that it did
  * not change meanwhile.
+ * </p>
+ * <p>
+ * This is the only real difference to {@link org.hamcrest.FeatureMatcher} which might result
+ * in a mismatch description which does not match the previously retrieved value.
+ * </p>
  * </dd>
  * </dl>
  *
@@ -92,6 +99,7 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
 
   @Override
   public void describeTo(@NotNull Description description) {
+    description.appendText(valueOf(function)).appendText(" ");
     delegateMatcher.describeTo(description);
   }
 
@@ -129,5 +137,11 @@ public class ApplyingMatcher<F, T> extends TypeSafeMatcher<F> {
     }
 
     delegateMatcher.describeMismatch(actualValue, mismatchDescription);
+    mismatchDescription
+        .appendText(" applying ")
+        .appendText(valueOf(function))
+        .appendText(" to ")
+        .appendValue(item)
+    ;
   }
 }
