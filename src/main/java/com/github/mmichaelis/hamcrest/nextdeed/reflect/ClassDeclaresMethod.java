@@ -148,9 +148,5 @@ public class ClassDeclaresMethod<T extends Class<?>> extends TypeSafeMatcher<T> 
   protected void describeMismatchSafely(T item, Description mismatchDescription) {
     mismatchDescription
         .appendText(messages().wasClassWithMethods(item, item.getDeclaredMethods()));
-    mismatchDescription.appendText("was ")
-        .appendValue(item)
-        .appendText(" with methods ")
-        .appendValue(item.getDeclaredMethods());
   }
 }
