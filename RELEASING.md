@@ -90,13 +90,16 @@ credentials and keys. Mind that you generate a personal access token for GitHub 
 * [Sonatype Nexus Professional][sonatype-nexus]
 
     Staging repository. Use to finish release.
+
+* [Semantic Versioning 2.0.0][semantic-versioning]
  
 <!-- Links -->
 
 [axion-release-plugin]: <https://github.com/allegro/axion-release-plugin> "allegro/axion-release-plugin"
-[axion-release-plugin-documentation]: <http://axion-release-plugin.readthedocs.org/en/latest/> "axion-release-plugin — axion-release-plugin latest documentation"
+[axion-release-plugin-documentation]: <http://axion-release-plugin.readthedocs.org/en/latest/> "axion-release-plugin â€” axion-release-plugin latest documentation"
 [version-numbers]: <https://docs.oracle.com/middleware/1212/core/MAVEN/maven_version.htm#MAVEN400> "7 Understanding Maven Version Numbers"
 [sonatype-nexus]: <https://oss.sonatype.org/> "Sonatype Nexus Professional"
+[semantic-versioning]: <http://semver.org/> "Semantic Versioning 2.0.0"
 
 [gradle.properties]: <./gradle.properties>
 
