@@ -21,17 +21,22 @@ import static com.google.common.reflect.Reflection.newProxy;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
@@ -87,6 +92,12 @@ public enum MessagesProxyProvider {
    * @since SINCE
    */
   private static final InvocationHandler RAW_RESOLVER = new RawResolver();
+  /**
+   * If required transforms arguments so that they can better be represented in messages.
+   */
+  private static final Function<Object[], Object[]>
+      ARGUMENTS_TRANSFORMER =
+      new ArgumentsTransformer();
   /**
    * Base name of the bundle file.
    *
@@ -206,7 +217,8 @@ public enum MessagesProxyProvider {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-      return getString(method.getDeclaringClass(), method.getName(), args);
+      return getString(method.getDeclaringClass(), method.getName(),
+                       ARGUMENTS_TRANSFORMER.apply(args));
     }
   }
 
@@ -219,13 +231,57 @@ public enum MessagesProxyProvider {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
+      //noinspection ConstantConditions
       return MessageFormat.format("{0}({1})", method.getName(),
                                   (args == null)
                                   ? ""
-                                  : Joiner.on(',').useForNull("null").join(args)
+                                  : Joiner.on(',').useForNull("null")
+                                      .join(ARGUMENTS_TRANSFORMER.apply(args))
       );
     }
 
+  }
+
+  /**
+   * Transforms an array of arguments.
+   *
+   * @since SINCE
+   */
+  private static class ArgumentsTransformer implements Function<Object[], Object[]> {
+
+    private static final Function<Object, Object> ARGUMENT_TRANSFORMER = new ArgumentTransformer();
+
+    @Override
+    public Object[] apply(Object[] input) {
+      if (input == null) {
+        return null;
+      }
+      Collection<Object> transformed = new ArrayList<>(input.length);
+      for (Object o : input) {
+        transformed.add(ARGUMENT_TRANSFORMER.apply(o));
+      }
+      return Iterables.toArray(transformed, Object.class);
+    }
+  }
+
+  /**
+   * Transforms a single argument.
+   *
+   * @since SINCE
+   */
+  private static class ArgumentTransformer implements Function<Object, Object> {
+
+    @Override
+    public Object apply(Object input) {
+      if (input == null) {
+        return null;
+      }
+      Class<?> inputClass = input.getClass();
+      if (inputClass.isArray()) {
+        return Arrays.toString((Object[]) input);
+      }
+      return input;
+    }
   }
 
 }
