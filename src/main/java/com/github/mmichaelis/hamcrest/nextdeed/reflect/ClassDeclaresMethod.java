@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.reflect;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.reflect.Messages.messages;
+
 import com.google.common.base.MoreObjects;
 
 import org.hamcrest.Description;
@@ -54,7 +56,8 @@ public class ClassDeclaresMethod<T extends Class<?>> extends TypeSafeMatcher<T> 
    * Validates that a declared method with the possibly given parameters exists.
    *
    * @param methodName     name of the method
-   * @param parameterTypes the parameter array; {@code null} for ignoring parameters and just search
+   * @param parameterTypes the parameter array; {@code null} for ignoring parameters and just
+   *                       search
    *                       for name
    * @param <T>            the type of the class to check
    * @return matcher
@@ -105,14 +108,9 @@ public class ClassDeclaresMethod<T extends Class<?>> extends TypeSafeMatcher<T> 
   @Override
   public void describeTo(Description description) {
     if (parameterTypes == null) {
-      description.appendText("declares method '")
-          .appendText(methodName)
-          .appendText("'");
+      description.appendText(messages().declaresMethod(methodName));
     } else {
-      description.appendText("declares method '")
-          .appendText(methodName)
-          .appendText("' with parameters: ")
-          .appendValue(parameterTypes);
+      description.appendText(messages().declaresMethodWithParameters(methodName, parameterTypes));
     }
   }
 
@@ -148,6 +146,8 @@ public class ClassDeclaresMethod<T extends Class<?>> extends TypeSafeMatcher<T> 
 
   @Override
   protected void describeMismatchSafely(T item, Description mismatchDescription) {
+    mismatchDescription
+        .appendText(messages().wasClassWithMethods(item, item.getDeclaredMethods()));
     mismatchDescription.appendText("was ")
         .appendValue(item)
         .appendText(" with methods ")

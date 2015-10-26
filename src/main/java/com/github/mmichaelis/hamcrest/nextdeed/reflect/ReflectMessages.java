@@ -18,6 +18,8 @@ package com.github.mmichaelis.hamcrest.nextdeed.reflect;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
+
 /**
  * Messages for the {@code reflect} package.
  *
@@ -30,4 +32,13 @@ interface ReflectMessages {
 
   @NotNull
   String cannotInstantiateWithConstructor(Class<?>[] parameterTypes, Throwable e);
+
+  @NotNull
+  String declaresMethod(@NotNull String methodName);
+
+  @NotNull
+  String declaresMethodWithParameters(@NotNull String methodName, @NotNull Class<?>[] parameterTypes);
+
+  @NotNull
+  <T extends Class<?>> String wasClassWithMethods(@NotNull T item, @NotNull Method[] declaredMethods);
 }
