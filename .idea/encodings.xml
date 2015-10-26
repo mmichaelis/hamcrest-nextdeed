@@ -16,9 +16,11 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/concurrent/ThrowAssertionErrorStrategy.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/concurrent/WaitTimeoutException.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/ConfigurationException.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/Encoder.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/NextDeedConfiguration.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/NextDeedTestConfiguration.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/PropagatedTestDetails.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/RandomTokenGenerator.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/package-info.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/exception/ExceptionMessages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/exception/IsJavaCompliantExceptionMatcher.java" charset="UTF-8" />
@@ -92,9 +94,11 @@
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/concurrent/ThrowWaitTimeoutExceptionStrategyTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/concurrent/WaitTimeoutExceptionTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/config/ConfigurationExceptionTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/config/EncoderTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/config/NextDeedConfigurationTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/config/NextDeedTestConfigurationTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/config/PropagatedTestDetailsTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/config/RandomTokenGeneratorTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/exception/ExceptionMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/exception/IsJavaCompliantExceptionMatcherTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/function/ReferenceImplTest.java" charset="UTF-8" />

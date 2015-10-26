@@ -86,6 +86,12 @@ public class PropagatedTestDetailsTest {
   }
 
   @Test
+  public void defaultsHandleCornerCaseMinLong() throws Exception {
+
+
+  }
+
+  @Test
   public void defaultKeyIsAvailable() throws Exception {
     assertThat("Default key should be available.", key, not(emptyOrNullString()));
   }

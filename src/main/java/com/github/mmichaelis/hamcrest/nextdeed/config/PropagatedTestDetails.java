@@ -16,8 +16,6 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.config;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
@@ -26,11 +24,7 @@ import org.apache.commons.configuration.PropertyConverter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestName;
 import org.junit.runner.Description;
-import org.slf4j.Logger;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -143,8 +137,7 @@ public class PropagatedTestDetails extends TestName {
    * @since SINCE
    */
   public static final String TEST_TIMESTAMP = "testTimestamp";
-  private static final Logger LOG = getLogger(PropagatedTestDetails.class);
-  private static final SecureRandom RANDOM = new SecureRandom();
+  private static final RandomTokenGenerator TOKEN_GENERATOR = new RandomTokenGenerator();
   private static final String TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH-mm-ss-S";
   private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL =
       new ThreadLocal<SimpleDateFormat>() {
@@ -153,9 +146,6 @@ public class PropagatedTestDetails extends TestName {
           return new SimpleDateFormat(TIMESTAMP_PATTERN, Locale.ROOT);
         }
       };
-  private static final String URL_ENCODING_CHARSET = "UTF-8";
-  private static final String FILE_ENCODING_PROPERTY = "file.encoding";
-  private static final String SYSTEM_DEFAULT_ENCODING = System.getProperty(FILE_ENCODING_PROPERTY);
   private static final String UNKNOWN_METHOD_NAME = "unknownMethodName";
   private static final String UNKNOWN_CLASS_NAME = "unknownClassName";
   private static final String UNKNOWN_FULL_NAME = "unknownFullName";
@@ -174,7 +164,7 @@ public class PropagatedTestDetails extends TestName {
    */
   @NotNull
   public static Map<String, String> createDefaults() {
-    String randomToken = getRandomToken();
+    String randomToken = TOKEN_GENERATOR.getRandomToken();
     return ImmutableMap
         .<String, String>builder()
         .put(TEST_METHOD_NAME, UNKNOWN_METHOD_NAME + randomToken)
@@ -185,23 +175,6 @@ public class PropagatedTestDetails extends TestName {
         .put(TEST_FULL_NAME_ENCODED, UNKNOWN_FULL_NAME + randomToken)
         .put(TEST_TIMESTAMP, DATE_FORMAT_THREAD_LOCAL.get().format(new Date()))
         .build();
-  }
-
-  /**
-   * Create a random token to grant unique defaults.
-   *
-   * @return token
-   * @since SINCE
-   */
-  @NotNull
-  private static String getRandomToken() {
-    long n = RANDOM.nextLong();
-    if (n == Long.MIN_VALUE) {
-      n = 0;
-    } else {
-      n = Math.abs(n);
-    }
-    return Long.toString(n);
   }
 
   /**
@@ -287,20 +260,6 @@ public class PropagatedTestDetails extends TestName {
    */
   @NotNull
   private String encode(@NotNull String string) {
-    try {
-      return URLEncoder.encode(string, URL_ENCODING_CHARSET);
-    } catch (UnsupportedEncodingException e) {
-      LOG.warn("Unable to encode '{}' with encoding {}. Will try system encoding next.", string,
-               URL_ENCODING_CHARSET, e);
-    }
-    try {
-      return URLEncoder.encode(string, SYSTEM_DEFAULT_ENCODING);
-    } catch (UnsupportedEncodingException e) {
-      LOG.warn(
-          "Unable to encode '{}' with system default encoding {}. Will return string unencoded.",
-          string,
-          SYSTEM_DEFAULT_ENCODING, e);
-    }
-    return string;
+    return new Encoder().encode(string);
   }
 }
