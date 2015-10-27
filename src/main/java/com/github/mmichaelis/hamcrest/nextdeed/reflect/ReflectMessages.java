@@ -17,6 +17,7 @@
 package com.github.mmichaelis.hamcrest.nextdeed.reflect;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
@@ -41,4 +42,7 @@ interface ReflectMessages {
 
   @NotNull
   <T extends Class<?>> String wasClassWithMethods(@NotNull T item, @NotNull Method[] declaredMethods);
+
+  @NotNull
+  String isInstantiableWithParameters(int parameterCount, @Nullable Object[] parameters);
 }

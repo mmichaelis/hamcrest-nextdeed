@@ -59,9 +59,11 @@ public class InstantiableViaConstructor<T extends Class<?>> extends IssuesMatche
    * @since SINCE
    */
   public InstantiableViaConstructor(@Nullable Object... parameters) {
-    super(((parameters == null) || (parameters.length == 0)) ? "is instantiable with no parameters"
-                                                             : "is instantiable with parameters: ",
-          Arrays.toString(parameters));
+    super(messages()
+              .isInstantiableWithParameters(
+                  parameters == null ? 0 : parameters.length, parameters
+              )
+    );
     if (parameters != null) {
       this.parameters = parameters.clone();
       Collection<Class<?>> types = new ArrayList<>(parameters.length);
