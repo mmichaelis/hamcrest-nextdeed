@@ -19,9 +19,12 @@ package com.github.mmichaelis.hamcrest.nextdeed.image;
 import com.github.mmichaelis.hamcrest.nextdeed.base.HamcrestNextdeedException;
 
 /**
+ * Exception during image processing.
+ *
  * @since SINCE
  */
 public class ImageException extends HamcrestNextdeedException {
+
   public ImageException() {
   }
 
