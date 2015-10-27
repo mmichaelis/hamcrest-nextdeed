@@ -27,20 +27,20 @@ import com.google.common.io.Files;
 import com.github.mmichaelis.hamcrest.nextdeed.glue.BiFunction;
 import com.github.mmichaelis.hamcrest.nextdeed.image.ImageException;
 import com.github.mmichaelis.hamcrest.nextdeed.image.ImageType;
-import com.github.mmichaelis.hamcrest.nextdeed.incubator.FileConflictResolver;
+import com.github.mmichaelis.hamcrest.nextdeed.incubator.PathConflictResolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
-import javax.imageio.stream.FileImageOutputStream;
 
 /**
  * @since SINCE
@@ -50,22 +50,22 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
   private static final Logger LOG = getLogger(WriteImageHandlerFunction.class);
 
   @NotNull
-  private final Function<ImageType, File> fileProvider;
+  private final Function<ImageType, Path> pathProvider;
 
   public WriteImageHandlerFunction() {
-    this(new DefaultImageFileProvider());
+    this(new DefaultImagePathProvider());
   }
 
-  public WriteImageHandlerFunction(@NotNull Function<ImageType, File> fileProvider) {
-    this.fileProvider = fileProvider;
+  public WriteImageHandlerFunction(@NotNull Function<ImageType, Path> pathProvider) {
+    this.pathProvider = pathProvider;
   }
 
   @Override
   public String apply(ImageType imageType, BufferedImage bufferedImage) {
-    File outFile = getOutFile(imageType);
-    String result = outFile.getAbsolutePath();
-    createParentDirs(outFile);
-    if (!tryWriteImage(bufferedImage, outFile)) {
+    Path outPath = getOutPath(imageType);
+    String result = outPath.toAbsolutePath().toString();
+    createParentDirs(outPath);
+    if (!tryWriteImage(bufferedImage, outPath)) {
       result = format("<Failed writing image to to file %s>", result);
     }
     return result;
@@ -75,40 +75,42 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("fileProvider", fileProvider)
+        .add("pathProvider", pathProvider)
         .toString();
   }
 
-  private boolean tryWriteImage(BufferedImage bufferedImage, File outFile) {
+  private boolean tryWriteImage(BufferedImage bufferedImage, Path outPath) {
     boolean success = false;
-    Iterator<ImageWriter> writerIterator = getImageWriterIteratorFor(outFile);
+    Iterator<ImageWriter> writerIterator = getImageWriterIteratorFor(outPath);
     while (writerIterator.hasNext() && !success) {
       ImageWriter next = writerIterator.next();
-      success = tryWriteImage(bufferedImage, outFile, next, writerIterator.hasNext());
+      success = tryWriteImage(bufferedImage, outPath, next, writerIterator.hasNext());
     }
     return success;
   }
 
   private boolean tryWriteImage(BufferedImage bufferedImage,
-                                File outFile,
+                                Path outPath,
                                 ImageWriter imageWriter,
                                 boolean moreImageWritersAvailable) {
     boolean mySuccess = false;
-    try (Closeable ios = new FileImageOutputStream(outFile)) {
+
+    try (OutputStream os = java.nio.file.Files.newOutputStream(outPath);
+         Closeable ios = ImageIO.createImageOutputStream(os)) {
       imageWriter.setOutput(ios);
       imageWriter.write(bufferedImage);
-      LOG.info("Wrote file {} containing image {} via image writer {}.", outFile, bufferedImage,
+      LOG.info("Wrote file {} containing image {} via image writer {}.", outPath, bufferedImage,
                imageWriter);
       mySuccess = true;
     } catch (IOException e) {
       if (moreImageWritersAvailable) {
         LOG.warn(
             "Unable writing {} to contain image {} via image writer {}. Will try next image writer.",
-            outFile, bufferedImage, imageWriter, e);
+            outPath, bufferedImage, imageWriter, e);
       } else {
         LOG.error(
             "Could write {} to contain image {} with any image writer found. Last one tried: {}.",
-            outFile, bufferedImage, imageWriter, e);
+            outPath, bufferedImage, imageWriter, e);
 
       }
     }
@@ -116,18 +118,18 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
   }
 
   @NotNull
-  private File getOutFile(ImageType imageType) {
-    File providedFile = requireNonNull(fileProvider.apply(imageType),
-                                       format("File provided by %s must not be null.",
-                                              fileProvider));
-    File outFile = FileConflictResolver.defaultConflictResolver().apply(providedFile);
-    assert outFile != null : "Should never be null.";
-    return outFile;
+  private Path getOutPath(ImageType imageType) {
+    Path providedFile = requireNonNull(pathProvider.apply(imageType),
+                                       format("Path provided by %s must not be null.",
+                                              pathProvider));
+    Path outPath = PathConflictResolver.defaultConflictResolver().apply(providedFile);
+    assert outPath != null : "Should never be null.";
+    return outPath;
   }
 
   @NotNull
-  private Iterator<ImageWriter> getImageWriterIteratorFor(@NotNull File outFile) {
-    String outFileExtension = Files.getFileExtension(outFile.getName());
+  private Iterator<ImageWriter> getImageWriterIteratorFor(@NotNull Path outPath) {
+    String outFileExtension = Files.getFileExtension(outPath.getFileName().toString());
     Iterator<ImageWriter> writerIterator = ImageIO.getImageWritersBySuffix(outFileExtension);
     if (!writerIterator.hasNext()) {
       LOG.debug("Don't know how to write files with suffix '{}'.", outFileExtension);
@@ -135,13 +137,13 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
     return writerIterator;
   }
 
-  private void createParentDirs(File outFile) {
+  private void createParentDirs(Path path) {
     try {
-      Files.createParentDirs(outFile);
+      java.nio.file.Files.createDirectories(path.getParent());
     } catch (IOException e) {
       throw new ImageException(
-          format("Unable to create parent directories for file %s.",
-                 outFile.getAbsolutePath()), e);
+          format("Unable to create parent directories for path %s.",
+                 path.toAbsolutePath()), e);
     }
   }
 

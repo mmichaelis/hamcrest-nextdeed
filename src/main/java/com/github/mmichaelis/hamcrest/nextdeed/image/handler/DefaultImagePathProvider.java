@@ -27,21 +27,22 @@ import com.github.mmichaelis.hamcrest.nextdeed.image.ImageType;
 
 import org.apache.commons.configuration.Configuration;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @since SINCE
  */
-public class DefaultImageFileProvider implements Function<ImageType, File> {
+public class DefaultImagePathProvider implements Function<ImageType, Path> {
 
   private static final String IMAGE_OUT_FILE_PATTERN = "image.outFilePattern";
 
   @Override
-  public File apply(ImageType input) {
+  public Path apply(ImageType input) {
     Configuration configuration =
         NextDeedTestConfiguration.HAMCREST_NEXT_DEED_TEST_CONFIG
             .get(singletonMap("imageType", input.toString()),
                  createDefaults());
-    return new File(configuration.getString(propertyName(IMAGE_OUT_FILE_PATTERN)));
+    return Paths.get(configuration.getString(propertyName(IMAGE_OUT_FILE_PATTERN)));
   }
 }
