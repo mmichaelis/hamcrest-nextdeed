@@ -113,6 +113,7 @@
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/reflect/ClassDeclaresMethodTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/reflect/InstantiableViaConstructorTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/reflect/InstantiableViaDefaultConstructorTest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/reflect/ModifierMatcherBaseTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/reflect/ReflectMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/util/UtilMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/resources/com/github/mmichaelis/hamcrest/nextdeed/base/messages/Bundle.properties" charset="UTF-8" />

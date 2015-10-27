@@ -17,6 +17,8 @@
 package com.github.mmichaelis.hamcrest.nextdeed.reflect;
 
 import static com.github.mmichaelis.hamcrest.nextdeed.TestMarker.TEST;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.Assert.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -114,6 +116,18 @@ public class ModifierMatcherBaseTest {
         return actualModifiers;
       }
     };
+  }
+
+  @Test
+  public void containsRelevantInformationInToString() throws Exception {
+    assertThat(modifierMatcherBase,
+               hasToString(
+                   stringContainsInOrder(
+                       "expectedModifier",
+                       String.valueOf(expectedModifiers)
+                   )
+               )
+    );
   }
 
   @Test
