@@ -17,10 +17,27 @@
 package com.github.mmichaelis.hamcrest.nextdeed.image;
 
 /**
+ * The different types of images created during comparison process.
+ *
  * @since SINCE
  */
 public enum ImageType {
+  /**
+   * The expected image type.
+   *
+   * @since SINCE
+   */
   EXPECTED,
+  /**
+   * The actual image type.
+   *
+   * @since SINCE
+   */
   ACTUAL,
+  /**
+   * The difference image type.
+   *
+   * @since SINCE
+   */
   DIFFERENCE
 }
