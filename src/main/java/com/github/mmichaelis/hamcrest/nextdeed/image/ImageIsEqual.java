@@ -19,6 +19,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.image;
 import static com.github.mmichaelis.hamcrest.nextdeed.image.Messages.messages;
 import static com.github.mmichaelis.hamcrest.nextdeed.image.internal.Helper.imageTypeString;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Supplier;
 
 import com.github.mmichaelis.hamcrest.nextdeed.base.Issue;
@@ -48,14 +49,26 @@ import java.util.Collection;
  */
 public class ImageIsEqual extends IssuesMatcher<BufferedImage> {
 
+  /**
+   * The expected image to compare to.
+   *
+   * @since SINCE
+   */
   @NotNull
   private final BufferedImage expectedImage;
+  /**
+   * Handler function to process images for reporting purpose. For example might store the
+   * file to disk and return the file name where the image got stored to.
+   *
+   * @since SINCE
+   */
   @Nullable
   private final BiFunction<ImageType, BufferedImage, String> imageHandlerFunction;
 
   /**
    * <p>
-   * Comparison without image handler. On failure standard mismatch description is generated.
+   * Comparison without image handler. On failure standard mismatch description is generated and
+   * images are not stored anywhere.
    * </p>
    *
    * @param expectedImage image to compare to
@@ -146,6 +159,16 @@ public class ImageIsEqual extends IssuesMatcher<BufferedImage> {
   }
 
   @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
+        .add("expectedImage", expectedImage)
+        .add("imageHandlerFunction", imageHandlerFunction)
+        .add("super", super.toString())
+        .toString();
+  }
+
+  @Override
   protected void describeMismatchedItem(@NotNull BufferedImage item,
                                         @NotNull Description mismatchDescription) {
     if (imageHandlerFunction == null) {
@@ -221,7 +244,8 @@ public class ImageIsEqual extends IssuesMatcher<BufferedImage> {
     return comparable;
   }
 
-  private void validateImage(@NotNull BufferedImage actualImage, @NotNull Collection<Issue> issues) {
+  private void validateImage(@NotNull BufferedImage actualImage,
+                             @NotNull Collection<Issue> issues) {
     final BufferedImage diffImage = createDiffImageTarget(actualImage);
 
     final PixelCountingSampleProcessingListener
@@ -256,13 +280,13 @@ public class ImageIsEqual extends IssuesMatcher<BufferedImage> {
           } else {
             return messages().imageDiffers(differentPixels,
                                            1,
-                                           imageHandlerFunction.apply(ImageType.DIFFERENCE, diffImage));
+                                           imageHandlerFunction
+                                               .apply(ImageType.DIFFERENCE, diffImage));
           }
         }
       }));
     }
   }
-
 
   @NotNull
   private BufferedImage createDiffImageTarget(@NotNull BufferedImage actualImage) {
@@ -277,5 +301,4 @@ public class ImageIsEqual extends IssuesMatcher<BufferedImage> {
     }
     return difference;
   }
-
 }

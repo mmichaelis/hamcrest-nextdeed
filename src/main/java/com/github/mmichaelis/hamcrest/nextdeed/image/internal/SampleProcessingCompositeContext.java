@@ -34,7 +34,6 @@ import java.util.HashSet;
  */
 public class SampleProcessingCompositeContext implements CompositeContext {
 
-  private final Collection<BandPixelProcessingListener> bandPixelListeners = new HashSet<>(1);
   private final Collection<PixelProcessingListener> pixelListeners = new HashSet<>(1);
 
   @NotNull
@@ -43,14 +42,6 @@ public class SampleProcessingCompositeContext implements CompositeContext {
   public SampleProcessingCompositeContext(
       @NotNull SampleComparisonProcessor sampleComparisonProcessor) {
     this.sampleComparisonProcessor = sampleComparisonProcessor;
-  }
-
-  public void addBandPixelListener(@NotNull BandPixelProcessingListener listener) {
-    bandPixelListeners.add(listener);
-  }
-
-  public void removeBandPixelListener(@NotNull BandPixelProcessingListener listener) {
-    bandPixelListeners.remove(listener);
   }
 
   public void addPixelListener(@NotNull PixelProcessingListener listener) {
@@ -66,32 +57,60 @@ public class SampleProcessingCompositeContext implements CompositeContext {
   }
 
   @Override
-  public void compose(Raster src, Raster dstIn, WritableRaster dstOut) {
+  public void compose(Raster src, Raster dstIn, @NotNull WritableRaster dstOut) {
     int height = dstOut.getHeight();
     int width = dstOut.getWidth();
     int bands = dstOut.getNumBands();
-    SampleModel sampleModel = dstOut.getSampleModel();
-    int dataType = sampleModel.getDataType();
+    SampleType sampleType = getSampleType(dstOut);
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
-        ProcessSampleResult pixelResult = ProcessSampleResult.EQUAL;
-        for (int b = 0; b < bands; b++) {
-          SampleType sampleType = SampleType.forDataType(dataType);
-          if (sampleType == null) {
-            throw new IllegalStateException(
-                format("Cannot handle sample data type %d.", dataType));
-          }
-          ProcessSampleResult bandPixelResult =
-              sampleComparisonProcessor.processSample(sampleType, src, dstIn, dstOut, x, y, b);
-          pixelResult =
-              fireBandPixelEvent(pixelResult,
-                                 bandPixelResult,
-                                 new BandPixelProcessingEventObject(this, x, y, b,
-                                                                    bandPixelResult));
-        }
+        ProcessSampleResult
+            pixelResult =
+            collectPixelResultFromBands(src, dstIn, dstOut, sampleType, x, y, bands);
         firePixelEvent(pixelResult, new PixelProcessingEventObject(this, x, y, pixelResult));
       }
     }
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("hash", Integer.toHexString(System.identityHashCode(this)))
+        .add("pixelListeners", pixelListeners)
+        .add("sampleComparisonProcessor", sampleComparisonProcessor)
+        .toString();
+  }
+
+  @NotNull
+  private ProcessSampleResult collectPixelResultFromBands(Raster src,
+                                                          Raster dstIn,
+                                                          @NotNull WritableRaster dstOut,
+                                                          @NotNull SampleType sampleType,
+                                                          int x,
+                                                          int y,
+                                                          int bands) {
+    ProcessSampleResult pixelResult = ProcessSampleResult.EQUAL;
+    for (int b = 0; b < bands; b++) {
+      ProcessSampleResult bandPixelResult =
+          sampleComparisonProcessor.processSample(sampleType, src, dstIn, dstOut, x, y, b);
+      pixelResult =
+          refreshedPixelResult(pixelResult,
+                               bandPixelResult
+          );
+    }
+    return pixelResult;
+  }
+
+  @NotNull
+  private SampleType getSampleType(@NotNull WritableRaster dstOut) {
+    SampleModel sampleModel = dstOut.getSampleModel();
+    int dataType = sampleModel.getDataType();
+    SampleType sampleType = SampleType.forDataType(dataType);
+    if (sampleType == null) {
+      throw new IllegalStateException(
+          format("Cannot handle sample data type %d.", dataType));
+    }
+    return sampleType;
   }
 
   private void firePixelEvent(@NotNull ProcessSampleResult pixelResult,
@@ -113,36 +132,27 @@ public class SampleProcessingCompositeContext implements CompositeContext {
     }
   }
 
-  private ProcessSampleResult fireBandPixelEvent(@NotNull ProcessSampleResult pixelResult,
-                                                 @NotNull ProcessSampleResult bandPixelResult,
-                                                 @NotNull BandPixelProcessingEvent event) {
+  /**
+   * Calculates the new pixel result based on the previous result and the band pixel result.
+   *
+   * @param pixelResult     previous pixel result
+   * @param bandPixelResult new result from band pixel evaluation
+   * @return new pixel result
+   */
+  @NotNull
+  private ProcessSampleResult refreshedPixelResult(@NotNull ProcessSampleResult pixelResult,
+                                                   @NotNull ProcessSampleResult bandPixelResult) {
     ProcessSampleResult result = pixelResult;
     switch (bandPixelResult) {
       case DIFFERENT:
-        for (BandPixelProcessingListener listener : bandPixelListeners) {
-          listener.isDifferent(event);
-        }
         result = ProcessSampleResult.DIFFERENT;
         break;
       case EQUAL:
-        for (BandPixelProcessingListener listener : bandPixelListeners) {
-          listener.isEqual(event);
-        }
         break;
       default:
         throw new IllegalStateException(
             format("Unknown process sample result: %s.", bandPixelResult));
     }
     return result;
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("bandPixelListeners", bandPixelListeners)
-        .add("pixelListeners", pixelListeners)
-        .add("sampleComparisonProcessor", sampleComparisonProcessor)
-        .toString();
   }
 }
