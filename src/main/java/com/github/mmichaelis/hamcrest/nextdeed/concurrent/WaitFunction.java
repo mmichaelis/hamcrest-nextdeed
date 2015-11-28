@@ -93,6 +93,9 @@ public class WaitFunction<T, R> implements Function<T, R> {
   private final TimeUnit initialDelayTimeUnit;
   private final double decelerationFactor;
 
+  @SuppressWarnings(
+      "squid:S00107" // Complexity of constructor arguments hidden by builder pattern.
+  )
   WaitFunction(@NotNull Function<T, R> delegateFunction,
                @NotNull Predicate<? super R> predicate,
                @NotNull Function<WaitTimeoutEvent<T, R>, R> onTimeoutFunction,

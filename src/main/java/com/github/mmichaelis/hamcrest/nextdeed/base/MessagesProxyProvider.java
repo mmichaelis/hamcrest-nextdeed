@@ -30,6 +30,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -125,6 +126,12 @@ public enum MessagesProxyProvider {
                                                    final Callable<Void> delegateCallable) {
     return new Callable<Void>() {
       @Override
+      @SuppressWarnings(
+          {
+              "squid:S1854",
+              "squid:S1481"
+          } // Variable "ignored" cannot be removed; required by Java
+      )
       public Void call() throws Exception {
         try (AutoCloseable ignored = MESSAGES_PROXY.overrideAsRaw(messageClass)) {
           return delegateCallable.call();
@@ -252,7 +259,11 @@ public enum MessagesProxyProvider {
     private static final Function<Object, Object> ARGUMENT_TRANSFORMER = new ArgumentTransformer();
 
     @Override
-    public Object[] apply(Object[] input) {
+    @Nullable
+    @SuppressWarnings(
+        "squid:S1168" // Returning null is valid here, as arguments should only be modified if transformer wants to deal with them
+    )
+    public Object[] apply(@Nullable Object[] input) {
       if (input == null) {
         return null;
       }

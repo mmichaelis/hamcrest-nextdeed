@@ -148,7 +148,7 @@ public abstract class IssuesMatcher<T> extends TypeSafeMatcher<T> {
     Collection<Issue> mismatchIssues;
     synchronized (issues) {
       mismatchIssues = new ArrayList<>(issues);
-      // issues.clear();
+      issues.clear();
     }
     return mismatchIssues;
   }

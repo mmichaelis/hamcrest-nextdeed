@@ -26,6 +26,7 @@ public class HamcrestNextdeedException extends RuntimeException {
   private static final long serialVersionUID = -5152515635944888760L;
 
   public HamcrestNextdeedException() {
+    // default constructor
   }
 
   public HamcrestNextdeedException(String message) {

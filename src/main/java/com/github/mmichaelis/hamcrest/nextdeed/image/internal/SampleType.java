@@ -236,7 +236,7 @@ public enum SampleType {
 
   private static class DoubleEqualsFunction implements BiFunction<Number, Number, Boolean> {
 
-    private double epsilon(double f1, double f2) {
+    private static double epsilon(double f1, double f2) {
       double baseEpsilon;
       if (Math.abs(f1) > Math.abs(f2)) {
         baseEpsilon = Math.ulp(f1);
@@ -258,7 +258,7 @@ public enum SampleType {
 
   private static class FloatEqualsFunction implements BiFunction<Number, Number, Boolean> {
 
-    private float epsilon(float f1, float f2) {
+    private static float epsilon(float f1, float f2) {
       float baseEpsilon;
       if (Math.abs(f1) > Math.abs(f2)) {
         baseEpsilon = Math.ulp(f1);

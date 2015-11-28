@@ -132,11 +132,11 @@ public class IsSerializable<T> extends IssuesMatcher<T> {
   @SuppressWarnings("unchecked")
   @Override
   protected void validate(@NotNull T item, @NotNull Collection<Issue> issues) {
-    T newItem;
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     if (!validateSerialization(item, bytes, issues)) {
       return;
     }
+    T newItem;
     try (ObjectInput in = new ObjectInputStream(
               new ByteArrayInputStream(bytes.toByteArray()))) {
       newItem = (T) in.readObject();
@@ -156,7 +156,9 @@ public class IsSerializable<T> extends IssuesMatcher<T> {
     }
   }
 
-  private boolean validateSerialization(@NotNull T item, ByteArrayOutputStream bytes, @NotNull Collection<Issue> issues) {
+  private static boolean validateSerialization(@NotNull Object item,
+                                               @NotNull ByteArrayOutputStream bytes,
+                                               @NotNull Collection<Issue> issues) {
     try (final ObjectOutput out = new ObjectOutputStream(bytes)) {
       out.writeObject(item);
     } catch (IOException e) {

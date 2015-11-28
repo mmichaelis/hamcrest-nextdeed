@@ -276,7 +276,7 @@ public enum SystemPropertyChanger implements TestRule {
    * @return previous value; {@code null} if it was not set
    */
   @Nullable
-  private String setOrClearSystemProperty(@NotNull String name, @Nullable String value) {
+  private static String setOrClearSystemProperty(@NotNull String name, @Nullable String value) {
     String previousValue;
     if (value == null) {
       previousValue = System.clearProperty(name);
@@ -295,7 +295,7 @@ public enum SystemPropertyChanger implements TestRule {
    * @throws IllegalStateException if this rule is used outside of test lifecycle
    */
   @NotNull
-  private Description validatedContext() {
+  private static Description validatedContext() {
     Description currentContext = TEST_CONTEXT.get();
     if (currentContext == null) {
       throw new IllegalStateException(
@@ -359,7 +359,7 @@ public enum SystemPropertyChanger implements TestRule {
    * @param description current context
    * @throws IllegalStateException iff. a current context is already set
    */
-  private void starting(@NotNull Description description) {
+  private static void starting(@NotNull Description description) {
     Description currentContext = TEST_CONTEXT.get();
     if (currentContext == null) {
       TEST_CONTEXT.set(description);

@@ -117,6 +117,7 @@ public enum JavaComplianceLevel {
       Constructor<? extends Throwable> constructor = itemClass.getDeclaredConstructor();
       instantiateViaDefaultConstructor(constructor, issues);
     } catch (NoSuchMethodException e) {
+      LOG.trace("Issue detected: Cannot instantiate via default constructor.", e);
       issues.add(messages().noDefaultConstructor());
     }
   }
