@@ -101,7 +101,7 @@ public class NextDeedConfigurationTest {
   @Test
   public void hasToStringMethod() throws Exception {
     assertThat("Resolver has toString with relevant information.", HAMCREST_NEXT_DEED_CONFIG,
-               hasToString(Matchers.containsString("CONFIGURATION_SUPPLIER")));
+               hasToString(Matchers.containsString("hash")));
   }
 
 }

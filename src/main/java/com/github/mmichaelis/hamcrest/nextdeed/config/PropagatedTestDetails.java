@@ -258,7 +258,7 @@ public class PropagatedTestDetails extends TestName {
     NextDeedTestConfiguration.HAMCREST_NEXT_DEED_TEST_CONFIG.getWritable().clear();
   }
 
-  private String escapeValue(AbstractConfiguration testConfiguration, String string) {
+  private static String escapeValue(AbstractConfiguration testConfiguration, String string) {
     return PropertyConverter.escapeDelimiters(string, testConfiguration
         .getListDelimiter());
   }
@@ -270,7 +270,7 @@ public class PropagatedTestDetails extends TestName {
    * @return encoded string
    */
   @NotNull
-  private String encode(@NotNull String string) {
+  private static String encode(@NotNull String string) {
     return new Encoder().encode(string);
   }
 }

@@ -79,7 +79,7 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
         .toString();
   }
 
-  private boolean tryWriteImage(BufferedImage bufferedImage, Path outPath) {
+  private static boolean tryWriteImage(BufferedImage bufferedImage, Path outPath) {
     boolean success = false;
     Iterator<ImageWriter> writerIterator = getImageWriterIteratorFor(outPath);
     while (writerIterator.hasNext() && !success) {
@@ -89,7 +89,7 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
     return success;
   }
 
-  private boolean tryWriteImage(BufferedImage bufferedImage,
+  private static boolean tryWriteImage(BufferedImage bufferedImage,
                                 Path outPath,
                                 ImageWriter imageWriter,
                                 boolean moreImageWritersAvailable) {
@@ -136,7 +136,7 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
   }
 
   @NotNull
-  private Iterator<ImageWriter> getImageWriterIteratorFor(@NotNull Path outPath) {
+  private static Iterator<ImageWriter> getImageWriterIteratorFor(@NotNull Path outPath) {
     String outFileExtension = Files.getFileExtension(outPath.getFileName().toString());
     Iterator<ImageWriter> writerIterator = ImageIO.getImageWritersBySuffix(outFileExtension);
     if (!writerIterator.hasNext()) {
@@ -145,7 +145,7 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
     return writerIterator;
   }
 
-  private void createParentDirs(Path path) {
+  private static void createParentDirs(Path path) {
     try {
       java.nio.file.Files.createDirectories(path.getParent());
     } catch (IOException e) {

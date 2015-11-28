@@ -102,7 +102,7 @@ public class SampleProcessingCompositeContext implements CompositeContext {
   }
 
   @NotNull
-  private SampleType getSampleType(@NotNull WritableRaster dstOut) {
+  private static SampleType getSampleType(@NotNull WritableRaster dstOut) {
     SampleModel sampleModel = dstOut.getSampleModel();
     int dataType = sampleModel.getDataType();
     SampleType sampleType = SampleType.forDataType(dataType);

@@ -20,6 +20,8 @@ import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +40,8 @@ import java.lang.reflect.InvocationTargetException;
 @Deprecated
 public class InstantiableViaDefaultConstructor<T extends Class<?>>
     extends CustomTypeSafeMatcher<T> {
+
+  private static final Logger LOG = LoggerFactory.getLogger(InstantiableViaDefaultConstructor.class);
 
   private static final ThreadLocal<Exception> INSTANTIATION_EXCEPTION = new ThreadLocal<>();
 
@@ -116,7 +120,8 @@ public class InstantiableViaDefaultConstructor<T extends Class<?>>
       } finally {
         defaultConstructor.setAccessible(false);
       }
-    } catch (SecurityException ignored) {
+    } catch (SecurityException e) {
+      LOG.trace("Issue detected: Cannot instantiate with default constructor.", e);
       result = false;
     }
     return result;

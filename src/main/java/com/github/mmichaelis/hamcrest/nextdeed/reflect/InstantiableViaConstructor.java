@@ -29,6 +29,8 @@ import com.github.mmichaelis.hamcrest.nextdeed.base.IssuesMatcher;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -44,6 +46,7 @@ import java.util.Collection;
  * @since SINCE
  */
 public class InstantiableViaConstructor<T extends Class<?>> extends IssuesMatcher<T> {
+  private static final Logger LOG = LoggerFactory.getLogger(InstantiableViaConstructor.class);
 
   @Nullable
   private final Object[] parameters;
@@ -114,6 +117,7 @@ public class InstantiableViaConstructor<T extends Class<?>> extends IssuesMatche
     try {
       constructor = item.getDeclaredConstructor(parameterTypes);
     } catch (NoSuchMethodException e) {
+      LOG.trace("Issue detected: Constructor with following parameter types not available: {}.", parameterTypes, e);
       issues.add(issue(messages().constructorWithParametersNotAvailable(parameterTypes)));
       return;
     }
@@ -121,6 +125,7 @@ public class InstantiableViaConstructor<T extends Class<?>> extends IssuesMatche
       Invokable.from(constructor).setAccessible(true);
       constructor.newInstance(parameters);
     } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+      LOG.trace("Issue detected: Cannot instantiate with constructor with following parameter types: {}.", parameterTypes, e);
       issues.add(issue(messages().cannotInstantiateWithConstructor(parameterTypes, e)));
     }
   }

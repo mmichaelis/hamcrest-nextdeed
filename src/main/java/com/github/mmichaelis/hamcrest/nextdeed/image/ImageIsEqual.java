@@ -289,7 +289,7 @@ public class ImageIsEqual extends IssuesMatcher<BufferedImage> {
   }
 
   @NotNull
-  private BufferedImage createDiffImageTarget(@NotNull BufferedImage actualImage) {
+  private static BufferedImage createDiffImageTarget(@NotNull BufferedImage actualImage) {
     BufferedImage difference;
     if (actualImage.getColorModel() instanceof IndexColorModel) {
       difference =

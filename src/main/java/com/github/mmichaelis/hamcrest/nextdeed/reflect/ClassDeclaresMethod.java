@@ -25,6 +25,8 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
@@ -35,6 +37,7 @@ import java.lang.reflect.Method;
  * @since SINCE
  */
 public class ClassDeclaresMethod<T extends Class<?>> extends TypeSafeMatcher<T> {
+  private static final Logger LOG = LoggerFactory.getLogger(ClassDeclaresMethod.class);
 
   @Nullable
   private final Class<?>[] parameterTypes;
@@ -138,6 +141,7 @@ public class ClassDeclaresMethod<T extends Class<?>> extends TypeSafeMatcher<T> 
       try {
         item.getDeclaredMethod(methodName, parameterTypes);
       } catch (NoSuchMethodException e) {
+        LOG.trace("No match: Class does not declare method {} with parameters of types: {}.", methodName, parameterTypes, e);
         return false;
       }
     }

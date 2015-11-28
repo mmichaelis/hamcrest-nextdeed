@@ -117,7 +117,6 @@ public enum JavaComplianceLevel {
       Constructor<? extends Throwable> constructor = itemClass.getDeclaredConstructor();
       instantiateViaDefaultConstructor(constructor, issues);
     } catch (NoSuchMethodException e) {
-      LOG.trace("Issue detected: default constructor not available.", e);
       issues.add(messages().noDefaultConstructor());
     }
   }
@@ -180,7 +179,7 @@ public enum JavaComplianceLevel {
     }
   }
 
-  private void validateConstructorMessage(@NotNull String description,
+  private static void validateConstructorMessage(@NotNull String description,
                                           @Nullable String expectedMessage,
                                           @NotNull Throwable instance,
                                           @NotNull Collection<String> issues) {
@@ -219,7 +218,7 @@ public enum JavaComplianceLevel {
     }
   }
 
-  private void validateConstructorSuppression(@NotNull String description,
+  private static void validateConstructorSuppression(@NotNull String description,
                                               @NotNull Throwable instance,
                                               @NotNull Collection<String> issues) {
     StackTraceElement[] stackTraceBefore = instance.getStackTrace();

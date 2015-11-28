@@ -117,7 +117,7 @@ public enum NextDeedConfiguration {
   /**
    * Supplier for the configuration, cached in order to have only one instance.
    */
-  private final transient Supplier<Configuration> CONFIGURATION_SUPPLIER =
+  private static final Supplier<Configuration> CONFIGURATION_SUPPLIER =
       Suppliers.memoize(new ConfigurationSupplier());
 
   /**
@@ -192,7 +192,6 @@ public enum NextDeedConfiguration {
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("CONFIGURATION_SUPPLIER", CONFIGURATION_SUPPLIER)
         .toString();
   }
 

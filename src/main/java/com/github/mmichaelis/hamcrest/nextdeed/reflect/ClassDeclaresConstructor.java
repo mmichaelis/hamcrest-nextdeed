@@ -23,6 +23,8 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -33,6 +35,7 @@ import java.util.Arrays;
  * @since 1.0.0
  */
 public class ClassDeclaresConstructor<T extends Class<?>> extends TypeSafeMatcher<T> {
+  private static final Logger LOG = LoggerFactory.getLogger(ClassDeclaresConstructor.class);
 
   @Nullable
   private final Class<?>[] parameterTypes;
@@ -94,6 +97,7 @@ public class ClassDeclaresConstructor<T extends Class<?>> extends TypeSafeMatche
     try {
       item.getDeclaredConstructor(parameterTypes);
     } catch (NoSuchMethodException e) {
+      LOG.trace("No match: Class does not declare constructor with parameters of types: {}.", parameterTypes, e);
       return false;
     }
     return true;

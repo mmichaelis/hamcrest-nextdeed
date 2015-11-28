@@ -29,10 +29,10 @@ import java.lang.reflect.Method;
 interface ReflectMessages {
 
   @NotNull
-  String constructorWithParametersNotAvailable(Class<?>[] parameterTypes);
+  String constructorWithParametersNotAvailable(@Nullable Class<?>[] parameterTypes);
 
   @NotNull
-  String cannotInstantiateWithConstructor(Class<?>[] parameterTypes, Throwable e);
+  String cannotInstantiateWithConstructor(@Nullable Class<?>[] parameterTypes, Throwable e);
 
   @NotNull
   String declaresMethod(@NotNull String methodName);
