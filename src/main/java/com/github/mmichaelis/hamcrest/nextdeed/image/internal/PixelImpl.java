@@ -25,6 +25,8 @@ import java.util.Objects;
  */
 public class PixelImpl implements Pixel {
 
+  private static final long serialVersionUID = -7204472678006297842L;
+
   private final int x;
   private final int y;
 
@@ -58,7 +60,7 @@ public class PixelImpl implements Pixel {
     }
     PixelImpl other = (PixelImpl) obj;
     return Objects.equals(x, other.x)
-           && Objects.equals(y, other.y);
+        && Objects.equals(y, other.y);
   }
 
 

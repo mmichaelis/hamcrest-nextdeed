@@ -134,11 +134,11 @@ public class IsSerializable<T> extends IssuesMatcher<T> {
   protected void validate(@NotNull T item, @NotNull Collection<Issue> issues) {
     T newItem;
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    try {
-      ObjectOutput out = new ObjectOutputStream(bytes);
-      out.writeObject(item);
-      ObjectInput in = new ObjectInputStream(
-          new ByteArrayInputStream(bytes.toByteArray()));
+    if (!validateSerialization(item, bytes, issues)) {
+      return;
+    }
+    try (ObjectInput in = new ObjectInputStream(
+              new ByteArrayInputStream(bytes.toByteArray()))) {
       newItem = (T) in.readObject();
     } catch (IOException | ClassNotFoundException e) {
       issues.add(issue(messages().serializationDeserializationFailure(e)));
@@ -154,6 +154,16 @@ public class IsSerializable<T> extends IssuesMatcher<T> {
         issues.add(issue(description.toString()));
       }
     }
+  }
+
+  private boolean validateSerialization(@NotNull T item, ByteArrayOutputStream bytes, @NotNull Collection<Issue> issues) {
+    try (final ObjectOutput out = new ObjectOutputStream(bytes)) {
+      out.writeObject(item);
+    } catch (IOException e) {
+      issues.add(issue(messages().serializationDeserializationFailure(e)));
+      return false;
+    }
+    return true;
   }
 
   /**

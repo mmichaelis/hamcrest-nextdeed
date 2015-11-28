@@ -117,7 +117,7 @@ public enum NextDeedConfiguration {
   /**
    * Supplier for the configuration, cached in order to have only one instance.
    */
-  private final Supplier<Configuration> CONFIGURATION_SUPPLIER =
+  private final transient Supplier<Configuration> CONFIGURATION_SUPPLIER =
       Suppliers.memoize(new ConfigurationSupplier());
 
   /**

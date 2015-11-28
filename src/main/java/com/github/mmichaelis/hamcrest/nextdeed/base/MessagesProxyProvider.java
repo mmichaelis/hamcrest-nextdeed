@@ -110,7 +110,7 @@ public enum MessagesProxyProvider {
    *
    * @since SINCE
    */
-  private final LoadingCache<Class<?>, Object> proxyCache =
+  private final transient LoadingCache<Class<?>, Object> proxyCache =
       CacheBuilder
           .newBuilder()
           .build(

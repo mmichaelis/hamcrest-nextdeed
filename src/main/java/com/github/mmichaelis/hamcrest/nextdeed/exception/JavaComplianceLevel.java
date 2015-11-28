@@ -23,6 +23,8 @@ import com.google.common.reflect.Invokable;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -44,6 +46,8 @@ public enum JavaComplianceLevel {
   JAVA_1_1("Java 1.1", false, false),
   JAVA_1_4("Java 1.4", true, false),
   JAVA_1_7("Java 1.7", true, true);
+
+  private static final Logger LOG = LoggerFactory.getLogger(JavaComplianceLevel.class);
 
   /**
    * Just some sample cause message during validation.
@@ -112,7 +116,8 @@ public enum JavaComplianceLevel {
     try {
       Constructor<? extends Throwable> constructor = itemClass.getDeclaredConstructor();
       instantiateViaDefaultConstructor(constructor, issues);
-    } catch (NoSuchMethodException ignored) {
+    } catch (NoSuchMethodException e) {
+      LOG.trace("Issue detected: default constructor not available.", e);
       issues.add(messages().noDefaultConstructor());
     }
   }
@@ -123,7 +128,8 @@ public enum JavaComplianceLevel {
       Constructor<? extends Throwable> constructor =
           itemClass.getDeclaredConstructor(String.class);
       instantiateViaMessageConstructor(constructor, issues);
-    } catch (NoSuchMethodException ignored) {
+    } catch (NoSuchMethodException e) {
+      LOG.trace("Issue detected: message constructor not available.", e);
       issues.add(messages().noMessageConstructor());
     }
   }
@@ -135,7 +141,8 @@ public enum JavaComplianceLevel {
         Constructor<? extends Throwable> constructor =
             itemClass.getDeclaredConstructor(Throwable.class);
         instantiateViaCauseConstructor(constructor, issues);
-      } catch (NoSuchMethodException ignored) {
+      } catch (NoSuchMethodException e) {
+        LOG.trace("Issue detected: cause constructor not available.", e);
         issues.add(messages().noCauseConstructor());
       }
     }
@@ -148,7 +155,8 @@ public enum JavaComplianceLevel {
         Constructor<? extends Throwable> constructor =
             itemClass.getDeclaredConstructor(String.class, Throwable.class);
         instantiateViaMessageCauseConstructor(constructor, issues);
-      } catch (NoSuchMethodException ignored) {
+      } catch (NoSuchMethodException e) {
+        LOG.trace("Issue detected: message-cause constructor not available.", e);
         issues.add(messages().noMessageCauseConstructor());
       }
     }
@@ -165,7 +173,8 @@ public enum JavaComplianceLevel {
           issues.add(messages().suppressionEnabledConstructorIsNotProtected());
         }
         instantiateViaSuppressionEnabledConstructor(constructor, issues);
-      } catch (NoSuchMethodException ignored) {
+      } catch (NoSuchMethodException e) {
+        LOG.trace("Issue detected: suppression-enabled constructor not available.", e);
         issues.add(messages().noSuppressionEnabledConstructor());
       }
     }
@@ -200,6 +209,7 @@ public enum JavaComplianceLevel {
       try {
         instance.initCause(PROBE_CAUSE);
       } catch (IllegalArgumentException | IllegalStateException e) {
+        LOG.trace("Issue detected: problem while initializing cause.", e);
         if (null == instance.getCause()) {
           issues.add(messages().initCauseFailureNull(description));
         } else {

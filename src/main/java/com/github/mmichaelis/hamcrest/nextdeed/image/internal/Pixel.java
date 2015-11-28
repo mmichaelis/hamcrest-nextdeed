@@ -16,10 +16,12 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.image.internal;
 
+import java.io.Serializable;
+
 /**
  * @since SINCE
  */
-public interface Pixel {
+public interface Pixel extends Serializable {
 
   int getX();
 

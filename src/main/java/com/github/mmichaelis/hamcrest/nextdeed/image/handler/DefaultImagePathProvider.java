@@ -55,6 +55,7 @@ public class DefaultImagePathProvider implements Function<ImageType, Path> {
       URI uri = URI.create(path);
       return Paths.get(uri);
     } catch (IllegalArgumentException e) {
+      LOG.debug("Cannot build URI from {}. Retrying to get path directly.", path, e);
       return Paths.get(path);
     }
   }
