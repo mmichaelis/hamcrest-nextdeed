@@ -31,8 +31,6 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/function/ApplyingMatcher.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/function/Reference.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/function/ReferenceImpl.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/glue/DirtyCombinedConfiguration.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/glue/MonitoredSystemConfiguration.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageException.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageIsEqual.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageMessages.java" charset="UTF-8" />

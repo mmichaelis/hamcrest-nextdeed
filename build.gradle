@@ -38,6 +38,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: "sonar-runner"
 apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'org.ajoberstar.github-pages'
@@ -68,10 +69,10 @@ if (!isCiBuild) {
     hooks {
       // replaces usages of e. g. @since SINCE by the new version number
       pre 'fileUpdate',
-          [files: fileTree('src').include('**/*.java'), pattern: {v, p -> /SINCE/}, replacement: {
+          [files: fileTree('src').include('**/*.java'), pattern: { v, p -> /SINCE/ }, replacement: {
             v, p -> "$v"
           }]
-      pre 'commit', {v, p -> "Applying release version $v."}
+      pre 'commit', { v, p -> "Applying release version $v." }
     }
   }
 
@@ -128,11 +129,19 @@ dependencies {
   )
 }
 
+// Task: sonarRunner
+sonarRunner {
+  sonarProperties {
+    property "sonar.java.source", "1.7"
+    property "sonar.java.target", "1.7"
+  }
+}
+
 jar {
   manifest {
     attributes 'Implementation-Title': 'Hamcrest - Next Deed',
-               'Implementation-Vendor': 'Mark Michaelis',
-               'Implementation-Version': version
+        'Implementation-Vendor': 'Mark Michaelis',
+        'Implementation-Version': version
   }
 }
 
@@ -140,8 +149,8 @@ allprojects {
   tasks.withType(Javadoc) {
     options.footer '<em>Hamcrest &mdash; Next Deed</em> <a href="https://github.com/mmichaelis/hamcrest-nextdeed">@GitHub</a>'
     options.links 'http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/',
-                  'http://hamcrest.org/JavaHamcrest/javadoc/1.3/',
-                  'http://docs.oracle.com/javase/7/docs/api'
+        'http://hamcrest.org/JavaHamcrest/javadoc/1.3/',
+        'http://docs.oracle.com/javase/7/docs/api'
   }
 
   tasks.withType(Test) {
