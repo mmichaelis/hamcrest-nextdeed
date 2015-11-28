@@ -63,7 +63,7 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
   @Override
   public String apply(ImageType imageType, BufferedImage bufferedImage) {
     Path outPath = getOutPath(imageType);
-    String result = outPath.toAbsolutePath().toString();
+    String result = outPath.toAbsolutePath().toUri().toString();
     createParentDirs(outPath);
     if (!tryWriteImage(bufferedImage, outPath)) {
       result = format("<Failed writing image to to file %s>", result);
@@ -99,18 +99,26 @@ public class WriteImageHandlerFunction implements BiFunction<ImageType, Buffered
          Closeable ios = ImageIO.createImageOutputStream(os)) {
       imageWriter.setOutput(ios);
       imageWriter.write(bufferedImage);
-      LOG.info("Wrote file {} containing image {} via image writer {}.", outPath, bufferedImage,
-               imageWriter);
+      LOG.debug("Wrote file {} containing image {} via image writer {}.",
+                outPath.toUri(),
+                bufferedImage,
+                imageWriter);
       mySuccess = true;
     } catch (IOException e) {
       if (moreImageWritersAvailable) {
         LOG.warn(
             "Unable writing {} to contain image {} via image writer {}. Will try next image writer.",
-            outPath, bufferedImage, imageWriter, e);
+            outPath.toUri(),
+            bufferedImage,
+            imageWriter,
+            e);
       } else {
         LOG.error(
             "Could write {} to contain image {} with any image writer found. Last one tried: {}.",
-            outPath, bufferedImage, imageWriter, e);
+            outPath.toUri(),
+            bufferedImage,
+            imageWriter,
+            e);
 
       }
     }

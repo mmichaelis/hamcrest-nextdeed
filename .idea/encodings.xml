@@ -15,6 +15,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/base/package-info.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/concurrent/ThrowAssertionErrorStrategy.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/concurrent/WaitTimeoutException.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/ConfigUtil.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/ConfigurationException.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/Encoder.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/config/NextDeedConfiguration.java" charset="UTF-8" />
@@ -30,6 +31,8 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/function/ApplyingMatcher.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/function/Reference.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/function/ReferenceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/glue/DirtyCombinedConfiguration.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/glue/MonitoredSystemConfiguration.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageException.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageIsEqual.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageMessages.java" charset="UTF-8" />
@@ -37,13 +40,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/Messages.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/handler/DefaultImagePathProvider.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/handler/WriteImageHandlerFunction.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/AbstractBandPixelProcessingListener.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/AbstractPixelProcessingListener.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/BandPixel.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/BandPixelImpl.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/BandPixelProcessingEvent.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/BandPixelProcessingEventObject.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/BandPixelProcessingListener.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/DefaultSampleComparisonProcessor.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/GetSampleFunction.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/Helper.java" charset="UTF-8" />
@@ -58,7 +55,6 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/SampleProcessingCompositeContext.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/SampleType.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/image/internal/SetSampleFunction.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/FileConflictResolver.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/PathConflictResolver.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/SystemPropertyChanger.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/package-info.java" charset="UTF-8" />
@@ -106,7 +102,6 @@
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/glue/HamcrestGlueTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/image/ImageIsEqualTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/image/WriteImageHandlerFunctionTest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/FileConflictResolverTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/PathConflictResolverTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/incubator/SystemPropertyChangerTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/io/IoMessagesTest.java" charset="UTF-8" />
@@ -118,5 +113,7 @@
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/reflect/ReflectMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/github/mmichaelis/hamcrest/nextdeed/util/UtilMessagesTest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/resources/com/github/mmichaelis/hamcrest/nextdeed/base/messages/Bundle.properties" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/logback-test.properties" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

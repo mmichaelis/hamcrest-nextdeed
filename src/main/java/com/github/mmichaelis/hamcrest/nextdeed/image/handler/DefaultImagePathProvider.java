@@ -19,6 +19,7 @@ package com.github.mmichaelis.hamcrest.nextdeed.image.handler;
 import static com.github.mmichaelis.hamcrest.nextdeed.config.NextDeedConfiguration.propertyName;
 import static com.github.mmichaelis.hamcrest.nextdeed.config.PropagatedTestDetails.createDefaults;
 import static java.util.Collections.singletonMap;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import com.google.common.base.Function;
 
@@ -26,7 +27,9 @@ import com.github.mmichaelis.hamcrest.nextdeed.config.NextDeedTestConfiguration;
 import com.github.mmichaelis.hamcrest.nextdeed.image.ImageType;
 
 import org.apache.commons.configuration.Configuration;
+import org.slf4j.Logger;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -35,7 +38,8 @@ import java.nio.file.Paths;
  */
 public class DefaultImagePathProvider implements Function<ImageType, Path> {
 
-  private static final String IMAGE_OUT_FILE_PATTERN = "image.outFilePattern";
+  public static final String IMAGE_OUT_FILE_PATTERN = "image.outFilePattern";
+  private static final Logger LOG = getLogger(DefaultImagePathProvider.class);
 
   @Override
   public Path apply(ImageType input) {
@@ -43,6 +47,15 @@ public class DefaultImagePathProvider implements Function<ImageType, Path> {
         NextDeedTestConfiguration.HAMCREST_NEXT_DEED_TEST_CONFIG
             .get(singletonMap("imageType", input.toString()),
                  createDefaults());
-    return Paths.get(configuration.getString(propertyName(IMAGE_OUT_FILE_PATTERN)));
+    String path = configuration.getString(propertyName(IMAGE_OUT_FILE_PATTERN));
+    LOG.debug("Raw property value: {} -> {}",
+              configuration.getProperty(propertyName(IMAGE_OUT_FILE_PATTERN)),
+              path);
+    try {
+      URI uri = URI.create(path);
+      return Paths.get(uri);
+    } catch (IllegalArgumentException e) {
+      return Paths.get(path);
+    }
   }
 }

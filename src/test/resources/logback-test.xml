@@ -35,6 +35,13 @@
   <variable scope="system"
             resource="logback-test.properties"/>
 
+  <!-- Allows tests to temporarily turn off logging in case e. g. warnings are expected. -->
+  <turboFilter class="ch.qos.logback.classic.turbo.MDCFilter">
+    <MDCKey>suppression</MDCKey>
+    <Value>suppressed</Value>
+    <OnMatch>DENY</OnMatch>
+  </turboFilter>
+
   <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>${config.stdout.log.pattern}</pattern>

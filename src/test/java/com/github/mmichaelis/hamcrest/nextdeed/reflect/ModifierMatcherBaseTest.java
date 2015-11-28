@@ -143,7 +143,7 @@ public class ModifierMatcherBaseTest {
     StringDescription description = new StringDescription();
     modifierMatcherBase.describeMismatch("anything", description);
     String str = description.toString();
-    LOG.info(TEST, "Mismatch Description: {}", str);
+    LOG.debug(TEST, "Mismatch Description: {}", str);
     assertThat("Mismatch contains actual modifiers.", str,
                Matchers
                    .containsString(String.format("\"%s\"", Modifier.toString(actualModifiers))));
@@ -154,7 +154,7 @@ public class ModifierMatcherBaseTest {
     StringDescription description = new StringDescription();
     modifierMatcherBase.describeMismatch("anything", description);
     String str = description.toString();
-    LOG.info(TEST, "Mismatch Description: {}", str);
+    LOG.debug(TEST, "Mismatch Description: {}", str);
     assertThat("Mismatch contains actual modifiers.", str,
                Matchers.containsString(
                    String.format("\"%s\"", Modifier.toString(differenceModifiers))));
@@ -165,7 +165,7 @@ public class ModifierMatcherBaseTest {
     StringDescription description = new StringDescription();
     modifierMatcherBase.describeTo(description);
     String str = description.toString();
-    LOG.info(TEST, "Description: {}", str);
+    LOG.debug(TEST, "Description: {}", str);
     assertThat("Description contains verbose expected modifiers.", str, Matchers
         .containsString(String.format("\"%s\"", Modifier.toString(expectedModifiers))));
   }

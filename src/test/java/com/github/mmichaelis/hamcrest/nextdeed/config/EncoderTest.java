@@ -20,8 +20,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import com.github.mmichaelis.hamcrest.nextdeed.MdcAccess;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -32,6 +35,9 @@ import org.junit.Test;
 public class EncoderTest {
 
   private Encoder defaultEncoder;
+
+  @Rule
+  public MdcAccess mdcAccess = new MdcAccess();
 
   @Before
   public void setUp() throws Exception {
@@ -60,6 +66,7 @@ public class EncoderTest {
         return "not-really-an-encoding";
       }
     };
+    mdcAccess.startSuppressLogging();
     assertThat(encoder.encode(value), not(equalTo(value)));
   }
 
@@ -78,6 +85,7 @@ public class EncoderTest {
         return "not-really-an-encoding";
       }
     };
+    mdcAccess.startSuppressLogging();
     assertThat(encoder.encode(value), equalTo(value));
   }
 }

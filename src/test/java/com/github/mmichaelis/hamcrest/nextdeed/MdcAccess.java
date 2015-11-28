@@ -16,33 +16,28 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed;
 
-import static com.github.mmichaelis.hamcrest.nextdeed.TestMarker.TEST;
-import static org.slf4j.LoggerFactory.getLogger;
-
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.slf4j.Logger;
 import org.slf4j.MDC;
 
 /**
- * Logs the test name and specifies an indent for subsequent log output.
- *
- * @since 1.0.0
+ * @since SINCE
  */
-public class LogTestName extends TestWatcher {
+public class MdcAccess extends TestWatcher {
 
-  private static final Logger LOG = getLogger(LogTestName.class);
-  private static final String LOG_INDENT = "log.indent";
-
-  @Override
-  protected void starting(Description description) {
-    LOG.debug(TEST, "Starting {}", description.getMethodName());
-    MDC.put(LOG_INDENT, "    ");
-  }
+  private static final String SUPRESSION_KEY = "suppression";
+  private static final String SUPPRESSED_VALUE = "suppressed";
 
   @Override
   protected void finished(Description description) {
-    MDC.remove(LOG_INDENT);
-    LOG.debug(TEST, "Finished {}", description.getMethodName());
+    MDC.clear();
+  }
+
+  public void startSuppressLogging() {
+    MDC.put(SUPRESSION_KEY, SUPPRESSED_VALUE);
+  }
+
+  public void endSuppressLogging() {
+    MDC.remove(SUPRESSION_KEY);
   }
 }

@@ -66,7 +66,7 @@ public class NextDeedTestConfigurationTest {
   public static void setUpClass() throws Exception {
     globalConfig = HAMCREST_NEXT_DEED_CONFIG.get();
     probeKey = globalConfig.getKeys().next();
-    LOG.info("Probing with key '{}' (value: {}).", probeKey, globalConfig.getString(probeKey));
+    LOG.debug("Probing with key '{}' (value: {}).", probeKey, globalConfig.getString(probeKey));
   }
 
   @Before

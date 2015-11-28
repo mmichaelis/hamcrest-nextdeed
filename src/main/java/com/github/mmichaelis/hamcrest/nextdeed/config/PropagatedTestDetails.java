@@ -16,6 +16,8 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.config;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
@@ -24,6 +26,7 @@ import org.apache.commons.configuration.PropertyConverter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.rules.TestName;
 import org.junit.runner.Description;
+import org.slf4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -137,6 +140,7 @@ public class PropagatedTestDetails extends TestName {
    * @since SINCE
    */
   public static final String TEST_TIMESTAMP = "testTimestamp";
+  private static final Logger LOG = getLogger(PropagatedTestDetails.class);
   private static final RandomTokenGenerator TOKEN_GENERATOR = new RandomTokenGenerator();
   private static final String TIMESTAMP_PATTERN = "yyyy-MM-dd'T'HH-mm-ss-S";
   private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL =
@@ -218,6 +222,19 @@ public class PropagatedTestDetails extends TestName {
         .toString();
   }
 
+  /**
+   * Set property which will only exist during test lifecycle.
+   *
+   * @param key   property key
+   * @param value property value
+   */
+  public void setProperty(String key, String value) {
+    AbstractConfiguration testConfiguration =
+        (AbstractConfiguration) NextDeedTestConfiguration.HAMCREST_NEXT_DEED_TEST_CONFIG
+            .getWritable();
+    testConfiguration.setProperty(key, escapeValue(testConfiguration, value));
+  }
+
   @Override
   protected void starting(Description d) {
     super.starting(d);
@@ -239,12 +256,6 @@ public class PropagatedTestDetails extends TestName {
   @Override
   protected void finished(Description description) {
     NextDeedTestConfiguration.HAMCREST_NEXT_DEED_TEST_CONFIG.getWritable().clear();
-  }
-
-  private void setProperty(String key, String value) {
-    AbstractConfiguration testConfiguration =
-        (AbstractConfiguration) NextDeedTestConfiguration.HAMCREST_NEXT_DEED_TEST_CONFIG.getWritable();
-    testConfiguration.setProperty(key, escapeValue(testConfiguration, value));
   }
 
   private String escapeValue(AbstractConfiguration testConfiguration, String string) {

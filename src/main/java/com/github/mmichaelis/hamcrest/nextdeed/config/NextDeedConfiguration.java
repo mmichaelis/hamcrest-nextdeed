@@ -16,14 +16,14 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.config;
 
+import static com.github.mmichaelis.hamcrest.nextdeed.config.ConfigUtil.dumpConfigurationOrder;
+import static com.github.mmichaelis.hamcrest.nextdeed.config.ConfigUtil.dumpConfigurationProperties;
 import static java.lang.String.format;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Lists;
 
 import org.apache.commons.configuration.CombinedConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -32,11 +32,8 @@ import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * <p>
@@ -108,7 +105,6 @@ public enum NextDeedConfiguration {
    */
   public static final String P_PROPERTIES = PROPERTIES_PREFIX + ".properties";
 
-  private static final Logger LOG = getLogger(NextDeedConfiguration.class);
   /**
    * Filename of user specific settings for <em>Hamcrest &mdash; Next Deed</em>.
    */
@@ -179,39 +175,6 @@ public enum NextDeedConfiguration {
     String[] namesFromProperty = configuration.getStringArray(P_PROPERTIES);
     for (String nameFromProperty : namesFromProperty) {
       addRequiredConfiguration(configuration, nameFromProperty);
-    }
-  }
-
-  private static void dumpConfigurationProperties(Configuration configuration) {
-    if (LOG.isDebugEnabled()) {
-      try {
-        LOG.debug("Available properties:");
-        List<String> keys = Lists.newArrayList(configuration.getKeys());
-        Collections.sort(keys);
-        for (String key : keys) {
-          Object rawProperty = configuration.getProperty(key);
-          String propertyString = configuration.getString(key);
-          if (propertyString.equals(rawProperty)) {
-            LOG.debug("    {} = {}", key, rawProperty);
-          } else {
-            LOG.debug("    {} = {} (raw: {})", key, propertyString, rawProperty);
-          }
-        }
-      } catch (RuntimeException e) {
-        LOG.warn("Unable to dump configured properties.", e);
-      }
-    }
-  }
-
-  private static void dumpConfigurationOrder(CombinedConfiguration configuration) {
-    if (LOG.isInfoEnabled()) {
-      List<String> names = configuration.getConfigurationNameList();
-      int configurationCount = configuration.getNumberOfConfigurations();
-      LOG.info("Loaded {} configuration sources (high priority first):", configurationCount);
-      for (int i = 0; i < configurationCount; i++) {
-        LOG.info("    {}. Configuration: {} ({})", i + 1, names.get(i),
-                 configuration.getConfiguration(i));
-      }
     }
   }
 

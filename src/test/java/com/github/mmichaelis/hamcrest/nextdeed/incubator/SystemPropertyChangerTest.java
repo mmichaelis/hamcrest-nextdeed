@@ -28,6 +28,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 
+import com.github.mmichaelis.hamcrest.nextdeed.MdcAccess;
 import com.github.mmichaelis.hamcrest.nextdeed.glue.DescribedFunction;
 
 import org.hamcrest.CustomTypeSafeMatcher;
@@ -69,8 +70,9 @@ public class SystemPropertyChangerTest {
   private final ErrorCollector errorCollector = new ErrorCollector();
   private final SystemPropertyValidatorRule
       systemPropertyValidatorRule = new SystemPropertyValidatorRule(errorCollector);
-  private SystemPropertyChanger systemPropertyChangerUnderTest = SYSTEM_PROPERTY_CHANGER;
-  private ExpectedException expectedException = ExpectedException.none();
+  private final SystemPropertyChanger systemPropertyChangerUnderTest = SYSTEM_PROPERTY_CHANGER;
+  private final ExpectedException expectedException = ExpectedException.none();
+  private final MdcAccess mdcAccess = new MdcAccess();
 
   @Rule
   public RuleChain
@@ -90,6 +92,7 @@ public class SystemPropertyChangerTest {
           })
           .around(systemPropertyValidatorRule)
           .around(expectedException)
+          .around(mdcAccess)
           .around(systemPropertyChangerUnderTest);
 
   @Test
@@ -102,12 +105,14 @@ public class SystemPropertyChangerTest {
     String key = "property.added.without.rule";
     String value = "you shouldn't have done this.";
     System.setProperty(key, value);
+    mdcAccess.startSuppressLogging();
     systemPropertyValidatorRule.addExpectAdded(key, value);
   }
 
   @Test
   public void dontRevertSystemPropertiesNotRemovedViaRule() throws Exception {
     System.clearProperty(PROPERTY_ADDED_BEFORE);
+    mdcAccess.startSuppressLogging();
     systemPropertyValidatorRule.addExpectRemoved(PROPERTY_ADDED_BEFORE, VALUE_BEFORE);
   }
 
@@ -115,6 +120,7 @@ public class SystemPropertyChangerTest {
   public void dontRevertSystemPropertiesNotChangedViaRule() throws Exception {
     String value = "new value";
     System.setProperty(PROPERTY_ADDED_BEFORE, value);
+    mdcAccess.startSuppressLogging();
     systemPropertyValidatorRule.addExpectChanged(PROPERTY_ADDED_BEFORE, VALUE_BEFORE, value);
   }
 
