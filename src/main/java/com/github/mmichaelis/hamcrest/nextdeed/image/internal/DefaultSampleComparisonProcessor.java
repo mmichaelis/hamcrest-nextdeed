@@ -16,8 +16,6 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.image.internal;
 
-import com.github.mmichaelis.hamcrest.nextdeed.glue.BiFunction;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.Raster;
@@ -38,9 +36,7 @@ public class DefaultSampleComparisonProcessor implements SampleComparisonProcess
                                            int b) {
     GetSampleFunction getSampleFunction = sampleType.getGetSampleFunction();
     SetSampleFunction setSampleFunction = sampleType.getSetSampleFunction();
-    BiFunction<? super Number, ? super Number, Boolean>
-        equalsFunction =
-        sampleType.getEqualsFunction();
+    NumberEqualsFunction equalsFunction = sampleType.getEqualsFunction();
 
     Number srcSample = getSampleFunction.apply(src, x, y, b);
     Number dstInSample = getSampleFunction.apply(dstIn, x, y, b);

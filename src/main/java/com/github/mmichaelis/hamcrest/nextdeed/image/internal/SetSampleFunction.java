@@ -19,10 +19,11 @@ package com.github.mmichaelis.hamcrest.nextdeed.image.internal;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.WritableRaster;
+import java.io.Serializable;
 
 /**
  * @since SINCE
  */
-public interface SetSampleFunction {
+public interface SetSampleFunction extends Serializable {
   void apply(@NotNull WritableRaster rst, int x, int y, int b, @NotNull Number sampleValue);
 }

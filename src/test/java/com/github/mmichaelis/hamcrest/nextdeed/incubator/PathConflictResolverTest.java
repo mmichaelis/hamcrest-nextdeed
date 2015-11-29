@@ -33,6 +33,7 @@ import com.google.common.jimfs.Jimfs;
 import com.github.mmichaelis.hamcrest.nextdeed.base.HamcrestNextdeedException;
 import com.github.mmichaelis.hamcrest.nextdeed.incubator.PathConflictResolver;
 
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -208,4 +209,9 @@ public class PathConflictResolverTest {
     noToleranceResolver.apply(path);
   }
 
+  @Test
+  public void toStringProvidesInformation() throws Exception {
+    PathConflictResolver resolver = new PathConflictResolver(1331);
+    assertThat(resolver, Matchers.hasToString(Matchers.containsString(Integer.toString(1331))));
+  }
 }

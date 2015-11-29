@@ -17,9 +17,6 @@
 package com.github.mmichaelis.hamcrest.nextdeed.image.internal;
 
 import com.google.common.base.MoreObjects;
-
-import com.github.mmichaelis.hamcrest.nextdeed.glue.BiFunction;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,9 +44,9 @@ public enum SampleType {
       DataBuffer.TYPE_BYTE,
       Byte.MIN_VALUE,
       Byte.MAX_VALUE,
-      Defaults.NUMBER_EQUALS_FUNCTION,
-      Defaults.GET_INT_SAMPLE_FUNCTION,
-      Defaults.SET_INT_SAMPLE_FUNCTION
+      Defaults.DEFAULTS.numberEqualsFunction,
+      Defaults.DEFAULTS.getIntSampleFunction,
+      Defaults.DEFAULTS.setIntSampleFunction
   ),
   /**
    * Double Type.
@@ -63,7 +60,7 @@ public enum SampleType {
       Double.MAX_VALUE,
       new DoubleEqualsFunction(),
       new GetFloatSampleFunction(),
-      Defaults.SET_INT_SAMPLE_FUNCTION
+      Defaults.DEFAULTS.setIntSampleFunction
   ),
   /**
    * Float Type.
@@ -77,7 +74,7 @@ public enum SampleType {
       Float.MAX_VALUE,
       new FloatEqualsFunction(),
       new GetDoubleSampleFunction(),
-      Defaults.SET_INT_SAMPLE_FUNCTION
+      Defaults.DEFAULTS.setIntSampleFunction
   ),
   /**
    * Integer Type.
@@ -89,9 +86,9 @@ public enum SampleType {
       DataBuffer.TYPE_INT,
       Integer.MIN_VALUE,
       Integer.MAX_VALUE,
-      Defaults.NUMBER_EQUALS_FUNCTION,
-      Defaults.GET_INT_SAMPLE_FUNCTION,
-      Defaults.SET_INT_SAMPLE_FUNCTION
+      Defaults.DEFAULTS.numberEqualsFunction,
+      Defaults.DEFAULTS.getIntSampleFunction,
+      Defaults.DEFAULTS.setIntSampleFunction
   ),
   /**
    * Short Type.
@@ -103,9 +100,9 @@ public enum SampleType {
       DataBuffer.TYPE_SHORT,
       Short.MIN_VALUE,
       Short.MAX_VALUE,
-      Defaults.NUMBER_EQUALS_FUNCTION,
-      Defaults.GET_INT_SAMPLE_FUNCTION,
-      Defaults.SET_INT_SAMPLE_FUNCTION
+      Defaults.DEFAULTS.numberEqualsFunction,
+      Defaults.DEFAULTS.getIntSampleFunction,
+      Defaults.DEFAULTS.setIntSampleFunction
   ),
   /**
    * Unsigned Short Type.
@@ -117,9 +114,9 @@ public enum SampleType {
       DataBuffer.TYPE_USHORT,
       0,
       (int) Short.MAX_VALUE - (int) Short.MIN_VALUE,
-      Defaults.NUMBER_EQUALS_FUNCTION,
-      Defaults.GET_INT_SAMPLE_FUNCTION,
-      Defaults.SET_INT_SAMPLE_FUNCTION
+      Defaults.DEFAULTS.numberEqualsFunction,
+      Defaults.DEFAULTS.getIntSampleFunction,
+      Defaults.DEFAULTS.setIntSampleFunction
   );
 
   private final int dataType;
@@ -128,7 +125,7 @@ public enum SampleType {
   @NotNull
   private final Number maxValue;
   @NotNull
-  private final BiFunction<? super Number, ? super Number, Boolean> equalsFunction;
+  private final NumberEqualsFunction equalsFunction;
   @NotNull
   private final GetSampleFunction getSampleFunction;
   @NotNull
@@ -137,7 +134,7 @@ public enum SampleType {
   SampleType(int dataType,
              @NotNull Number minValue,
              @NotNull Number maxValue,
-             @NotNull BiFunction<? super Number, ? super Number, Boolean> equalsFunction,
+             @NotNull NumberEqualsFunction equalsFunction,
              @NotNull GetSampleFunction getSampleFunction,
              @NotNull SetSampleFunction setSampleFunction) {
     this.dataType = dataType;
@@ -180,7 +177,7 @@ public enum SampleType {
   }
 
   @NotNull
-  public BiFunction<? super Number, ? super Number, Boolean> getEqualsFunction() {
+  public NumberEqualsFunction getEqualsFunction() {
     return equalsFunction;
   }
 
@@ -197,44 +194,52 @@ public enum SampleType {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("dataType", dataType)
-        .add("minValue", minValue)
-        .add("maxValue", maxValue)
-        .add("super", super.toString())
-        .toString();
+                      .add("hash", Integer.toHexString(System.identityHashCode(this)))
+                      .add("dataType", dataType)
+                      .add("minValue", minValue)
+                      .add("maxValue", maxValue)
+                      .add("super", super.toString())
+                      .toString();
   }
 
-  private interface Defaults {
+  private enum Defaults {
+    DEFAULTS;
 
-    BiFunction<? super Number, ? super Number, Boolean>
-        NUMBER_EQUALS_FUNCTION =
-        new BiFunction<Number, Number, Boolean>() {
-          @Override
-          public Boolean apply(Number a, Number b) {
-            return Objects.equals(a, b);
-          }
-        };
-    GetSampleFunction
-        GET_INT_SAMPLE_FUNCTION =
-        new GetSampleFunction() {
-          @Override
-          public Number apply(@NotNull Raster rst, int x, int y, int b) {
-            return rst.getSample(x, y, b);
-          }
-        };
-    SetSampleFunction
-        SET_INT_SAMPLE_FUNCTION =
-        new SetSampleFunction() {
-          @Override
-          public void apply(@NotNull WritableRaster rst, int x, int y, int b, @NotNull Number sampleValue) {
-            rst.setSample(x, y, b, (Integer) sampleValue);
-          }
-        };
-    int ULP_TOLERANCE = 5;
+    private final NumberEqualsFunction numberEqualsFunction = new PlainNumberEqualsFunction();
+    private final GetSampleFunction getIntSampleFunction = new GetIntSampleFunction();
+    private final SetSampleFunction setIntSampleFunction = new SetIntSampleFunction();
+    private final int ulpTolerance = 5;
+
+    private static class PlainNumberEqualsFunction implements NumberEqualsFunction {
+      private static final long serialVersionUID = -8924239771249618240L;
+
+      @Override
+      public Boolean apply(Number a, Number b) {
+        return Objects.equals(a, b);
+      }
+    }
+
+    private static class GetIntSampleFunction implements GetSampleFunction {
+      private static final long serialVersionUID = -4472993106607728543L;
+
+      @Override
+      public Number apply(@NotNull Raster rst, int x, int y, int b) {
+        return rst.getSample(x, y, b);
+      }
+    }
+
+    private static class SetIntSampleFunction implements SetSampleFunction {
+      private static final long serialVersionUID = -4146484236816284795L;
+
+      @Override
+      public void apply(@NotNull WritableRaster rst, int x, int y, int b, @NotNull Number sampleValue) {
+        rst.setSample(x, y, b, (Integer) sampleValue);
+      }
+    }
   }
 
-  private static class DoubleEqualsFunction implements BiFunction<Number, Number, Boolean> {
+  private static class DoubleEqualsFunction implements NumberEqualsFunction {
+    private static final long serialVersionUID = 8892568023408479061L;
 
     private static double epsilon(double f1, double f2) {
       double baseEpsilon;
@@ -243,7 +248,7 @@ public enum SampleType {
       } else {
         baseEpsilon = Math.ulp(f2);
       }
-      return Defaults.ULP_TOLERANCE * baseEpsilon;
+      return Defaults.DEFAULTS.ulpTolerance * baseEpsilon;
     }
 
     @Override
@@ -256,7 +261,9 @@ public enum SampleType {
 
   }
 
-  private static class FloatEqualsFunction implements BiFunction<Number, Number, Boolean> {
+  private static class FloatEqualsFunction implements NumberEqualsFunction {
+
+    private static final long serialVersionUID = -7282130186488343126L;
 
     private static float epsilon(float f1, float f2) {
       float baseEpsilon;
@@ -265,7 +272,7 @@ public enum SampleType {
       } else {
         baseEpsilon = Math.ulp(f2);
       }
-      return Defaults.ULP_TOLERANCE * baseEpsilon;
+      return Defaults.DEFAULTS.ulpTolerance * baseEpsilon;
     }
 
     @Override
@@ -280,6 +287,8 @@ public enum SampleType {
 
   private static class GetFloatSampleFunction implements GetSampleFunction {
 
+    private static final long serialVersionUID = -5605956220287805158L;
+
     @Override
     public Number apply(@NotNull Raster rst, int x, int y, int b) {
       return rst.getSampleFloat(x, y, b);
@@ -287,6 +296,8 @@ public enum SampleType {
   }
 
   private static class GetDoubleSampleFunction implements GetSampleFunction {
+
+    private static final long serialVersionUID = 2426564634585641124L;
 
     @Override
     public Number apply(@NotNull Raster rst, int x, int y, int b) {

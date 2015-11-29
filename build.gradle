@@ -117,7 +117,9 @@ dependencies {
       [group: 'junit', name: 'junit', version: '4.12', transitive: false],
       [group: 'com.google.guava', name: 'guava', version: '18.0'],
       [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'],
-      [group: 'org.jetbrains', name: 'annotations', version: '13.0']
+      [group: 'org.jetbrains', name: 'annotations', version: '13.0'],
+      // Sonar complains otherwise because some 3rd-party libs use this for NonNull and Nullable.
+      [group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'],
   )
   testCompile(
       [group: 'com.google.jimfs', name: 'jimfs', version: '1.0'],
