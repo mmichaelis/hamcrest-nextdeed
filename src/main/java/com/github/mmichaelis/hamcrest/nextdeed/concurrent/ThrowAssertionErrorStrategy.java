@@ -16,14 +16,14 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import com.google.common.base.Function;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
-
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.Nullable;
+
+import static com.google.common.base.MoreObjects.toStringHelper;
+import static java.util.Objects.requireNonNull;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Strategy to timeout with assertion error.
@@ -41,14 +41,14 @@ final class ThrowAssertionErrorStrategy<T, R> implements Function<WaitTimeoutEve
    */
   private final Matcher<? super R> matcher;
 
-  public ThrowAssertionErrorStrategy(String reason, Matcher<? super R> matcher) {
+  public ThrowAssertionErrorStrategy(@Nullable String reason, Matcher<? super R> matcher) {
     this.reason = reason;
     this.matcher = matcher;
   }
 
   @Override
   public R apply(@Nullable WaitTimeoutEvent<T, R> input) {
-    assert input != null : "null values unexpected";
+    requireNonNull(input, "null value for input unexpected.");
     R lastResult = input.getLastResult();
     assertThat(Optional.fromNullable(reason).or(""), lastResult, matcher);
     // Will never get here unless as last validation the actual value eventually matches,
@@ -58,7 +58,7 @@ final class ThrowAssertionErrorStrategy<T, R> implements Function<WaitTimeoutEve
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
+    return toStringHelper(this)
         .add("hash", Integer.toHexString(System.identityHashCode(this)))
         .add("matcher", matcher)
         .add("reason", reason)

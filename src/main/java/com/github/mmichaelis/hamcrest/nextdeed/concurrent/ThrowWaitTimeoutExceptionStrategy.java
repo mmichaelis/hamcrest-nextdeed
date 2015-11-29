@@ -17,10 +17,11 @@
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
 import com.google.common.base.Function;
-import com.google.common.base.MoreObjects;
-
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.Nullable;
+
+import static com.google.common.base.MoreObjects.toStringHelper;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Strategy to timeout with timeout exception.
@@ -39,14 +40,14 @@ final class ThrowWaitTimeoutExceptionStrategy<T, R>
    */
   private final Matcher<? super R> matcher;
 
-  public ThrowWaitTimeoutExceptionStrategy(String reason, Matcher<? super R> matcher) {
+  public ThrowWaitTimeoutExceptionStrategy(@Nullable String reason, Matcher<? super R> matcher) {
     this.reason = reason;
     this.matcher = matcher;
   }
 
   @Override
   public R apply(@Nullable WaitTimeoutEvent<T, R> input) {
-    assert input != null : "null values unexpected";
+    requireNonNull(input, "null value for input unexpected.");
     R lastResult = input.getLastResult();
     if (!matcher.matches(lastResult)) {
       throw new WaitTimeoutException(
@@ -59,7 +60,7 @@ final class ThrowWaitTimeoutExceptionStrategy<T, R>
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
+    return toStringHelper(this)
         .add("hash", Integer.toHexString(System.identityHashCode(this)))
         .add("matcher", matcher)
         .add("reason", reason)

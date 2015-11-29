@@ -123,7 +123,7 @@ public class IsSerializable<T> extends IssuesMatcher<T> {
    * @see BareSerializableMatcher#and()
    * @since SINCE
    */
-  @SuppressWarnings({"MethodReturnOfConcreteClass", "UnusedParameters"})
+  @SuppressWarnings({"MethodReturnOfConcreteClass", "UnusedParameters", "squid:S1172"})
   @NotNull
   public static <T> BareSerializableMatcher<T> isSerializable(Class<T> typeToken) {
     return new BareSerializableMatcher<>();

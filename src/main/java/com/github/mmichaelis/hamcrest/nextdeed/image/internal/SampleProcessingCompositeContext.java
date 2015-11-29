@@ -54,6 +54,7 @@ public class SampleProcessingCompositeContext implements CompositeContext {
 
   @Override
   public void dispose() {
+    pixelListeners.clear();
   }
 
   @Override

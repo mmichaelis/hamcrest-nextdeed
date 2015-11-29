@@ -16,16 +16,11 @@
 
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
-import static com.github.mmichaelis.hamcrest.nextdeed.glue.HamcrestGlue.asPredicate;
-import static java.util.Objects.requireNonNull;
-
+import com.github.mmichaelis.hamcrest.nextdeed.glue.Consumer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.MoreObjects;
-
-import com.github.mmichaelis.hamcrest.nextdeed.glue.Consumer;
-
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +28,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+
+import static com.github.mmichaelis.hamcrest.nextdeed.glue.HamcrestGlue.asPredicate;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Implementation of {@link ProbeBuilder}.
@@ -198,11 +196,11 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("hash", Integer.toHexString(System.identityHashCode(this)))
-        .add("actualFunction", actualFunction)
-        .add("target", target)
-        .add("waitFunctionBuilder", waitFunctionBuilder)
-        .toString();
+                      .add("hash", Integer.toHexString(System.identityHashCode(this)))
+                      .add("actualFunction", actualFunction)
+                      .add("target", target)
+                      .add("waitFunctionBuilder", waitFunctionBuilder)
+                      .toString();
   }
 
   /**
@@ -235,8 +233,7 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
    */
   @NotNull
   private Function<T, R> getActualFunction() {
-    assert actualFunction != null : "actualFunction must be set.";
-    return actualFunction;
+    return requireNonNull(actualFunction, "actualFunction must be set.");
   }
 
   private void checkThat(@NotNull Function<T, R> actualFunction,
@@ -255,9 +252,9 @@ final class ProbeBuilderImpl<T, R> implements ProbeBuilder<T, R> {
           }
         })
         .get();
-    Function<T, R> preProcessedWaitFunction = waitFunctionPreProcessor.apply(waitFunction);
-    assert preProcessedWaitFunction
-           != null : "Wait function should not have been preprocessed to null.";
+    Function<T, R> preProcessedWaitFunction =
+        requireNonNull(waitFunctionPreProcessor.apply(waitFunction),
+            "Wait function should not have been preprocessed to null.");
     preProcessedWaitFunction.apply(target);
   }
 }

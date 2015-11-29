@@ -17,11 +17,12 @@
 package com.github.mmichaelis.hamcrest.nextdeed.concurrent;
 
 import com.google.common.base.Function;
-import com.google.common.base.MoreObjects;
-
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.Nullable;
 import org.junit.AssumptionViolatedException;
+
+import static com.google.common.base.MoreObjects.toStringHelper;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Strategy to timeout with assumption violation.
@@ -40,14 +41,14 @@ final class ThrowAssumptionViolatedExceptionStrategy<T, R>
    */
   private final Matcher<? super R> matcher;
 
-  public ThrowAssumptionViolatedExceptionStrategy(String reason, Matcher<? super R> matcher) {
+  public ThrowAssumptionViolatedExceptionStrategy(@Nullable String reason, Matcher<? super R> matcher) {
     this.reason = reason;
     this.matcher = matcher;
   }
 
   @Override
   public R apply(@Nullable WaitTimeoutEvent<T, R> input) {
-    assert input != null : "null values unexpected";
+    requireNonNull(input, "null value for input unexpected.");
     R lastResult = input.getLastResult();
     // Copy & Paste from Hamcrest Matcher's assert, but with new exception
     if (!matcher.matches(lastResult)) {
@@ -62,7 +63,7 @@ final class ThrowAssumptionViolatedExceptionStrategy<T, R>
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
+    return toStringHelper(this)
         .add("hash", Integer.toHexString(System.identityHashCode(this)))
         .add("matcher", matcher)
         .add("reason", reason)
