@@ -25,7 +25,10 @@ import com.github.mmichaelis.hamcrest.nextdeed.base.HamcrestNextdeedException;
  */
 public class ImageException extends HamcrestNextdeedException {
 
+  private static final long serialVersionUID = -5411395398475572152L;
+
   public ImageException() {
+    // Default constructor
   }
 
   public ImageException(String message) {

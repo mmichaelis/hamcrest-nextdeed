@@ -144,15 +144,13 @@ public class IsSerializable<T> extends IssuesMatcher<T> {
       issues.add(issue(messages().serializationDeserializationFailure(e)));
       return;
     }
-    if (deserializedMatcher != null) {
-      if (!deserializedMatcher.matches(newItem)) {
-        Description description = new StringDescription();
-        description.appendText("Expected: ")
-            .appendDescriptionOf(deserializedMatcher)
-            .appendText(" but: ");
-        deserializedMatcher.describeMismatch(newItem, description);
-        issues.add(issue(description.toString()));
-      }
+    if (deserializedMatcher != null && !deserializedMatcher.matches(newItem)) {
+      Description description = new StringDescription();
+      description.appendText("Expected: ")
+                 .appendDescriptionOf(deserializedMatcher)
+                 .appendText(" but: ");
+      deserializedMatcher.describeMismatch(newItem, description);
+      issues.add(issue(description.toString()));
     }
   }
 

@@ -29,6 +29,7 @@ public class WaitTimeoutException extends RuntimeException {
   private static final long serialVersionUID = 575405375016958830L;
 
   public WaitTimeoutException() {
+    // Default constructor
   }
 
   public WaitTimeoutException(String message) {

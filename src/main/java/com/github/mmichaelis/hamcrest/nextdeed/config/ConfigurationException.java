@@ -26,7 +26,10 @@ import com.github.mmichaelis.hamcrest.nextdeed.base.HamcrestNextdeedException;
 @SuppressWarnings("unused")
 public class ConfigurationException extends HamcrestNextdeedException {
 
+  private static final long serialVersionUID = -7236851784748043801L;
+
   public ConfigurationException() {
+    // Default constructor
   }
 
   public ConfigurationException(String message) {
