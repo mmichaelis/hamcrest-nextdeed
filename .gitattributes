@@ -4,6 +4,9 @@
 
 # Declare files which require CRLF line endings on any platform.
 *.bat text eol=crlf
+.ps1 text eol=crlf
+.psd1 text eol=crlf
+.psm1 text eol=crlf
 
 #common settings that generally should always be used with your language specific settings
 
